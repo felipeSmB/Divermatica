@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EQUIPOS - Deportes</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">EQUIPOS</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="jugadores.html">Jugadores</a></li>
+            <li><a href="deportes.html" class="activo">Deportes</a></li>
+            <li><a href="equipos.html">Generar Equipos</a></li>
+        </ul>
+    </nav>
+
+    <main class="contenido">
+        <h2 class="modulo-titulo">Gestión de Deportes</h2>
+
+        <div class="tabla-contenedor">
+            <table id="tablaDeportes">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Deporte</th>
+                        <th>Jugadores por Equipo</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaDeportes">
+                    <tr><td colspan="4" class="sin-datos">Cargando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="formulario-panel">
+            <h3>Datos del Deporte</h3>
+            <input type="hidden" id="deporteId">
+            <div class="form-grid">
+                <div class="form-grupo">
+                    <label>Nombre *</label>
+                    <input type="text" id="dNombre" placeholder="Ej: Fútbol 7">
+                </div>
+                <div class="form-grupo">
+						<label>Jugadores por equipo *</label>
+						<div style="display:flex;align-items:center;gap:8px;">
+						<button type="button" onclick="alterarNum(-1)"
+                style="width:32px;height:32px;border:1px solid #CFD8DC;
+                       border-radius:6px;font-size:18px;cursor:pointer;background:white;">−</button>
+					<span id="dNumDisplay" style="font-size:16px;font-weight:bold;
+						min-width:28px;text-align:center;">7</span>
+						<button type="button" onclick="alterarNum(1)"
+                style="width:32px;height:32px;border:1px solid #CFD8DC;
+                       border-radius:6px;font-size:18px;cursor:pointer;background:white;">+</button>
+        <input type="hidden" id="dNumJugadores" value="7">
+			</div>
+            </div>
+            <div class="form-botones">
+                <button class="btn-primario"   onclick="guardarDeporte()">Guardar</button>
+                <button class="btn-secundario" onclick="limpiarDeporte()">Limpiar</button>
+            </div>
+            <p id="mensajeDeporte" class="mensaje-estado"></p>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/deportes.js"></script>
+    <script>cargarDeportes();</script>
+</body>
+</html>

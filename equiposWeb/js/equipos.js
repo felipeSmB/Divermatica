@@ -49,11 +49,8 @@ function renderizarListaJugadores() {
 
 function generarEquipos() {
     const numEquipos = parseInt(document.getElementById('numEquipos').value);
-
     const selDeporte = document.getElementById('selDeporte');
-    const limiteXEquipo = parseInt(
-        selDeporte.selectedOptions[0]?.dataset.num || 99
-    );
+    const limiteXEquipo = parseInt(selDeporte.selectedOptions[0]?.dataset.num || 99);
 
     const nombres = Array.from({ length: numEquipos }, (_, i) => {
         const val = document.getElementById(`nombreEquipo${i}`).value.trim();
@@ -72,23 +69,26 @@ function generarEquipos() {
     const maxJugadores = limiteXEquipo * numEquipos;
     const jugadoresUsados = jugadoresEquipos.slice(0, maxJugadores);
 
-    if (jugadoresEquipos.length > maxJugadores) {
-        mostrarMensaje('mensajeEquipos',
-            `⚠️ Solo se usarán ${maxJugadores} jugadores (${limiteXEquipo} por equipo). ` +
-            `${jugadoresEquipos.length - maxJugadores} quedan fuera.`, false);
-    }
+    const ordenados = [...jugadoresUsados].sort(
+        (a, b) => puntajeNivel(b.nivel) - puntajeNivel(a.nivel)
+    );
+    const equipos = Array.from({ length: numEquipos }, () => []);
+    let direccionIda = true, indice = 0;
 
-    // Snake draft corrigido
-const ordenados = [...jugadoresUsados].sort(
-    (a, b) => puntajeNivel(b.nivel) - puntajeNivel(a.nivel)
-);
-const equipos = Array.from({ length: numEquipos }, () => []);
-let direccionIda = true, indice = 0;
-
-for (const jugador of ordenados) {
-    // Encontrar próximo equipo com espaço disponível
-    let tentativas = 0;
-    while (equipos[indice].length >= limiteXEquipo && tentativas < numEquipos) {
+    for (const jugador of ordenados) {
+        let tentativas = 0;
+        while (equipos[indice].length >= limiteXEquipo && tentativas < numEquipos) {
+            if (direccionIda) {
+                if (indice === numEquipos - 1) direccionIda = false;
+                else indice++;
+            } else {
+                if (indice === 0) direccionIda = true;
+                else indice--;
+            }
+            tentativas++;
+        }
+        if (equipos[indice].length >= limiteXEquipo) break;
+        equipos[indice].push(jugador);
         if (direccionIda) {
             if (indice === numEquipos - 1) direccionIda = false;
             else indice++;
@@ -96,23 +96,14 @@ for (const jugador of ordenados) {
             if (indice === 0) direccionIda = true;
             else indice--;
         }
-        tentativas++;
     }
 
-    // Se todos os equipos estão cheios, parar
-    if (equipos[indice].length >= limiteXEquipo) break;
+    // ← DENTRO da função, APÓS o loop
+    renderizarEquiposCards(equipos, nombres);
 
-    equipos[indice].push(jugador);
-
-    if (direccionIda) {
-        if (indice === numEquipos - 1) direccionIda = false;
-        else indice++;
-    } else {
-        if (indice === 0) direccionIda = true;
-        else indice--;
-    }
-}
-}
+    mostrarMensaje('mensajeEquipos',
+        `✅ ${jugadoresUsados.length} jugadores distribuidos en ${numEquipos} equipos`);
+} // ← chave de fecho AQUI
 
 // 
 // Campo dinâmico por desporte + Draft visual

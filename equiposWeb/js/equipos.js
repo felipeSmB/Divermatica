@@ -295,36 +295,28 @@ function renderizarEquiposCards(equipos, nomes) {
 
         const card = document.createElement('div');
         card.className = 'equipo-card';
-        card.innerHTML = `
-            <div class="equipo-card-titulo">⚽ ${nomes[i].toUpperCase()}</div>
-            <div class="equipo-card-puntaje">Puntaje: ${puntaje} | ${equipo.length} jugadores</div>
-            <div id="listaEquipo${i}"></div>`;
-        container.appendChild(card);
 
-        // Entrada sequencial dos jogadores
-        const lista = card.querySelector(`#listaEquipo${i}`);
-        equipo.forEach((j, idx) => {
-            setTimeout(() => {
-                const nivelClass = j.nivel === 'Muy Bueno'
-                    ? 'nivel-muybueno-card'
-                    : j.nivel === 'Bueno'
-                        ? 'nivel-bueno-card'
-                        : 'nivel-medio-card';
-
-                const div = document.createElement('div');
-                div.className = `card-jugador ${nivelClass} draft-animar`;
-                div.style.animationDelay = '0ms';
-                div.innerHTML = `
+        const jogadoresHTML = equipo.map(j => {
+            const nivelClass = j.nivel === 'Muy Bueno'
+                ? 'nivel-muybueno-card'
+                : j.nivel === 'Bueno'
+                    ? 'nivel-bueno-card'
+                    : 'nivel-medio-card';
+            return `
+                <div class="card-jugador ${nivelClass}">
                     <strong style="color:#E3F2FD">${j.nombre}</strong>
                     <span style="color:#90A4AE;font-size:11px;margin-left:6px;">
                         ${j.posicion || '—'}
                     </span>
-                    <span style="float:right">${badgeNivel(j.nivel)}</span>`;
-                lista.appendChild(div);
+                    <span style="float:right">${badgeNivel(j.nivel)}</span>
+                </div>`;
+        }).join('');
 
-                // Destaque ao aparecer
-                setTimeout(() => div.classList.add('draft-highlight'), 200);
-            }, idx * 120 + i * 80);
-        });
+        card.innerHTML = `
+            <div class="equipo-card-titulo">⚽ ${nomes[i].toUpperCase()}</div>
+            <div class="equipo-card-puntaje">Puntaje: ${puntaje} | ${equipo.length} jugadores</div>
+            ${jogadoresHTML}`;
+
+        container.appendChild(card);
     });
 }

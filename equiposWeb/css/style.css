@@ -586,12 +586,17 @@ tbody td:last-child {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 14px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+  place-items: stretch;
 }
 
-.form-grupo { display: flex; flex-direction: column; gap: 6px; }
+.form-grupo { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px;
+}
 
 .form-grupo label {
   font-size: 11px;
@@ -603,7 +608,7 @@ tbody td:last-child {
 
 .form-grupo input,
 .form-grupo select {
-  height: 40px;
+  height: 44px;
   padding: 0 14px;
   background: rgba(8, 13, 26, 0.60);
   border: 1px solid var(--border-soft);
@@ -756,11 +761,13 @@ button,
    ===================================================== */
 
 .mensaje-estado {
-  margin-top: 12px;
+  margin-top: 16px;
+  margin-bottom: 12px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
   min-height: 18px;
+  text-align: center;
 }
 
 .hint { color: var(--text-muted); font-size: 13px; font-style: italic; }
@@ -1281,6 +1288,9 @@ tbody strong { color: var(--text-primary); font-weight: 600; }
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  overflow-y: auto;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -1295,14 +1305,16 @@ tbody strong { color: var(--text-primary); font-weight: 600; }
   background: #0d1427;
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 20px;
-  padding: 32px;
+  padding: 36px;
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
+  min-width: 320px;
   box-shadow: 0 24px 80px rgba(0,0,0,0.6);
   transform: translateY(20px) scale(0.97);
   opacity: 0;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
   position: relative;
+  margin: auto;
 }
 
 .modal-overlay.ativo .modal {
@@ -1315,8 +1327,8 @@ tbody strong { color: var(--text-primary); font-weight: 600; }
   font-size: 18px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
   border-bottom: 1px solid rgba(255,255,255,0.07);
   display: flex;
   align-items: center;
@@ -1346,15 +1358,17 @@ tbody strong { color: var(--text-primary); font-weight: 600; }
 
 .modal-botones {
   display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 24px;
-  padding-top: 20px;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 24px;
   border-top: 1px solid rgba(255,255,255,0.07);
+  flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
-  .modal { max-width: 95vw; padding: 24px 18px; margin: 0 10px; }
-  .modal-botones { flex-direction: column; }
-  .modal-botones button { width: 100%; }
+  .modal { max-width: 95vw; padding: 28px 20px; margin: auto; }
+  .modal-botones { flex-direction: row; gap: 10px; justify-content: center; }
+  .modal-botones button { flex: 1; min-width: 120px; }
 }

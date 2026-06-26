@@ -20,54 +20,66 @@
     <main class="contenido">
         <h2 class="modulo-titulo">Gestión de Jugadores</h2>
 
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+            <button class="btn-primario" onclick="abrirModalJugador()">+ Nuevo Jugador</button>
+        </div>
+
+
         <div class="barra-busqueda">
             <input type="text" id="txtBuscar" placeholder="Buscar jugador...">
             <button onclick="buscarJugador()">Buscar</button>
             <button onclick="mostrarTodos()">↺ Todos</button>
         </div>
 
-        <div class="formulario-panel">
-            <h3>Datos del Jugador</h3>
-            <input type="hidden" id="jugadorId">
-            <div class="form-grid">
-                <div class="form-grupo">
-                    <label>Nombre *</label>
-                    <input type="text" id="fNombre" placeholder="Nombre completo">
-                </div>
-                <div class="form-grupo">
-                    <label>Teléfono</label>
-                    <input type="text" id="fTelefono" placeholder="Teléfono">
-                </div>
-                <div class="form-grupo">
-                    <label>Correo</label>
-                    <input type="email" id="fMail" placeholder="correo@ejemplo.com">
-                </div>
-                <div class="form-grupo">
-                    <label>Posición</label>
-                    <select id="fPosicion">
-                        <option value="">— Seleccionar —</option>
-                        <option>Portero</option>
-                        <option>Defensa</option>
-                        <option>Lateral</option>
-                        <option>Mediocampista</option>
-                        <option>Delantero</option>
-                    </select>
-                </div>
-                <div class="form-grupo">
-                    <label>Nivel *</label>
-                    <select id="fNivel">
-                        <option value="">— Seleccionar —</option>
-                        <option>Medio</option>
-                        <option>Bueno</option>
-                        <option>Muy Bueno</option>
-                    </select>
-
-                    <div class="form-botones">
-                    <button class="btn-primario"   onclick="guardarJugador()">Guardar</button>
-                    <button class="btn-secundario" onclick="limpiarFormulario()">Limpiar</button>
+        <!-- MODAL JUGADOR -->
+<div class="modal-overlay" id="modalJugador">
+    <div class="modal">
+        <div class="modal-titulo">
+            <span id="modalJugadorTitulo">Nuevo Jugador</span>
+            <button class="modal-fechar" onclick="cerrarModalJugador()">✕</button>
+        </div>
+        <input type="hidden" id="jugadorId">
+        <div class="form-grid">
+            <div class="form-grupo">
+                <label>Nombre *</label>
+                <input type="text" id="fNombre" placeholder="Nombre completo">
             </div>
-
-                </div>
+            <div class="form-grupo">
+                <label>Teléfono</label>
+                <input type="text" id="fTelefono" placeholder="Teléfono">
+            </div>
+            <div class="form-grupo">
+                <label>Correo</label>
+                <input type="email" id="fMail" placeholder="correo@ejemplo.com">
+            </div>
+            <div class="form-grupo">
+                <label>Posición</label>
+                <select id="fPosicion">
+                    <option value="">— Seleccionar —</option>
+                    <option>Portero</option>
+                    <option>Defensa</option>
+                    <option>Lateral</option>
+                    <option>Mediocampista</option>
+                    <option>Delantero</option>
+                </select>
+            </div>
+            <div class="form-grupo">
+                <label>Nivel *</label>
+                <select id="fNivel">
+                    <option value="">— Seleccionar —</option>
+                    <option>Medio</option>
+                    <option>Bueno</option>
+                    <option>Muy Bueno</option>
+                </select>
+            </div>
+        </div>
+        <p id="mensajeEstado" class="mensaje-estado"></p>
+        <div class="modal-botones">
+            <button class="btn-secundario" onclick="cerrarModalJugador()">Cancelar</button>
+            <button class="btn-primario" onclick="guardarJugador()">💾 Guardar</button>
+        </div>
+    </div>
+</div>
             </div>
        <div class="tabla-contenedor">
             <table id="tablaJugadores">

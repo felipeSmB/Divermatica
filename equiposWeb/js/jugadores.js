@@ -29,11 +29,8 @@ function renderizarTabla(lista) {
             <td>${j.posicion || '—'}</td>
             <td>${badgeNivel(j.nivel)}</td>
             <td>
-                <button class="btn-secundario" onclick="editarJugador(${j.id},'${j.nombre}','${j.telefono}','${j.mail}','${j.posicion}','${j.nivel}')"
-                        style="padding:5px 10px;font-size:12px;">✏️</button>
-                <button class="btn-peligro" onclick="eliminarJugador(${j.id})"
-                        style="padding:5px 10px;font-size:12px;margin-left:4px;">🗑️</button>
-            </td>
+                <button class="btn-accion btn-accion-editar" onclick="editarJugador(${j.id},'${j.nombre}','${j.telefono}','${j.mail}','${j.posicion}','${j.nivel}')"></button>
+                <button class="btn-accion btn-accion-eliminar" onclick="eliminarJugador(${j.id})"></button>            </td>
         </tr>
     `).join('');
 }
@@ -100,6 +97,8 @@ function editarJugador(id, nombre, telefono, mail, posicion, nivel) {
     document.getElementById('fPosicion').value = posicion !== 'null' ? posicion : '';
     document.getElementById('fNivel').value    = nivel;
     mostrarMensaje('mensajeEstado', '✏️ Modifique y presione Guardar');
+    document.getElementById('modalJugadorTitulo').textContent = 'Editar Jugador';
+    document.getElementById('modalJugador').classList.add('ativo');
 }
 
 
@@ -121,5 +120,17 @@ function limpiarFormulario() {
     );
     document.getElementById('fPosicion').value = '';
     document.getElementById('fNivel').value    = '';
+    limpiarMensaje('mensajeEstado');
+}
+
+function abrirModalJugador() {
+    idEditando = null;
+    document.getElementById('modalJugadorTitulo').textContent = 'Nuevo Jugador';
+    limpiarFormulario();
+    document.getElementById('modalJugador').classList.add('ativo');
+}
+
+function cerrarModalJugador() {
+    document.getElementById('modalJugador').classList.remove('ativo');
     limpiarMensaje('mensajeEstado');
 }

@@ -55,6 +55,8 @@ function editarDeporte(id, nombre, num) {
     document.getElementById('dNombre').value       = nombre;
     document.getElementById('dNumJugadores').value = num;
     mostrarMensaje('mensajeDeporte', '✏️ Modifique y presione Guardar');
+    document.getElementById('modalDeporteTitulo').textContent = 'Editar Deporte';
+    document.getElementById('modalDeporte').classList.add('ativo');
 }
 
 async function eliminarDeporte(id) {
@@ -82,4 +84,16 @@ function alterarNum(delta) {
     val = Math.min(20, Math.max(2, val));
     input.value = val;
     display.textContent = val;
+}
+
+function abrirModalDeporte() {
+    deporteEditandoId = null;
+    document.getElementById('modalDeporteTitulo').textContent = 'Nuevo Deporte';
+    limpiarDeporte();
+    document.getElementById('modalDeporte').classList.add('ativo');
+}
+
+function cerrarModalDeporte() {
+    document.getElementById('modalDeporte').classList.remove('ativo');
+    limpiarMensaje('mensajeDeporte');
 }

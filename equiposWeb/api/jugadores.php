@@ -13,7 +13,6 @@ rate_limit_verificar();
 
 $secret  = $_ENV['JWT_SECRET'] ?? '';
 jwt_verificar($secret);
-
 $metodo = $_SERVER['REQUEST_METHOD'];
 
 switch ($metodo) {

@@ -111,3 +111,5 @@ function cerrarModalDeporte() {
     document.getElementById('modalDeporte').classList.remove('ativo');
     limpiarMensaje('mensajeDeporte');
 }
+}
+}

@@ -1,10 +1,6 @@
 <?php
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Max-Age: 86400');
+require_once __DIR__ . '/init.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
@@ -38,17 +34,6 @@ if (!$utilizador || !password_verify($password, $utilizador['password_hash'])) {
     http_response_code(401);
     echo json_encode(['erro' => 'Credenciais inválidas']);
     exit;
-}
-
-$env_path = __DIR__ . '/../.env';
-if (file_exists($env_path)) {
-    $linhas = file($env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($linhas as $linha) {
-        if (str_starts_with(trim($linha), '#')) continue;
-        if (!str_contains($linha, '=')) continue;
-        [$chave, $valor] = explode('=', $linha, 2);
-        $_ENV[trim($chave)] = trim($valor);
-    }
 }
 
 $secret = $_ENV['JWT_SECRET'] ?? '';

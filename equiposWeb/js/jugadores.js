@@ -7,13 +7,13 @@ async function cargarJugadores() {
     try {
         const res  = await apiFetch(`${API_URL}/jugadores.php`);
         if (!res || !res.ok) {
-            mostrarMensaje('mensajeModalEstado', '❌ Error al cargar jugadores', true);
+            mostrarMensaje('mensajeEstado', '❌ Error al cargar jugadores', true);
             return;
         }
         const data = await res.json();
         renderizarTabla(data);
     } catch (e) {
-        mostrarMensaje('mensajeModalEstado', '❌ Error al conectar con el servidor', true);
+        mostrarMensaje('mensajeEstado', '❌ Error al conectar con el servidor', true);
     }
 }
 
@@ -47,7 +47,7 @@ async function buscarJugador() {
     const texto = document.getElementById('txtBuscar').value.trim();
     const res   = await apiFetch(`${API_URL}/jugadores.php?buscar=${encodeURIComponent(texto)}`);
     if (!res || !res.ok) {
-        mostrarMensaje('mensajeModalEstado', '❌ Error al buscar jugadores', true);
+        mostrarMensaje('mensajeEstado', '❌ Error al buscar jugadores', true);
         return;
     }
     const data  = await res.json();
@@ -137,7 +137,7 @@ function limpiarFormulario() {
     );
     document.getElementById('fPosicion').value = '';
     document.getElementById('fNivel').value    = '';
-    limpiarMensaje('mensajeEstado');
+    limpiarMensaje('mensajeModalEstado');
 }
 
 function abrirModalJugador() {
@@ -149,5 +149,5 @@ function abrirModalJugador() {
 
 function cerrarModalJugador() {
     document.getElementById('modalJugador').classList.remove('ativo');
-    limpiarMensaje('mensajeEstado');
+    limpiarMensaje('mensajeModalEstado');
 }

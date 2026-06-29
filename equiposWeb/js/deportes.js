@@ -4,20 +4,25 @@ let deporteEditandoId = null;
 
 async function cargarDeportes() {
     const res  = await apiFetch(`${API_URL}/deportes.php`);
-    const data = await res.json();
     const cuerpo = document.getElementById('cuerpoTablaDeportes');
+    if (!res || !res.ok) {
+        cuerpo.innerHTML = '<tr><td colspan="4" class="sin-datos">❌ Error al cargar deportes</td></tr>';
+        return;
+    }
+
+    const data = await res.json();
     if (!data.length) {
         cuerpo.innerHTML = '<tr><td colspan="4" class="sin-datos">Sin deportes</td></tr>';
         return;
     }
     cuerpo.innerHTML = data.map(d => `
         <tr>
-            <td>${d.id}</td>
-            <td><strong>${d.nombre}</strong></td>
-            <td>${d.num_jugadores}</td>
+            <td>${escapeHtml(d.id)}</td>
+            <td><strong>${escapeHtml(d.nombre)}</strong></td>
+            <td>${escapeHtml(d.num_jugadores)}</td>
             <td>
                 <button class="btn-secundario"
-                        onclick="editarDeporte(${d.id},'${d.nombre}',${d.num_jugadores})"
+                        onclick="editarDeporte(${d.id}, ${JSON.stringify(d.nombre)}, ${d.num_jugadores})"
                         style="padding:5px 10px;font-size:12px;">✏️</button>
                 <button class="btn-peligro"
                         onclick="eliminarDeporte(${d.id})"
@@ -29,9 +34,8 @@ async function cargarDeportes() {
 
 async function guardarDeporte() {
     const nombre = document.getElementById('dNombre').value.trim();
-    const num    = parseInt(document.getElementById('dNumJugadores').value);
+    const num    = parseInt(document.getElementById('dNumJugadores').value, 10);
     if (!nombre) { mostrarMensaje('mensajeDeporte','⚠️ Nombre obligatorio',true); return; }
-	
 
     const deporte  = { nombre, num_jugadores: num };
     const esEdicion = deporteEditandoId !== null;
@@ -42,13 +46,19 @@ async function guardarDeporte() {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(deporte)
     });
+
+    if (!res || !res.ok) {
+        mostrarMensaje('mensajeDeporte', '❌ Error al guardar deporte', true);
+        return;
+    }
+
     const data = await res.json();
     if (data.ok) {
         mostrarMensaje('mensajeDeporte', esEdicion ? '✅ Actualizado' : '✅ Guardado');
         await cargarDeportes();
         limpiarDeporte();
-    }
-}
+    } else {
+        mostrarMensaje('mensajeDeporte', '❌ Error al guardar deporte', true);
 
 function editarDeporte(id, nombre, num) {
     deporteEditandoId = id;
@@ -62,6 +72,10 @@ function editarDeporte(id, nombre, num) {
 async function eliminarDeporte(id) {
     if (!confirm('¿Eliminar este deporte?')) return;
     const res  = await apiFetch(`${API_URL}/deportes.php?id=${id}`, { method: 'DELETE' });
+    if (!res || !res.ok) {
+        mostrarMensaje('mensajeDeporte', '❌ Error al eliminar deporte', true);
+        return;
+    }
     const data = await res.json();
     if (data.ok) {
         mostrarMensaje('mensajeDeporte', '✅ Eliminado');

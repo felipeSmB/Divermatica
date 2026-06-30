@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS admin_logs (
 -- Crear usuario admin (password: admin123)
 -- Hash bcrypt de "admin123" con cost=12
 INSERT INTO usuarios (username, password_hash, role)
-VALUES ('admin', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC7enSMEP3bIWbUI3Pom', 'admin')
+VALUES ('admin', '$2y$12$huvrx5mr0cOy6v2eVTWHV.9loyKtyDqGYFWhP3d0.NxGd/MM0lPa2', 'admin')
 ON DUPLICATE KEY UPDATE role = 'admin';
 
 -- =====================================================

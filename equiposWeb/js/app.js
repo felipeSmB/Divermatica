@@ -2,7 +2,7 @@
 // app.js — versão PRO estável
 // ─────────────────────────────────────────────
 
-const API_URL = 'https://deviancy-bulldozer-concave.ngrok-free.dev/equiposWeb/api';
+const API_URL = '/equiposWeb/api';
 
 // ─────────────────────────────────────────────
 // AUTH

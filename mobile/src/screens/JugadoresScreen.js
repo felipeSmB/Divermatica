@@ -3,7 +3,6 @@ import {
     View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView,
     SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
 import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/nivel';
@@ -179,22 +178,58 @@ export default function JugadoresScreen() {
                                 <TextInput style={styles.input} placeholder="Correo" placeholderTextColor="#888" value={mail} onChangeText={setMail} autoCapitalize="none" keyboardType="email-address" />
 
                                 <Text style={styles.label}>Deporte</Text>
-                                <Picker selectedValue={deporteId} onValueChange={v => { setDeporteId(v); setPosicion(''); }} style={styles.picker} dropdownIconColor="#fff">
-                                    <Picker.Item label="— Seleccionar —" value="" color="#fff" />
-                                    {deportes.map(d => <Picker.Item key={d.id} label={d.nombre} value={String(d.id)} color="#fff" />)}
-                                </Picker>
+                                <View style={styles.chipsContainer}>
+                                    {deportes.map(d => {
+                                        const activo = String(d.id) === deporteId;
+                                        return (
+                                            <TouchableOpacity
+                                                key={d.id}
+                                                style={[styles.chip, activo && styles.chipActivo]}
+                                                onPress={() => { setDeporteId(String(d.id)); setPosicion(''); }}
+                                            >
+                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{d.nombre}</Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
 
                                 <Text style={styles.label}>Posición *</Text>
-                                <Picker selectedValue={posicion} onValueChange={setPosicion} style={styles.picker} enabled={posiciones.length > 0} dropdownIconColor="#fff">
-                                    <Picker.Item label={deporteId ? '— Seleccionar —' : 'Elige un deporte primero'} value="" color="#fff" />
-                                    {posiciones.map(p => <Picker.Item key={p.id} label={p.nombre} value={p.nombre} color="#fff" />)}
-                                </Picker>
+                                {posiciones.length === 0 ? (
+                                    <Text style={styles.chipsVacio}>
+                                        {deporteId ? 'Sin posiciones para este deporte' : 'Elige un deporte primero'}
+                                    </Text>
+                                ) : (
+                                    <View style={styles.chipsContainer}>
+                                        {posiciones.map(p => {
+                                            const activo = p.nombre === posicion;
+                                            return (
+                                                <TouchableOpacity
+                                                    key={p.id}
+                                                    style={[styles.chip, activo && styles.chipActivo]}
+                                                    onPress={() => setPosicion(p.nombre)}
+                                                >
+                                                    <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{p.nombre}</Text>
+                                                </TouchableOpacity>
+                                            );
+                                        })}
+                                    </View>
+                                )}
 
                                 <Text style={styles.label}>Nivel *</Text>
-                                <Picker selectedValue={nivel} onValueChange={setNivel} style={styles.picker} dropdownIconColor="#fff">
-                                    <Picker.Item label="— Seleccionar —" value="" color="#fff" />
-                                    {NIVELES.map(n => <Picker.Item key={n} label={n} value={n} color="#fff" />)}
-                                </Picker>
+                                <View style={styles.chipsContainer}>
+                                    {NIVELES.map(n => {
+                                        const activo = n === nivel;
+                                        return (
+                                            <TouchableOpacity
+                                                key={n}
+                                                style={[styles.chip, activo && styles.chipActivo]}
+                                                onPress={() => setNivel(n)}
+                                            >
+                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{n}</Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
 
                             </ScrollView>
                         </TouchableWithoutFeedback>
@@ -289,9 +324,18 @@ const styles = StyleSheet.create({
     botonTexto: { color: '#000', fontWeight: 'bold', textAlign: 'center' },
     botonTextoClaro: { color: '#fff', fontWeight: 'bold', textAlign: 'center' },
     modal: { flex: 1, backgroundColor: '#0f1115', padding: 20 },
-    input: { backgroundColor: '#1c1f26', color: '#fff', padding: 12, borderRadius: 8, marginBottom: 8 },
-    label: { color: '#999', marginTop: 8, marginBottom: 4 },
+    input: { backgroundColor: '#1c1f26', color: '#fff', padding: 12, borderRadius: 8, marginBottom: 8, borderWidth: 1.5, borderColor: '#00c2ff' },    label: { color: '#999', marginTop: 8, marginBottom: 4 },
     picker: { backgroundColor: '#1c1f26', color: '#fff', marginBottom: 8 },
+    chipsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
+    chip: {
+        paddingVertical: 8, paddingHorizontal: 14, borderRadius: 20,
+        backgroundColor: '#1c1f26', borderWidth: 1.5, borderColor: '#2a2f3a',
+    },
+    chipActivo: { backgroundColor: '#00c2ff', borderColor: '#00c2ff' },
+    chipTexto: { color: '#ccc', fontWeight: '600', fontSize: 13 },
+    chipTextoActivo: { color: '#0f1115' },
+    chipsVacio: { color: '#666', fontStyle: 'italic', marginBottom: 8 },
+    
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginTop: 16 },
     botonSecundario: { backgroundColor: '#333', padding: 14, borderRadius: 8, marginTop: 8 },
 

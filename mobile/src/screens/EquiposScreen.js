@@ -23,6 +23,7 @@ export default function EquiposScreen() {
     const [guardando, setGuardando] = useState(false);
 
     const scrollRef = useRef(null);
+    const deporteSeleccionado = deportes.find(d => String(d.id) === deporteId);
 
     const cargarDeportes = useCallback(async () => {
         const res = await apiFetch('/deportes.php');
@@ -171,7 +172,7 @@ export default function EquiposScreen() {
                             {equipos.map((eq, i) => (
                                 <ScrollView key={i} style={{ width: ANCHO_PANTALLA - 24 }} contentContainerStyle={styles.paginaCampo}>
                                     <Text style={styles.nombreEquipo}>Equipo {i + 1} · {eq.length} jugadores</Text>
-                                    <FormationPitch equipo={eq} posicionesInfo={posicionesDeporte} />
+                                    <FormationPitch equipo={eq} posicionesInfo={posicionesDeporte} deporte={deporteSeleccionado?.nombre} />
                                 </ScrollView>
                             ))}
                         </ScrollView>

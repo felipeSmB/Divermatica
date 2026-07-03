@@ -125,7 +125,6 @@ export default function DeportesScreen() {
                                 <Text style={styles.iconoTexto}>{iconoDeporte(item.nombre)}</Text>
                             </View>
                             <Text style={styles.nombreDeporte} numberOfLines={1}>{item.nombre}</Text>
-                            <Text style={styles.idDeporte}>ID #{item.id}</Text>
                             <View style={styles.stat}>
                                 <Text style={styles.statIcono}>👥</Text>
                                 <Text style={styles.statTexto}>
@@ -190,9 +189,8 @@ const styles = StyleSheet.create({
     },
     iconoTexto: { fontSize: 20 },
 
-    nombreDeporte: { color: '#fff', fontSize: 14.5, fontWeight: '700' },
-    idDeporte: { color: '#5b6478', fontSize: 10, marginTop: 2, marginBottom: 10 },
-
+    nombreDeporte: { color: '#fff', fontSize: 14.5, fontWeight: '700', marginBottom: 10 },
+    
     stat: {
         flexDirection: 'row',
         alignItems: 'center',

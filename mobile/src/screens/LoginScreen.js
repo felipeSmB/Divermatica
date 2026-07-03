@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    Alert,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Platform,
+    ScrollView,
+} from 'react-native';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 
@@ -35,22 +47,32 @@ export default function LoginScreen({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.titulo}>MATCHORA</Text>
-            <TextInput style={styles.input} placeholder="Usuario" placeholderTextColor="#888" value={username} onChangeText={setUsername} autoCapitalize="none" />
-            <TextInput style={styles.input} placeholder="Contraseña" placeholderTextColor="#888" value={password} onChangeText={setPassword} secureTextEntry />
-            <TouchableOpacity style={styles.boton} onPress={entrar} disabled={cargando}>
-                <Text style={styles.botonTexto}>{cargando ? 'Entrando...' : 'Iniciar sesión'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.link}>¿No tienes cuenta? Regístrate</Text>
-            </TouchableOpacity>
-        </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: '#0f1115' }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView
+                    contentContainerStyle={styles.container}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Text style={styles.titulo}>MATCHORA</Text>
+                    <TextInput style={styles.input} placeholder="Usuario" placeholderTextColor="#888" value={username} onChangeText={setUsername} autoCapitalize="none" />
+                    <TextInput style={styles.input} placeholder="Contraseña" placeholderTextColor="#888" value={password} onChangeText={setPassword} secureTextEntry />
+                    <TouchableOpacity style={styles.boton} onPress={entrar} disabled={cargando}>
+                        <Text style={styles.botonTexto}>{cargando ? 'Entrando...' : 'Iniciar sesión'}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                        <Text style={styles.link}>¿No tienes cuenta? Regístrate</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#0f1115' },
+    container: { flexGrow: 1, justifyContent: 'center', padding: 24 },
     titulo: { fontSize: 32, fontWeight: 'bold', color: '#fff', textAlign: 'center', marginBottom: 32 },
     input: { backgroundColor: '#1c1f26', color: '#fff', padding: 14, borderRadius: 8, marginBottom: 12 },
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginTop: 8 },

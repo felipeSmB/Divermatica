@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { API_URL } from '../config';
 
+//tela de registro
 export default function RegisterScreen({ navigation }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

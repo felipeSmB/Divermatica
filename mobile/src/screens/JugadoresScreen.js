@@ -1,11 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView } from 'react-native';
+import {
+    View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView,
+    SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
 import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/nivel';
 
+
+
 const NIVELES = ['Medio', 'Bueno', 'Muy Bueno'];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function JugadoresScreen() {
     const [jugadores, setJugadores] = useState([]);
@@ -13,7 +19,8 @@ export default function JugadoresScreen() {
     const [posiciones, setPosiciones] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [editandoId, setEditandoId] = useState(null);
-
+    const [detalleVisible, setDetalleVisible] = useState(false);
+    const [jugadorSeleccionado, setJugadorSeleccionado] = useState(null);    
     const [nombre, setNombre] = useState('');
     const [telefono, setTelefono] = useState('');
     const [mail, setMail] = useState('');
@@ -55,11 +62,19 @@ export default function JugadoresScreen() {
         setModalVisible(true);
     }
 
+    function abrirDetalle(j) {
+        setJugadorSeleccionado(j);
+        setDetalleVisible(true);
+    }
+
     async function guardar() {
-        if (!nombre || !nivel) {
-            Alert.alert('Atención', 'Nombre y nivel son obligatorios');
-            return;
-        }
+        if (!nombre.trim()) return Alert.alert('Atención', 'El nombre es obligatorio');
+        if (!telefono.trim()) return Alert.alert('Atención', 'El teléfono es obligatorio');
+        if (!mail.trim() || !EMAIL_REGEX.test(mail.trim())) return Alert.alert('Atención', 'Introduce un correo válido');
+        if (!posicion) return Alert.alert('Atención', 'Selecciona una posición');
+        if (!nivel) return Alert.alert('Atención', 'Selecciona un nivel');
+
+
         const body = {
             nombre, telefono, mail, posicion, nivel,
             deporte_id: deporteId ? parseInt(deporteId, 10) : null,
@@ -116,8 +131,9 @@ export default function JugadoresScreen() {
                     return (
                         <TouchableOpacity
                             style={[styles.item, { borderLeftColor: color }]}
-                            onPress={() => abrirEditar(item)}
+                            onPress={() => abrirDetalle(item)}
                         >
+
                             <View style={styles.itemInfo}>
                                 <View style={styles.itemCabecera}>
                                     <Text style={styles.itemNombre}>{item.nombre}</Text>
@@ -140,39 +156,112 @@ export default function JugadoresScreen() {
                 }}
             />
 
-            <Modal visible={modalVisible} animationType="slide">
-                <ScrollView style={styles.modal}>
-                    <Text style={styles.titulo}>{editandoId ? 'Editar jugador' : 'Nuevo jugador'}</Text>
+            <Modal visible={modalVisible} animationType="slide" presentationStyle="pageSheet">
+                <SafeAreaView style={styles.modalSafe}>
+                    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitulo}>{editandoId ? 'Editar jugador' : 'Nuevo jugador'}</Text>
+                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                <Text style={styles.cerrarModal}>✕</Text>
+                            </TouchableOpacity>
+                        </View>
 
-                    <TextInput style={styles.input} placeholder="Nombre" placeholderTextColor="#888" value={nombre} onChangeText={setNombre} />
-                    <TextInput style={styles.input} placeholder="Teléfono" placeholderTextColor="#888" value={telefono} onChangeText={setTelefono} />
-                    <TextInput style={styles.input} placeholder="Correo" placeholderTextColor="#888" value={mail} onChangeText={setMail} />
+                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                            <ScrollView contentContainerStyle={styles.modalBody} keyboardShouldPersistTaps="handled">
 
-                    <Text style={styles.label}>Deporte</Text>
-                    <Picker selectedValue={deporteId} onValueChange={v => { setDeporteId(v); setPosicion(''); }} style={styles.picker} dropdownIconColor="#fff">
-                        <Picker.Item label="— Seleccionar —" value="" color="#fff" />
-                        {deportes.map(d => <Picker.Item key={d.id} label={d.nombre} value={String(d.id)} color="#fff" />)}
-                    </Picker>
+                                <Text style={styles.label}>Nombre *</Text>
+                                <TextInput style={styles.input} placeholder="Nombre" placeholderTextColor="#888" value={nombre} onChangeText={setNombre} />
 
-                    <Text style={styles.label}>Posición</Text>
-                    <Picker selectedValue={posicion} onValueChange={setPosicion} style={styles.picker} enabled={posiciones.length > 0} dropdownIconColor="#fff">
-                        <Picker.Item label={deporteId ? '— Seleccionar —' : 'Elige un deporte primero'} value="" color="#fff" />
-                        {posiciones.map(p => <Picker.Item key={p.id} label={p.nombre} value={p.nombre} color="#fff" />)}
-                    </Picker>
+                                <Text style={styles.label}>Teléfono *</Text>
+                                <TextInput style={styles.input} placeholder="Teléfono" placeholderTextColor="#888" value={telefono} onChangeText={setTelefono} keyboardType="phone-pad" />
 
-                    <Text style={styles.label}>Nivel</Text>
-                    <Picker selectedValue={nivel} onValueChange={setNivel} style={styles.picker} dropdownIconColor="#fff">
-                        <Picker.Item label="— Seleccionar —" value="" color="#fff" />
-                        {NIVELES.map(n => <Picker.Item key={n} label={n} value={n} color="#fff" />)}
-                    </Picker>
+                                <Text style={styles.label}>Correo *</Text>
+                                <TextInput style={styles.input} placeholder="Correo" placeholderTextColor="#888" value={mail} onChangeText={setMail} autoCapitalize="none" keyboardType="email-address" />
 
-                    <TouchableOpacity style={styles.boton} onPress={guardar}>
-                        <Text style={styles.botonTexto}>💾 Guardar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.botonSecundario} onPress={() => setModalVisible(false)}>
-                        <Text style={styles.botonTextoClaro}>Cancelar</Text>
-                    </TouchableOpacity>
-                </ScrollView>
+                                <Text style={styles.label}>Deporte</Text>
+                                <Picker selectedValue={deporteId} onValueChange={v => { setDeporteId(v); setPosicion(''); }} style={styles.picker} dropdownIconColor="#fff">
+                                    <Picker.Item label="— Seleccionar —" value="" color="#fff" />
+                                    {deportes.map(d => <Picker.Item key={d.id} label={d.nombre} value={String(d.id)} color="#fff" />)}
+                                </Picker>
+
+                                <Text style={styles.label}>Posición *</Text>
+                                <Picker selectedValue={posicion} onValueChange={setPosicion} style={styles.picker} enabled={posiciones.length > 0} dropdownIconColor="#fff">
+                                    <Picker.Item label={deporteId ? '— Seleccionar —' : 'Elige un deporte primero'} value="" color="#fff" />
+                                    {posiciones.map(p => <Picker.Item key={p.id} label={p.nombre} value={p.nombre} color="#fff" />)}
+                                </Picker>
+
+                                <Text style={styles.label}>Nivel *</Text>
+                                <Picker selectedValue={nivel} onValueChange={setNivel} style={styles.picker} dropdownIconColor="#fff">
+                                    <Picker.Item label="— Seleccionar —" value="" color="#fff" />
+                                    {NIVELES.map(n => <Picker.Item key={n} label={n} value={n} color="#fff" />)}
+                                </Picker>
+
+                            </ScrollView>
+                        </TouchableWithoutFeedback>
+
+                        <View style={styles.modalFooter}>
+                            <TouchableOpacity style={styles.boton} onPress={guardar}>
+                                <Text style={styles.botonTexto}>💾 Guardar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.botonSecundario} onPress={() => setModalVisible(false)}>
+                                <Text style={styles.botonTextoClaro}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
+                </SafeAreaView>
+            </Modal>
+
+            <Modal visible={detalleVisible} animationType="slide" presentationStyle="pageSheet">
+                <SafeAreaView style={styles.modalSafe}>
+                    <View style={styles.modalHeader}>
+                        <Text style={styles.modalTitulo}>Detalles</Text>
+                        <TouchableOpacity onPress={() => setDetalleVisible(false)}>
+                            <Text style={styles.cerrarModal}>✕</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {jugadorSeleccionado && (
+                        <ScrollView contentContainerStyle={styles.modalBody}>
+                            <Text style={styles.detalleNombre}>{jugadorSeleccionado.nombre}</Text>
+
+                            <View style={styles.detalleFila}>
+                                <Text style={styles.detalleLabel}>📞 Teléfono</Text>
+                                <Text style={styles.detalleValor}>{jugadorSeleccionado.telefono || '—'}</Text>
+                            </View>
+                            <View style={styles.detalleFila}>
+                                <Text style={styles.detalleLabel}>✉️ Correo</Text>
+                                <Text style={styles.detalleValor}>{jugadorSeleccionado.mail || '—'}</Text>
+                            </View>
+                            <View style={styles.detalleFila}>
+                                <Text style={styles.detalleLabel}>⚽ Deporte</Text>
+                                <Text style={styles.detalleValor}>{jugadorSeleccionado.deporte_nombre || '—'}</Text>
+                            </View>
+                            <View style={styles.detalleFila}>
+                                <Text style={styles.detalleLabel}>📍 Posición</Text>
+                                <Text style={styles.detalleValor}>{jugadorSeleccionado.posicion || '—'}</Text>
+                            </View>
+                            <View style={styles.detalleFila}>
+                                <Text style={styles.detalleLabel}>⭐ Nivel</Text>
+                                <Text style={styles.detalleValor}>{jugadorSeleccionado.nivel}</Text>
+                            </View>
+
+                            <View style={styles.detalleBotones}>
+                                <TouchableOpacity
+                                    style={styles.boton}
+                                    onPress={() => { setDetalleVisible(false); abrirEditar(jugadorSeleccionado); }}
+                                >
+                                    <Text style={styles.botonTexto}>✏️ Editar</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.botonEliminar}
+                                    onPress={() => { setDetalleVisible(false); eliminar(jugadorSeleccionado.id, jugadorSeleccionado.nombre); }}
+                                >
+                                    <Text style={styles.botonTextoClaro}>🗑️ Eliminar</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    )}
+                </SafeAreaView>
             </Modal>
         </View>
     );
@@ -205,4 +294,24 @@ const styles = StyleSheet.create({
     picker: { backgroundColor: '#1c1f26', color: '#fff', marginBottom: 8 },
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginTop: 16 },
     botonSecundario: { backgroundColor: '#333', padding: 14, borderRadius: 8, marginTop: 8 },
+
+    modalSafe: { flex: 1, backgroundColor: '#0f1115' },
+    modalHeader: {
+        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+        paddingHorizontal: 20, paddingVertical: 16,
+        borderBottomWidth: 1, borderBottomColor: '#1c1f26',
+    },
+    modalTitulo: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+    cerrarModal: { color: '#999', fontSize: 20 },
+    modalBody: { padding: 20, paddingBottom: 40 },
+    modalFooter: { padding: 20, borderTopWidth: 1, borderTopColor: '#1c1f26' },
+    botonEliminar: { backgroundColor: '#3a1c1c', padding: 14, borderRadius: 8, marginTop: 10 },
+    detalleNombre: { color: '#fff', fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+    detalleFila: {
+        flexDirection: 'row', justifyContent: 'space-between',
+        backgroundColor: '#1c1f26', padding: 14, borderRadius: 10, marginBottom: 8,
+    },
+    detalleLabel: { color: '#999' },
+    detalleValor: { color: '#fff', fontWeight: '600' },
+    detalleBotones: { marginTop: 20 },
 });

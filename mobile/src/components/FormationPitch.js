@@ -130,11 +130,11 @@ function Diamante() {
 
 const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.64 },
-    futsal:     { fondo: '#1a6ea8', aspecto: 0.62 },
+    futsal:     { fondo: '#1a6ea8', aspecto: 0.50 }, // era 0.62 — campo oficial 40×20m
     baloncesto: { fondo: '#c17f3e', aspecto: 0.56 },
-    balonmano:  { fondo: '#146b52', aspecto: 0.58 },
+    balonmano:  { fondo: '#146b52', aspecto: 0.50 }, // era 0.58 — campo oficial 40×20m
     voleibol:   { fondo: '#1d6fae', aspecto: 0.50 },
-    padel:      { fondo: '#0e9488', aspecto: 0.55 },
+    padel:      { fondo: '#0e9488', aspecto: 0.50 }, // era 0.55 — campo oficial 20×10m
     tenis:      { fondo: '#b5541f', aspecto: 0.46 },
     tenisMesa:  { fondo: '#0a4f8c', aspecto: 0.60 },
     badminton:  { fondo: '#2f9e52', aspecto: 0.48 },

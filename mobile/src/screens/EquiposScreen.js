@@ -111,59 +111,82 @@ export default function EquiposScreen() {
         return disponible;
     }
 
-    function construirMensajeSMS(jugador, numEquipo, equipoJugadores) {
-        const colegas = equipoJugadores
-            .filter(j => j.id !== jugador.id)
-            .map(j => j.nombre)
-            .join(', ');
+    function limpiarTelefono(telefono) {
+    if (!telefono) return null;
+    const limpio = String(telefono).trim().replace(/[^\d+]/g, '');
+    if (limpio.length < 8) return null;
+    return limpio;
+}
 
-        const mensaje = `Hola ${jugador.nombre},\n\nHas sido asignado al Equipo ${numEquipo}.\n\nColegas: ${colegas}\n\nPartida:\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
-        return mensaje;
-    }
+function obtenerNumerosEquipo(equipoJugadores) {
+    const numeros = equipoJugadores
+        .map(j => limpiarTelefono(j.telefono))
+        .filter(Boolean);
+    return [...new Set(numeros)]; // sin duplicados
+}
+
+function construirMensajeSMS(numEquipo, equipoJugadores) {
+    const nombres = equipoJugadores.map(j => j.nombre).join(', ');
+    return `MATCHORA - Partida\n\nEstás en el Equipo ${numEquipo} con: ${nombres}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
+}
 
     async function enviarNotificaciones() {
-        if (!fechaPartida || !horaPartida || !localPartida) {
-            Alert.alert('Atención', 'Por favor completa todos los campos');
+    if (!fechaPartida || !horaPartida || !localPartida) {
+        Alert.alert('Atención', 'Por favor completa todos los campos');
+        return;
+    }
+
+    setNotificando(true);
+    setCampoVisible(false); // fecha o modal de Formación pra não ter 2 Modals abertos ao mesmo tempo
+
+    try {
+        const smsDisponible = await verificarDisponibilidadSMS();
+        if (!smsDisponible) {
+            Alert.alert('Error', 'SMS no está disponible en este dispositivo');
             return;
         }
 
-        setNotificando(true);
+        let equiposEnviados = 0;
+        let equiposCancelados = 0;
+        const equiposSinNumeros = [];
 
-        try {
-            const smsDisponible = await verificarDisponibilidadSMS();
+        for (let i = 0; i < equipos.length; i++) {
+            const equipoJugadores = equipos[i];
+            const numeros = obtenerNumerosEquipo(equipoJugadores);
 
-            if (!smsDisponible) {
-                Alert.alert('Error', 'SMS no está disponible en este dispositivo');
-                setNotificando(false);
-                return;
+            if (numeros.length === 0) {
+                equiposSinNumeros.push(i + 1);
+                continue;
             }
 
-            let enviados = 0;
-            let fallidos = 0;
-            const noNotificados = [];
+            const mensaje = construirMensajeSMS(i + 1, equipoJugadores);
+            const { result } = await SMS.sendSMSAsync(numeros, mensaje);
 
-            const numeros = equipos.flat().map(j => j.telefono);
-const mensagemGeral = equipos.map((eq, i) => {
-    const nomes = eq.map(j => j.nombre).join(', ');
-    return `Equipo ${i + 1}: ${nomes}`;
-}).join('\n');
-
-const mensagem = `MATCHORA - Partida\n${mensagemGeral}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
-
-await SMS.sendSMSAsync(numeros, mensagem);
-Alert.alert('Listo', `SMS enviado a ${numeros.length} jugadores`);
-
-setNotificacionVisible(false);
-setFechaPartida('');
-setHoraPartida('');
-setLocalPartida('');
-        } catch (error) {
-            console.error('Error en proceso de notificación:', error);
-            Alert.alert('Error', 'Ocurrió un error al intentar notificar');
-        } finally {
-            setNotificando(false);
+            if (result === 'cancelled') {
+                equiposCancelados++;
+            } else {
+                equiposEnviados++;
+            }
         }
+
+        const partes = [];
+        if (equiposEnviados > 0) partes.push(`${equiposEnviados} equipo(s) notificado(s)`);
+        if (equiposCancelados > 0) partes.push(`${equiposCancelados} cancelado(s)`);
+        if (equiposSinNumeros.length > 0) partes.push(`Equipo(s) ${equiposSinNumeros.join(', ')} sin teléfonos válidos`);
+
+        Alert.alert('Listo', partes.length ? partes.join('\n') : 'No se envió ningún mensaje');
+
+        setNotificacionVisible(false);
+        setFechaPartida('');
+        setHoraPartida('');
+        setLocalPartida('');
+    } catch (error) {
+        console.error('Error en proceso de notificación:', error);
+        Alert.alert('Error', 'Ocurrió un error al intentar notificar');
+    } finally {
+        setNotificando(false);
     }
+}
 
     return (
         <View style={styles.container}>
@@ -298,8 +321,7 @@ setLocalPartida('');
                                 activeOpacity={0.85}
                             >
                                 <Text style={styles.botonTextoClaro}>
-                                    {notificando ? 'Enviando notificaciones…' : `📨 Enviar SMS a ${equipos.flat().length} jugadores`}
-                                </Text>
+                                {notificando ? 'Enviando notificaciones…' : `📨 Enviar SMS a ${equipos.length} equipo(s) (${equipos.flat().length} jugadores)`}                                </Text>
                             </TouchableOpacity>
                         </ScrollView>
                     </Pressable>

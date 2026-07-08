@@ -55,11 +55,20 @@ export default function PlayerJerseyCard({ jugador, size = 'normal' }) {
                 />
 
                 <View style={[styles.torso, { width: jerseySize, height: jerseySize - 4, borderColor: color }]}>
+                    {/* Reflexo diagonal de luz — simula tecido em vez de superfície plana.
+                        "overflow: hidden" no torso funciona como máscara para esta tira. */}
+                    <View style={styles.brilho} pointerEvents="none" />
+                    <View style={[styles.brilhoFino, { left: jerseySize * 0.62 }]} pointerEvents="none" />
+
                     <View style={[styles.cuello, { backgroundColor: color }]} />
                     <Text style={[styles.letra, { color, fontSize: small ? 16 : 18 }]}>{letra}</Text>
                 </View>
 
-                <View style={[styles.sombra, { width: jerseySize * 0.8 }]} pointerEvents="none" />
+                {/* Sombra de contacto em duas camadas: um núcleo mais escuro e
+                    estreito por baixo da camisola, com uma penumbra maior e mais
+                    suave por fora — evita o "corte" abrupto de uma sombra única. */}
+                <View style={[styles.sombraPenumbra, { width: jerseySize * 0.95 }]} pointerEvents="none" />
+                <View style={[styles.sombraNucleo, { width: jerseySize * 0.55 }]} pointerEvents="none" />
             </View>
 
             <Text style={[styles.nome, small && styles.nomeSmall]} numberOfLines={1}>{jugador.nombre}</Text>
@@ -95,11 +104,28 @@ const styles = StyleSheet.create({
         borderRadius: 11,
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.35,
         shadowRadius: 4,
         elevation: 4,
+    },
+    // Duas tiras diagonais claras, deslocadas do centro — dão a
+    // sensação de dobra/textura de tecido em vez de plástico liso.
+    brilho: {
+        position: 'absolute',
+        top: -10, bottom: -10, left: '8%',
+        width: '30%',
+        backgroundColor: 'rgba(255,255,255,0.30)',
+        transform: [{ rotate: '18deg' }],
+    },
+    brilhoFino: {
+        position: 'absolute',
+        top: -10, bottom: -10,
+        width: '10%',
+        backgroundColor: 'rgba(255,255,255,0.18)',
+        transform: [{ rotate: '18deg' }],
     },
     cuello: {
         position: 'absolute',
@@ -109,11 +135,18 @@ const styles = StyleSheet.create({
         borderRadius: 4,
     },
     letra: { fontWeight: '800' },
-    sombra: {
-        height: 6,
-        borderRadius: 6,
-        backgroundColor: 'rgba(0,0,0,0.28)',
+    sombraPenumbra: {
+        height: 8,
+        borderRadius: 8,
+        backgroundColor: 'rgba(0,0,0,0.14)',
         marginTop: 2,
+    },
+    sombraNucleo: {
+        position: 'absolute',
+        bottom: 2,
+        height: 4,
+        borderRadius: 4,
+        backgroundColor: 'rgba(0,0,0,0.30)',
     },
     nome: { color: '#fff', fontSize: 11, fontWeight: '700', marginTop: 4, maxWidth: 74, textAlign: 'center' },
     nomeSmall: { fontSize: 10, maxWidth: 58 },

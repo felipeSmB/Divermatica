@@ -67,12 +67,21 @@ const FUTSAL = [
     [/piv[oô]/, { y: 84, xBase: 50, anchoMax: 20 }],
 ];
 
+// ---------------------------------------------------------------------
+// BASQUETEBOL — corrigido: os 5 jogadores jogam o campo todo, não faz
+// sentido "profundidade defensiva" como no futebol. Em vez disso,
+// representa-se um set ofensivo de meio-campo (o que se vê em qualquer
+// gráfico de alinhamento de basquetebol real): base no topo do
+// garrafão, escolta e alero nas alas, ala-pívot e pívot perto do cesto.
+// A ordem importa: "ala.?p[ií]vot" tem de vir ANTES de "alero|ala\b"
+// para não ser apanhada pela regex genérica de "alero".
+// ---------------------------------------------------------------------
 const BASQUETEBOL = [
-    [/base|armador/, { y: 16, xBase: 50, anchoMax: 20 }],
-    [/escolta|ala.?armador/, { y: 30, xBase: 74, anchoMax: 22 }],
-    [/alero|ala\b/, { y: 46, xBase: 50, anchoMax: 46 }],
-    [/ala.?p[ií]vot|power.?forward/, { y: 66, xBase: 30, anchoMax: 26 }],
-    [/p[ií]vo[t]?|center|centro\b/, { y: 84, xBase: 50, anchoMax: 22 }],
+    [/base|armador/, { y: 30, xBase: 50, anchoMax: 20 }],
+    [/ala.?p[ií]vot|power.?forward/, { y: 68, xBase: 68, anchoMax: 22 }],
+    [/escolta|ala.?armador/, { y: 48, xBase: 76, anchoMax: 20 }],
+    [/alero|ala\b/, { y: 48, xBase: 24, anchoMax: 20 }],
+    [/p[ií]vo[t]?|center|centro\b/, { y: 82, xBase: 50, anchoMax: 22 }],
 ];
 
 const ANDEBOL = [
@@ -85,13 +94,25 @@ const ANDEBOL = [
     [/piv[oô]/, { y: 84, xBase: 50, anchoMax: 18 }],
 ];
 
+// ---------------------------------------------------------------------
+// RUGBY — corrigido: os 8 avançados deixam de estar todos amontoados
+// na mesma linha (y:24) e passam a respeitar as 3 linhas reais da
+// formação (1ª linha, 2ª linha, 3ª linha/nº8), o que dá uma leitura
+// muito mais realista de "packing" do scrum. Também se removeu a
+// colisão com "ponta": os extremos (wingers) só devem ser nomeados
+// "Ponta" nesta app — se forem nomeados "Ala Direita/Esquerda" seriam
+// confundidos com o "ala" avançado (3ª linha), que é ambíguo por
+// natureza no português do rugby.
+// ---------------------------------------------------------------------
 const RUGBY = [
-    [/pilar|talonador|segunda.?linha|ala\b|n.?8|n[uú]mero.?8/, { y: 24, xBase: 50, anchoMax: 66 }],
-    [/m[eé]dio.?melee|meio.?scrum|m[eé]dio.?scrum/, { y: 44, xBase: 50, anchoMax: 18 }],
-    [/abertura|apertura/, { y: 52, xBase: 50, anchoMax: 18 }],
-    [/centro/, { y: 62, xBase: 50, anchoMax: 40 }],
-    [/ponta|ala.?(direit|esquerd|derech|izquierd)/, { y: 76, xBase: 50, anchoMax: 76 }],
-    [/zagueiro|fullback/, { y: 90, xBase: 50, anchoMax: 16 }],
+    [/pilar|talonador/, { y: 14, xBase: 50, anchoMax: 46 }],
+    [/segunda.?linha/, { y: 24, xBase: 50, anchoMax: 30 }],
+    [/ala\b|n.?8|n[uú]mero.?8/, { y: 34, xBase: 50, anchoMax: 60 }],
+    [/m[eé]dio.?melee|meio.?scrum|m[eé]dio.?scrum/, { y: 46, xBase: 50, anchoMax: 18 }],
+    [/abertura|apertura/, { y: 54, xBase: 50, anchoMax: 18 }],
+    [/centro/, { y: 64, xBase: 50, anchoMax: 40 }],
+    [/ponta/, { y: 78, xBase: 50, anchoMax: 76 }],
+    [/zagueiro|fullback/, { y: 92, xBase: 50, anchoMax: 16 }],
 ];
 
 const HOQUEI = [
@@ -101,6 +122,26 @@ const HOQUEI = [
     [/avan[cç]ado|delanter|atacante/, { y: 82, xBase: 50, anchoMax: 50 }],
 ];
 
+// ---------------------------------------------------------------------
+// BASEBOL — NOVO. Antes não existia nenhum mapa para esta modalidade,
+// pelo que os jogadores caíam sempre no fallback em filas horizontais,
+// completamente desligados do diamante desenhado no campo. As
+// coordenadas y aqui foram calibradas para o Diamante() de
+// FormationPitch.js (diamante ocupa aprox. y:48%–94%; home plate no
+// vértice inferior, 2ª base no vértice superior do diamante).
+// ---------------------------------------------------------------------
+const BEISBOL = [
+    [/receptor|catcher/, { y: 92, xBase: 50, anchoMax: 10 }],
+    [/lan[cç]ador|pitcher/, { y: 72, xBase: 50, anchoMax: 10 }],
+    [/primeira.?base|primera.?base/, { y: 64, xBase: 74, anchoMax: 10 }],
+    [/terceira.?base|tercera.?base/, { y: 64, xBase: 26, anchoMax: 10 }],
+    [/parador.?em.?curto|campo.?curto|shortstop|torpedeiro/, { y: 55, xBase: 38, anchoMax: 10 }],
+    [/segunda.?base/, { y: 52, xBase: 62, anchoMax: 10 }],
+    [/jardineiro.?esquerdo|jardinero.?izquierdo|left.?field/, { y: 22, xBase: 20, anchoMax: 10 }],
+    [/jardineiro.?central|jardinero.?central|center.?field/, { y: 14, xBase: 50, anchoMax: 10 }],
+    [/jardineiro.?direito|jardinero.?derecho|right.?field/, { y: 22, xBase: 80, anchoMax: 10 }],
+];
+
 const MAPAS = {
     futbol: FUTEBOL,
     futsal: FUTSAL,
@@ -108,6 +149,7 @@ const MAPAS = {
     balonmano: ANDEBOL,
     rugby: RUGBY,
     hockey: HOQUEI,
+    beisbol: BEISBOL,
 };
 
 // Desportos "divididos pela rede" (mostram só o próprio meio-campo).
@@ -164,11 +206,22 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
         nomesGrupo.forEach(nome => {
             const info = classificarPosicao(nome, tipoDeporte);
             const jogadoresGrupo = grupos[nome];
-            const xs = distribuirX(jogadoresGrupo.length, info.xBase, info.anchoMax);
+            const n = jogadoresGrupo.length;
+            const xs = distribuirX(n, info.xBase, info.anchoMax);
+
             jogadoresGrupo.forEach((j, i) => {
-                // pequeno "jitter" vertical quando há muitos na mesma posição,
-                // para não ficarem perfeitamente alinhados (efeito robótico)
-                const jitterY = jogadoresGrupo.length > 1 ? ((i % 2 === 0 ? -1 : 1) * 3) : 0;
+                // Ciclo de 3 níveis (-1, 0, +1) em vez de apenas 2 — com
+                // apenas 2 níveis, o 3º, 5º, 7º... jogador do mesmo grupo
+                // ficava exatamente sobreposto ao 1º. A amplitude cresce
+                // ligeiramente em grupos maiores (>4), para compensar
+                // equipas grandes com muitos jogadores na mesma posição.
+                let jitterY = 0;
+                if (n > 1) {
+                    const ciclo = i % 3;
+                    const nivel = ciclo === 0 ? -1 : ciclo === 1 ? 0 : 1;
+                    const amplitude = n > 4 ? 4.5 : 3;
+                    jitterY = nivel * amplitude;
+                }
                 resultado.push({
                     jogador: j,
                     xPorc: xs[i],
@@ -211,17 +264,17 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
 
 export function detetarDeporte(nome) {
     const n = normalizar(nome);
-    if (n.includes('futsal') || n.includes('futbol sala') || n.includes('futebol de sal') || n.includes('futebol.?sal')) return 'futsal';
+    if (n.includes('futsal') || n.includes('futbol sala') || n.includes('futebol de sal')) return 'futsal';
     if (n.includes('futbol') || n.includes('futebol')) return 'futbol';
     if (n.includes('baloncesto') || n.includes('basquet') || n.includes('basquete')) return 'baloncesto';
     if (n.includes('balonmano') || n.includes('handball') || n.includes('andebol')) return 'balonmano';
-    if (n.includes('voleibol') || n.includes('voley') || n.includes('v[oó]lei')) return 'voleibol';
-    if (n.includes('padel') || n.includes('p[aá]del')) return 'padel';
-    if (n.includes('tenis de mesa') || n.includes('t[eé]nis de mesa') || n.includes('ping pong')) return 'tenisMesa';
-    if (n.includes('tenis') || n.includes('t[eé]nis')) return 'tenis';
+    if (n.includes('voleibol') || n.includes('voley') || n.includes('volei')) return 'voleibol';
+    if (n.includes('padel')) return 'padel';
+    if (n.includes('tenis de mesa') || n.includes('ping pong') || n.includes('pingpong')) return 'tenisMesa';
+    if (n.includes('tenis')) return 'tenis';
     if (n.includes('badminton')) return 'badminton';
-    if (n.includes('rugby') || n.includes('r[uú]gbi')) return 'rugby';
+    if (n.includes('rugby') || n.includes('rugbi')) return 'rugby';
     if (n.includes('hockey') || n.includes('hoquei')) return 'hockey';
-    if (n.includes('beisbol') || n.includes('softball') || n.includes('softbol') || n.includes('b[eé]isebol')) return 'beisbol';
+    if (n.includes('beisbol') || n.includes('beisebol') || n.includes('softball') || n.includes('softbol')) return 'beisbol';
     return 'generico';
 }

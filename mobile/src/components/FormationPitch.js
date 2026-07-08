@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import PlayerJerseyCard from './PlayerJerseyCard';
+import PlayerJerseyCard, { JERSEY_SIZES } from './PlayerJerseyCard';
+import { detetarDeporte, calcularFormacao } from '../utils/posicionamento';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
 
 /* =====================================================
-   PIEZAS REUTILIZABLES DEL CAMPO
+   PEÇAS REUTILIZÁVEIS DO CAMPO
    ===================================================== */
 
 function LineaCentral() {
@@ -32,7 +33,7 @@ function Punto({ extremo, distanciaPorc }) {
     return <View style={[styles.punto, lado]} pointerEvents="none" />;
 }
 
-// Rectángulo de área, abierto hacia el borde del campo (fútbol, rugby...)
+// Retângulo de área, aberto para a linha de fundo (futebol, râguebi...)
 function CajaArea({ extremo, anchoPorc = 18, altoPorc = 13 }) {
     const lado = extremo === 'arriba' ? { top: 0, borderTopWidth: 0 } : { bottom: 0, borderBottomWidth: 0 };
     return (
@@ -40,10 +41,10 @@ function CajaArea({ extremo, anchoPorc = 18, altoPorc = 13 }) {
     );
 }
 
-// Arco obtenido recortando un círculo grande contra el borde del campo
-// (el "overflow: hidden" del contenedor hace de tijera). Con esto se dibuja
-// desde la D del área de fútbol hasta la línea de 3 puntos de baloncesto
-// o el área de 6m de balonmano, solo cambiando el diámetro.
+// Arco obtido recortando um círculo grande contra o limite do campo
+// (o "overflow: hidden" do contentor funciona como tesoura). Serve para
+// desenhar desde a grande área do futebol até à linha de 3 pontos do
+// basquetebol ou à área de 6m do andebol, só mudando o diâmetro.
 function ArcoRecortado({ extremo, diametro, distanciaBorde = 0, dashed = false }) {
     const r = diametro / 2;
     const lado = extremo === 'arriba' ? { top: distanciaBorde, marginTop: -r } : { bottom: distanciaBorde, marginBottom: -r };
@@ -51,6 +52,25 @@ function ArcoRecortado({ extremo, diametro, distanciaBorde = 0, dashed = false }
         <View
             style={[styles.arco, { width: diametro, height: diametro, borderRadius: r, left: '50%', marginLeft: -r, borderStyle: dashed ? 'dashed' : 'solid' }, lado]}
             pointerEvents="none"
+        />
+    );
+}
+
+// Pequeno arco de canto — mesma técnica de recorte, aplicada aos 4
+// cantos do campo. Só faz sentido em desportos com cantos retos (futebol/futsal).
+function ArcoCanto({ vertical, horizontal, tamanho = 16 }) {
+    const posStyle = {};
+    posStyle[vertical] = -tamanho / 2;
+    posStyle[horizontal] = -tamanho / 2;
+    const raioStyle = {};
+    if (vertical === 'top' && horizontal === 'left') raioStyle.borderBottomRightRadius = tamanho;
+    if (vertical === 'top' && horizontal === 'right') raioStyle.borderBottomLeftRadius = tamanho;
+    if (vertical === 'bottom' && horizontal === 'left') raioStyle.borderTopRightRadius = tamanho;
+    if (vertical === 'bottom' && horizontal === 'right') raioStyle.borderTopLeftRadius = tamanho;
+    return (
+        <View
+            pointerEvents="none"
+            style={[styles.cantoBase, posStyle, raioStyle, { width: tamanho, height: tamanho }]}
         />
     );
 }
@@ -70,7 +90,7 @@ function Red() {
     );
 }
 
-// Cajas de servicio de tenis / pádel / bádminton a cada lado de la red
+// Caixas de serviço de ténis / padel / badminton, de cada lado da rede
 function CajasServicio({ profundidadPorc = 22 }) {
     const borde = `${50 - profundidadPorc}%`;
     return (
@@ -82,7 +102,7 @@ function CajasServicio({ profundidadPorc = 22 }) {
     );
 }
 
-// Postes en "H" de rugby
+// Postes em "H" de râguebi
 function Postes({ extremo }) {
     const lado = extremo === 'arriba' ? { top: 2 } : { bottom: 2 };
     return (
@@ -94,7 +114,7 @@ function Postes({ extremo }) {
     );
 }
 
-// Diamante de béisbol / sóftbol
+// Losango de basebol / softbol
 function Diamante() {
     return (
         <View style={styles.diamanteWrap} pointerEvents="none">
@@ -105,49 +125,8 @@ function Diamante() {
 }
 
 /* =====================================================
-   AGRUPACIÓN DE JUGADORES POR POSICIÓN
+   CONFIGURAÇÃO VISUAL POR DESPORTO
    ===================================================== */
-
-function agruparPorPosicion(jugadores, posicionesInfo) {
-    const grupos = {};
-    jugadores.forEach(j => {
-        const pos = j.posicion || 'Sin posición';
-        if (!grupos[pos]) grupos[pos] = [];
-        grupos[pos].push(j);
-    });
-
-    const ordenDe = {};
-    (posicionesInfo || []).forEach(p => { ordenDe[p.nombre] = p.orden ?? 0; });
-
-    return Object.keys(grupos)
-        .map(nombre => ({
-            nombre,
-            jugadores: grupos[nombre],
-            orden: nombre === 'Sin posición' ? -1 : (ordenDe[nombre] ?? 999),
-        }))
-        .sort((a, b) => a.orden - b.orden);
-}
-
-/* =====================================================
-   DETECCIÓN DEL DEPORTE
-   ===================================================== */
-
-function tipoDeporte(nombre) {
-    const n = (nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (n.includes('futsal') || n.includes('futbol sala')) return 'futsal';
-    if (n.includes('futbol')) return 'futbol';
-    if (n.includes('baloncesto') || n.includes('basquet')) return 'baloncesto';
-    if (n.includes('balonmano') || n.includes('handball')) return 'balonmano';
-    if (n.includes('voleibol') || n.includes('voley')) return 'voleibol';
-    if (n.includes('padel')) return 'padel';
-    if (n.includes('tenis de mesa') || n.includes('ping pong')) return 'tenisMesa';
-    if (n.includes('tenis')) return 'tenis';
-    if (n.includes('badminton')) return 'badminton';
-    if (n.includes('rugby')) return 'rugby';
-    if (n.includes('hockey')) return 'hockey';
-    if (n.includes('beisbol') || n.includes('softball') || n.includes('softbol')) return 'beisbol';
-    return 'generico';
-}
 
 const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.64 },
@@ -172,11 +151,14 @@ const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
    ===================================================== */
 
 export default function FormationPitch({ equipo, posicionesInfo, deporte, small }) {
-    const filas = agruparPorPosicion(equipo, posicionesInfo);
-    const muchasFilas = filas.length >= 5;
-    const tipo = tipoDeporte(deporte);
+    const tipo = detetarDeporte(deporte);
     const cfg = CONFIG[tipo];
     const dividePorRed = DIVIDE_POR_RED.includes(tipo);
+    const denso = equipo.length >= 9;
+    const tamanho = small || denso ? 'small' : 'normal';
+    const { width: cardW, height: cardH } = JERSEY_SIZES[tamanho];
+
+    const formacao = calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
 
     return (
         <View style={[styles.campo, { backgroundColor: cfg.fondo, aspectRatio: cfg.aspecto }]}>
@@ -185,6 +167,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
                     <View key={i} style={[styles.franja, { backgroundColor: i % 2 === 0 ? 'rgba(255,255,255,0.035)' : 'transparent' }]} />
                 ))}
             </View>
+            <View style={styles.vinheta} pointerEvents="none" />
 
             {(tipo === 'futbol' || tipo === 'futsal') && (
                 <>
@@ -195,6 +178,10 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
                     <CajaArea extremo="abajo" anchoPorc={18} altoPorc={13} />
                     <CajaArea extremo="abajo" anchoPorc={34} altoPorc={6} />
                     <ArcoRecortado extremo="abajo" diametro={90} distanciaBorde="13%" />
+                    <ArcoCanto vertical="top" horizontal="left" />
+                    <ArcoCanto vertical="top" horizontal="right" />
+                    <ArcoCanto vertical="bottom" horizontal="left" />
+                    <ArcoCanto vertical="bottom" horizontal="right" />
                 </>
             )}
 
@@ -203,9 +190,11 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
                     <LineaCentral /><CirculoCentro diametro={64} />
                     <CajaArea extremo="arriba" anchoPorc={30} altoPorc={20} />
                     <ArcoRecortado extremo="arriba" diametro={70} distanciaBorde="20%" />
+                    <ArcoRecortado extremo="arriba" diametro={26} distanciaBorde="8%" />
                     <ArcoRecortado extremo="arriba" diametro={300} distanciaBorde={0} />
                     <CajaArea extremo="abajo" anchoPorc={30} altoPorc={20} />
                     <ArcoRecortado extremo="abajo" diametro={70} distanciaBorde="20%" />
+                    <ArcoRecortado extremo="abajo" diametro={26} distanciaBorde="8%" />
                     <ArcoRecortado extremo="abajo" diametro={300} distanciaBorde={0} />
                 </>
             )}
@@ -280,15 +269,22 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
                 </>
             )}
 
-            <View style={[styles.filasContenedor, dividePorRed && styles.filasContenedorMitad]}>
-                {filas.map((fila, idx) => (
-                    <View key={fila.nombre + idx} style={[styles.fila, muchasFilas && styles.filaCompacta]}>
-                        {fila.jugadores.map(j => (
-                            <PlayerJerseyCard key={j.id} jugador={j} size={small || muchasFilas ? 'small' : 'normal'} />
-                        ))}
-                    </View>
-                ))}
-            </View>
+            {formacao.map(({ jogador, xPorc, yPorc }) => (
+                <View
+                    key={jogador.id}
+                    style={[
+                        styles.jogadorAbs,
+                        {
+                            left: `${xPorc}%`,
+                            top: `${yPorc}%`,
+                            marginLeft: -(cardW / 2),
+                            marginTop: -(cardH / 2),
+                        },
+                    ]}
+                >
+                    <PlayerJerseyCard jugador={jogador} size={tamanho} />
+                </View>
+            ))}
         </View>
     );
 }
@@ -304,6 +300,12 @@ const styles = StyleSheet.create({
     },
     franjas: { ...StyleSheet.absoluteFillObject, flexDirection: 'column' },
     franja: { flex: 1 },
+    vinheta: {
+        ...StyleSheet.absoluteFillObject,
+        borderWidth: 26,
+        borderColor: 'rgba(0,0,0,0.10)',
+        borderRadius: 30,
+    },
 
     lineaMedio: { position: 'absolute', left: 0, right: 0, top: '50%', height: 2, backgroundColor: LINEA },
     circulo: { position: 'absolute', borderWidth: 2, borderColor: LINEA },
@@ -316,6 +318,7 @@ const styles = StyleSheet.create({
 
     caja: { position: 'absolute', borderWidth: 2, borderColor: LINEA },
     arco: { position: 'absolute', borderWidth: 2, borderColor: LINEA, backgroundColor: 'transparent' },
+    cantoBase: { position: 'absolute', borderWidth: 2, borderColor: LINEA, backgroundColor: 'transparent' },
     lineaPunteada: { position: 'absolute', height: 0, borderTopWidth: 2, borderColor: LINEA_SUAVE, borderStyle: 'dashed' },
 
     red: { position: 'absolute', left: 0, right: 0, top: '50%', height: 4, marginTop: -2, backgroundColor: 'rgba(255,255,255,0.9)' },
@@ -343,22 +346,5 @@ const styles = StyleSheet.create({
         backgroundColor: '#a9744a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.6)',
     },
 
-    filasContenedor: {
-        flex: 1,
-        flexDirection: 'column-reverse',
-        justifyContent: 'space-evenly',
-        paddingVertical: 14,
-        paddingHorizontal: 6,
-    },
-    filasContenedorMitad: {
-        flex: 0,
-        position: 'absolute',
-        left: 0, right: 0, bottom: 0,
-        height: '44%',
-        paddingVertical: 8,
-    },
-    fila: {
-        flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'flex-start', rowGap: 10,
-    },
-    filaCompacta: { rowGap: 4 },
+    jogadorAbs: { position: 'absolute' },
 });

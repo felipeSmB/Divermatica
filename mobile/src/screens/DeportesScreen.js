@@ -2,32 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
-
-// Mesma paleta de acentos já usada em utils/nivel.js, para manter a
-// identidade visual consistente com o resto da app.
-const ACCENTS = ['#00d4ff', '#7c4dff', '#00e676', '#ffc107', '#ff4d6d', '#1e88e5'];
-
-function iconoDeporte(nombre) {
-    const n = (nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (n.includes('futbol sala') || n.includes('futsal')) return '🥅';
-    if (n.includes('futbol'))     return '⚽';
-    if (n.includes('baloncesto') || n.includes('basquet')) return '🏀';
-    if (n.includes('voleibol') || n.includes('voley'))     return '🏐';
-    if (n.includes('tenis de mesa') || n.includes('ping pong')) return '🏓';
-    if (n.includes('padel'))      return '🎾';
-    if (n.includes('tenis'))      return '🎾';
-    if (n.includes('balonmano') || n.includes('handball')) return '🤾';
-    if (n.includes('rugby'))      return '🏉';
-    if (n.includes('beisbol') || n.includes('softball'))   return '⚾';
-    if (n.includes('hockey'))     return '🏑';
-    if (n.includes('badminton'))  return '🏸';
-    if (n.includes('natacion'))   return '🏊';
-    if (n.includes('ciclismo'))   return '🚴';
-    if (n.includes('atletismo') || n.includes('carrera'))  return '🏃';
-    if (n.includes('boxeo'))      return '🥊';
-    if (n.includes('golf'))       return '⛳';
-    return '🏅';
-}
+import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
 
 export default function DeportesScreen() {
     const [deportes, setDeportes] = useState([]);
@@ -190,7 +165,7 @@ const styles = StyleSheet.create({
     iconoTexto: { fontSize: 20 },
 
     nombreDeporte: { color: '#fff', fontSize: 14.5, fontWeight: '700', marginBottom: 10 },
-    
+
     stat: {
         flexDirection: 'row',
         alignItems: 'center',

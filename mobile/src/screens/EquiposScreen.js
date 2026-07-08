@@ -3,12 +3,12 @@ import {
     View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
     Alert, Modal, Pressable, Dimensions,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SMS from 'expo-sms';
 import { apiFetch } from '../api/client';
 import { generarEquiposBalanceados } from '../utils/teamBalancer';
 import FormationPitch from '../components/FormationPitch';
+import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
 
 const { width: ANCHO_PANTALLA } = Dimensions.get('window');
 
@@ -112,81 +112,81 @@ export default function EquiposScreen() {
     }
 
     function limpiarTelefono(telefono) {
-    if (!telefono) return null;
-    const limpio = String(telefono).trim().replace(/[^\d+]/g, '');
-    if (limpio.length < 8) return null;
-    return limpio;
-}
-
-function obtenerNumerosEquipo(equipoJugadores) {
-    const numeros = equipoJugadores
-        .map(j => limpiarTelefono(j.telefono))
-        .filter(Boolean);
-    return [...new Set(numeros)]; // sin duplicados
-}
-
-function construirMensajeSMS(numEquipo, equipoJugadores) {
-    const nombres = equipoJugadores.map(j => j.nombre).join(', ');
-    return `MATCHORA - Partida\n\nEstás en el Equipo ${numEquipo} con: ${nombres}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
-}
-
-    async function enviarNotificaciones() {
-    if (!fechaPartida || !horaPartida || !localPartida) {
-        Alert.alert('Atención', 'Por favor completa todos los campos');
-        return;
+        if (!telefono) return null;
+        const limpio = String(telefono).trim().replace(/[^\d+]/g, '');
+        if (limpio.length < 8) return null;
+        return limpio;
     }
 
-    setNotificando(true);
-    setCampoVisible(false); // fecha o modal de Formación pra não ter 2 Modals abertos ao mesmo tempo
+    function obtenerNumerosEquipo(equipoJugadores) {
+        const numeros = equipoJugadores
+            .map(j => limpiarTelefono(j.telefono))
+            .filter(Boolean);
+        return [...new Set(numeros)]; // sin duplicados
+    }
 
-    try {
-        const smsDisponible = await verificarDisponibilidadSMS();
-        if (!smsDisponible) {
-            Alert.alert('Error', 'SMS no está disponible en este dispositivo');
+    function construirMensajeSMS(numEquipo, equipoJugadores) {
+        const nombres = equipoJugadores.map(j => j.nombre).join(', ');
+        return `MATCHORA - Partida\n\nEstás en el Equipo ${numEquipo} con: ${nombres}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
+    }
+
+    async function enviarNotificaciones() {
+        if (!fechaPartida || !horaPartida || !localPartida) {
+            Alert.alert('Atención', 'Por favor completa todos los campos');
             return;
         }
 
-        let equiposEnviados = 0;
-        let equiposCancelados = 0;
-        const equiposSinNumeros = [];
+        setNotificando(true);
+        setCampoVisible(false); // fecha o modal de Formación pra não ter 2 Modals abertos ao mesmo tempo
 
-        for (let i = 0; i < equipos.length; i++) {
-            const equipoJugadores = equipos[i];
-            const numeros = obtenerNumerosEquipo(equipoJugadores);
-
-            if (numeros.length === 0) {
-                equiposSinNumeros.push(i + 1);
-                continue;
+        try {
+            const smsDisponible = await verificarDisponibilidadSMS();
+            if (!smsDisponible) {
+                Alert.alert('Error', 'SMS no está disponible en este dispositivo');
+                return;
             }
 
-            const mensaje = construirMensajeSMS(i + 1, equipoJugadores);
-            const { result } = await SMS.sendSMSAsync(numeros, mensaje);
+            let equiposEnviados = 0;
+            let equiposCancelados = 0;
+            const equiposSinNumeros = [];
 
-            if (result === 'cancelled') {
-                equiposCancelados++;
-            } else {
-                equiposEnviados++;
+            for (let i = 0; i < equipos.length; i++) {
+                const equipoJugadores = equipos[i];
+                const numeros = obtenerNumerosEquipo(equipoJugadores);
+
+                if (numeros.length === 0) {
+                    equiposSinNumeros.push(i + 1);
+                    continue;
+                }
+
+                const mensaje = construirMensajeSMS(i + 1, equipoJugadores);
+                const { result } = await SMS.sendSMSAsync(numeros, mensaje);
+
+                if (result === 'cancelled') {
+                    equiposCancelados++;
+                } else {
+                    equiposEnviados++;
+                }
             }
+
+            const partes = [];
+            if (equiposEnviados > 0) partes.push(`${equiposEnviados} equipo(s) notificado(s)`);
+            if (equiposCancelados > 0) partes.push(`${equiposCancelados} cancelado(s)`);
+            if (equiposSinNumeros.length > 0) partes.push(`Equipo(s) ${equiposSinNumeros.join(', ')} sin teléfonos válidos`);
+
+            Alert.alert('Listo', partes.length ? partes.join('\n') : 'No se envió ningún mensaje');
+
+            setNotificacionVisible(false);
+            setFechaPartida('');
+            setHoraPartida('');
+            setLocalPartida('');
+        } catch (error) {
+            console.error('Error en proceso de notificación:', error);
+            Alert.alert('Error', 'Ocurrió un error al intentar notificar');
+        } finally {
+            setNotificando(false);
         }
-
-        const partes = [];
-        if (equiposEnviados > 0) partes.push(`${equiposEnviados} equipo(s) notificado(s)`);
-        if (equiposCancelados > 0) partes.push(`${equiposCancelados} cancelado(s)`);
-        if (equiposSinNumeros.length > 0) partes.push(`Equipo(s) ${equiposSinNumeros.join(', ')} sin teléfonos válidos`);
-
-        Alert.alert('Listo', partes.length ? partes.join('\n') : 'No se envió ningún mensaje');
-
-        setNotificacionVisible(false);
-        setFechaPartida('');
-        setHoraPartida('');
-        setLocalPartida('');
-    } catch (error) {
-        console.error('Error en proceso de notificación:', error);
-        Alert.alert('Error', 'Ocurrió un error al intentar notificar');
-    } finally {
-        setNotificando(false);
     }
-}
 
     return (
         <View style={styles.container}>
@@ -194,12 +194,33 @@ function construirMensajeSMS(numEquipo, equipoJugadores) {
                 <Text style={styles.titulo}>Generar Equipos</Text>
 
                 <Text style={styles.label}>Deporte</Text>
-                <Picker selectedValue={deporteId} onValueChange={setDeporteId} style={styles.picker} dropdownIconColor="#fff">
-                    <Picker.Item label="— Seleccionar —" value="" color="#fff" />
-                    {deportes.map(d => (
-                        <Picker.Item key={d.id} label={d.nombre} value={String(d.id)} color="#fff" />
-                    ))}
-                </Picker>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.chipsFila}
+                >
+                    {deportes.map((d, i) => {
+                        const activo = String(d.id) === deporteId;
+                        const accent = ACCENTS[i % ACCENTS.length];
+                        return (
+                            <TouchableOpacity
+                                key={d.id}
+                                style={[
+                                    styles.chip,
+                                    activo && { backgroundColor: accent, borderColor: accent },
+                                ]}
+                                onPress={() => setDeporteId(String(d.id))}
+                            >
+                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>
+                                    {iconoDeporte(d.nombre)} {d.nombre}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </ScrollView>
+                {deportes.length === 0 && (
+                    <Text style={styles.hint}>Aún no hay deportes creados</Text>
+                )}
 
                 <Text style={styles.label}>Número de equipos</Text>
                 <TextInput style={styles.input} value={numEquipos} onChangeText={setNumEquipos} keyboardType="numeric" />
@@ -321,7 +342,8 @@ function construirMensajeSMS(numEquipo, equipoJugadores) {
                                 activeOpacity={0.85}
                             >
                                 <Text style={styles.botonTextoClaro}>
-                                {notificando ? 'Enviando notificaciones…' : `📨 Enviar SMS a ${equipos.length} equipo(s) (${equipos.flat().length} jugadores)`}                                </Text>
+                                    {notificando ? 'Enviando notificaciones…' : `📨 Enviar SMS a ${equipos.length} equipo(s) (${equipos.flat().length} jugadores)`}
+                                </Text>
                             </TouchableOpacity>
                         </ScrollView>
                     </Pressable>
@@ -336,7 +358,6 @@ const styles = StyleSheet.create({
     scrollContenido: { padding: 16, paddingBottom: 100 },
     titulo: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 12 },
     label: { color: '#999', marginTop: 8, marginBottom: 4 },
-    picker: { backgroundColor: '#1c1f26', color: '#fff', marginBottom: 8 },
     input: { backgroundColor: '#1c1f26', color: '#fff', padding: 12, borderRadius: 8, marginBottom: 8 },
     hint: { color: '#999', marginBottom: 12 },
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginBottom: 16 },
@@ -344,6 +365,14 @@ const styles = StyleSheet.create({
     botonTextoClaro: { color: '#000', fontWeight: 'bold', textAlign: 'center' },
     resumen: { backgroundColor: '#132a24', borderWidth: 1, borderColor: '#00e676', borderRadius: 10, padding: 14, marginBottom: 8 },
     resumenTexto: { color: '#00e676', fontWeight: '700', textAlign: 'center' },
+
+    chipsFila: { gap: 8, paddingBottom: 4, paddingRight: 8 },
+    chip: {
+        paddingVertical: 8, paddingHorizontal: 14, borderRadius: 20,
+        backgroundColor: '#1c1f26', borderWidth: 1.5, borderColor: '#2a2f3a',
+    },
+    chipTexto: { color: '#ccc', fontWeight: '600', fontSize: 13 },
+    chipTextoActivo: { color: '#0f1115' },
 
     fab: {
         position: 'absolute',

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView,
     SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform,
@@ -6,11 +6,17 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
 import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/nivel';
-
-
+import { ACCENTS, iconoDeporte, normalizarTexto } from '../utils/deporteVisual';
 
 const NIVELES = ['Medio', 'Bueno', 'Muy Bueno'];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function inicialesNombre(nombre) {
+    const palabras = (nombre || '').trim().split(/\s+/).filter(Boolean);
+    if (palabras.length === 0) return '?';
+    if (palabras.length === 1) return palabras[0].charAt(0).toUpperCase();
+    return (palabras[0].charAt(0) + palabras[palabras.length - 1].charAt(0)).toUpperCase();
+}
 
 export default function JugadoresScreen() {
     const [jugadores, setJugadores] = useState([]);
@@ -19,13 +25,17 @@ export default function JugadoresScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [editandoId, setEditandoId] = useState(null);
     const [detalleVisible, setDetalleVisible] = useState(false);
-    const [jugadorSeleccionado, setJugadorSeleccionado] = useState(null);    
+    const [jugadorSeleccionado, setJugadorSeleccionado] = useState(null);
     const [nombre, setNombre] = useState('');
     const [telefono, setTelefono] = useState('');
     const [mail, setMail] = useState('');
     const [deporteId, setDeporteId] = useState('');
     const [posicion, setPosicion] = useState('');
     const [nivel, setNivel] = useState('');
+
+    // --- Filtragem e pesquisa ---
+    const [busqueda, setBusqueda] = useState('');
+    const [filtroDeporte, setFiltroDeporte] = useState(''); // '' = Todos
 
     const cargarJugadores = useCallback(async () => {
         const res = await apiFetch('/jugadores.php');
@@ -46,6 +56,23 @@ export default function JugadoresScreen() {
             if (res && res.ok) setPosiciones(await res.json());
         })();
     }, [deporteId]);
+
+    // Mapa deporte_id -> cor de destaque, para os cards de jugador usarem
+    // sempre a mesma cor do card do desporto correspondente na outra página.
+    const accentPorDeporte = useMemo(() => {
+        const map = {};
+        deportes.forEach((d, i) => { map[d.id] = ACCENTS[i % ACCENTS.length]; });
+        return map;
+    }, [deportes]);
+
+    const jugadoresFiltrados = useMemo(() => {
+        const q = normalizarTexto(busqueda);
+        return jugadores.filter(j => {
+            if (filtroDeporte && String(j.deporte_id) !== filtroDeporte) return false;
+            if (q && !normalizarTexto(j.nombre).includes(q)) return false;
+            return true;
+        });
+    }, [jugadores, busqueda, filtroDeporte]);
 
     function abrirNuevo() {
         setEditandoId(null);
@@ -73,7 +100,6 @@ export default function JugadoresScreen() {
         if (!posicion) return Alert.alert('Atención', 'Selecciona una posición');
         if (!nivel) return Alert.alert('Atención', 'Selecciona un nivel');
 
-
         const body = {
             nombre, telefono, mail, posicion, nivel,
             deporte_id: deporteId ? parseInt(deporteId, 10) : null,
@@ -94,10 +120,10 @@ export default function JugadoresScreen() {
         }
     }
 
-    function eliminar(id, nombre) {
+    function eliminar(id, nombreJugador) {
         Alert.alert(
             'Eliminar jugador',
-            `¿Seguro que quieres eliminar a ${nombre}?`,
+            `¿Seguro que quieres eliminar a ${nombreJugador}?`,
             [
                 { text: 'Cancelar', style: 'cancel' },
                 {
@@ -116,45 +142,128 @@ export default function JugadoresScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.cabecera}>
-                <Text style={styles.titulo}>Jugadores</Text>
+                <View>
+                    <Text style={styles.titulo}>Jugadores</Text>
+                    <Text style={styles.subtitulo}>
+                        {jugadoresFiltrados.length} de {jugadores.length} {jugadores.length === 1 ? 'jugador' : 'jugadores'}
+                    </Text>
+                </View>
                 <TouchableOpacity style={styles.botonPeq} onPress={abrirNuevo}>
                     <Text style={styles.botonTexto}>+ Nuevo</Text>
                 </TouchableOpacity>
             </View>
 
-            <FlatList
-                data={jugadores}
-                keyExtractor={item => String(item.id)}
-                renderItem={({ item }) => {
-                    const color = colorNivel(item.nivel);
+            {/* Buscador por nombre */}
+            <View style={styles.buscadorWrap}>
+                <Text style={styles.buscadorIcono}>🔍</Text>
+                <TextInput
+                    style={styles.buscadorInput}
+                    placeholder="Buscar jugador por nombre..."
+                    placeholderTextColor="#5b6478"
+                    value={busqueda}
+                    onChangeText={setBusqueda}
+                    autoCapitalize="none"
+                />
+                {busqueda.length > 0 && (
+                    <TouchableOpacity onPress={() => setBusqueda('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                        <Text style={styles.buscadorLimpiar}>✕</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+
+            {/* Filtro por deporte */}
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.filtrosFila}
+            >
+                <TouchableOpacity
+                    style={[styles.chip, filtroDeporte === '' && styles.chipActivo]}
+                    onPress={() => setFiltroDeporte('')}
+                >
+                    <Text style={[styles.chipTexto, filtroDeporte === '' && styles.chipTextoActivo]}>
+                        📋 Todos ({jugadores.length})
+                    </Text>
+                </TouchableOpacity>
+                {deportes.map(d => {
+                    const activo = String(d.id) === filtroDeporte;
+                    const cantidad = jugadores.filter(j => String(j.deporte_id) === String(d.id)).length;
                     return (
                         <TouchableOpacity
-                            style={[styles.item, { borderLeftColor: color }]}
+                            key={d.id}
+                            style={[styles.chip, activo && styles.chipActivo]}
+                            onPress={() => setFiltroDeporte(String(d.id))}
+                        >
+                            <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>
+                                {iconoDeporte(d.nombre)} {d.nombre} ({cantidad})
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </ScrollView>
+
+            <FlatList
+                data={jugadoresFiltrados}
+                keyExtractor={item => String(item.id)}
+                numColumns={2}
+                columnWrapperStyle={styles.columna}
+                contentContainerStyle={styles.lista}
+                ListEmptyComponent={
+                    <View style={styles.vacio}>
+                        <Text style={styles.vacioEmoji}>🔎</Text>
+                        <Text style={styles.vacioTexto}>
+                            {jugadores.length === 0 ? 'Aún no hay jugadores' : 'Ningún jugador coincide con la búsqueda'}
+                        </Text>
+                    </View>
+                }
+                renderItem={({ item }) => {
+                    const accent = accentPorDeporte[item.deporte_id] || '#5b6478';
+                    const colorN = colorNivel(item.nivel);
+                    return (
+                        <TouchableOpacity
+                            style={[styles.card, { borderColor: accent + '33' }]}
+                            activeOpacity={0.85}
                             onPress={() => abrirDetalle(item)}
                         >
+                            <View style={[styles.cardTopo, { backgroundColor: accent }]} />
 
-                            <View style={styles.itemInfo}>
-                                <View style={styles.itemCabecera}>
-                                    <Text style={styles.itemNombre}>{item.nombre}</Text>
-                                    {!!item.posicion && (
-                                        <View style={styles.posBadge}>
-                                            <Text style={styles.posBadgeTexto}>{inicialesPosicion(item.posicion)}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                                <Text style={styles.itemSub}>{item.deporte_nombre || 'Sin deporte'} · {item.posicion || 'Sin posición'}</Text>
-                                <View style={[styles.nivelPill, { backgroundColor: colorNivelDim(item.nivel) }]}>
-                                    <Text style={[styles.nivelPillTexto, { color }]}>{item.nivel}</Text>
-                                </View>
-                            </View>
-                            <TouchableOpacity onPress={() => eliminar(item.id, item.nombre)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                                <Text style={styles.eliminar}>Eliminar</Text>
+                            <TouchableOpacity
+                                style={styles.botonCerrar}
+                                onPress={() => eliminar(item.id, item.nombre)}
+                                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            >
+                                <Text style={styles.botonCerrarTexto}>✕</Text>
                             </TouchableOpacity>
+
+                            <View style={[styles.avatar, { backgroundColor: accent + '22', borderColor: accent }]}>
+                                <Text style={[styles.avatarTexto, { color: accent }]}>{inicialesNombre(item.nombre)}</Text>
+                            </View>
+
+                            <View style={styles.nombreFila}>
+                                <Text style={styles.nombreJugador} numberOfLines={1}>{item.nombre}</Text>
+                                {!!item.posicion && (
+                                    <View style={styles.posBadge}>
+                                        <Text style={styles.posBadgeTexto}>{inicialesPosicion(item.posicion)}</Text>
+                                    </View>
+                                )}
+                            </View>
+
+                            <View style={styles.stat}>
+                                <Text style={styles.statIcono}>{iconoDeporte(item.deporte_nombre)}</Text>
+                                <Text style={styles.statTexto} numberOfLines={1}>
+                                    {item.deporte_nombre || 'Sin deporte'}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.nivelPill, { backgroundColor: colorNivelDim(item.nivel) }]}>
+                                <Text style={[styles.nivelPillTexto, { color: colorN }]}>{item.nivel}</Text>
+                            </View>
                         </TouchableOpacity>
                     );
                 }}
             />
 
+            {/* Modal de crear / editar */}
             <Modal visible={modalVisible} animationType="slide" presentationStyle="pageSheet">
                 <SafeAreaView style={styles.modalSafe}>
                     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -187,7 +296,7 @@ export default function JugadoresScreen() {
                                                 style={[styles.chip, activo && styles.chipActivo]}
                                                 onPress={() => { setDeporteId(String(d.id)); setPosicion(''); }}
                                             >
-                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{d.nombre}</Text>
+                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{iconoDeporte(d.nombre)} {d.nombre}</Text>
                                             </TouchableOpacity>
                                         );
                                     })}
@@ -246,6 +355,7 @@ export default function JugadoresScreen() {
                 </SafeAreaView>
             </Modal>
 
+            {/* Modal de detalles */}
             <Modal visible={detalleVisible} animationType="slide" presentationStyle="pageSheet">
                 <SafeAreaView style={styles.modalSafe}>
                     <View style={styles.modalHeader}>
@@ -304,28 +414,85 @@ export default function JugadoresScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#0f1115', padding: 16 },
-    cabecera: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+
+    cabecera: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
     titulo: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
-    item: {
-        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-        backgroundColor: '#1c1f26', padding: 12, borderRadius: 8, marginBottom: 8,
-        borderLeftWidth: 4,
+    subtitulo: { fontSize: 12, color: '#5b6478', marginTop: 2 },
+
+    buscadorWrap: {
+        flexDirection: 'row', alignItems: 'center',
+        backgroundColor: '#1c1f26', borderRadius: 10,
+        paddingHorizontal: 12, paddingVertical: 10,
+        marginBottom: 12, gap: 8,
     },
-    itemInfo: { flex: 1, marginRight: 8 },
-    itemCabecera: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    itemNombre: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
-    itemSub: { color: '#999', marginTop: 2 },
-    posBadge: { backgroundColor: '#2a2f3a', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 1 },
+    buscadorIcono: { fontSize: 14 },
+    buscadorInput: { flex: 1, color: '#fff', fontSize: 14, padding: 0 },
+    buscadorLimpiar: { color: '#5b6478', fontSize: 15, fontWeight: 'bold', paddingHorizontal: 4 },
+
+    filtrosFila: { gap: 8, paddingBottom: 14, paddingRight: 8 },
+
+    lista: { paddingBottom: 24 },
+    columna: { gap: 12 },
+
+    card: {
+        flex: 1,
+        backgroundColor: '#1c1f26',
+        borderRadius: 16,
+        borderWidth: 1,
+        padding: 14,
+        marginBottom: 12,
+        overflow: 'hidden',
+    },
+    cardTopo: {
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
+        height: 3,
+    },
+    botonCerrar: {
+        position: 'absolute',
+        top: 10, right: 10,
+        width: 22, height: 22,
+        borderRadius: 11,
+        backgroundColor: 'rgba(255,255,255,0.06)',
+        alignItems: 'center', justifyContent: 'center',
+        zIndex: 2,
+    },
+    botonCerrarTexto: { color: '#ff4d6d', fontSize: 11, fontWeight: '800' },
+
+    avatar: {
+        width: 42, height: 42, borderRadius: 21,
+        borderWidth: 1,
+        alignItems: 'center', justifyContent: 'center',
+        marginBottom: 10,
+    },
+    avatarTexto: { fontSize: 15, fontWeight: '800' },
+
+    nombreFila: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 },
+    nombreJugador: { color: '#fff', fontSize: 14.5, fontWeight: '700', flexShrink: 1 },
+    posBadge: { backgroundColor: '#11141a', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 1 },
     posBadgeTexto: { color: '#00c2ff', fontSize: 10, fontWeight: '800', letterSpacing: 0.5 },
-    nivelPill: { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, marginTop: 6 },
+
+    stat: {
+        flexDirection: 'row', alignItems: 'center', gap: 6,
+        backgroundColor: '#11141a', borderRadius: 8,
+        paddingVertical: 7, paddingHorizontal: 8,
+        marginBottom: 10,
+    },
+    statIcono: { fontSize: 12 },
+    statTexto: { color: '#8a9bbf', fontSize: 11.5, flexShrink: 1 },
+
+    nivelPill: { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
     nivelPillTexto: { fontSize: 11, fontWeight: '700' },
-    eliminar: { color: '#ff4d4d' },
+
     botonPeq: { backgroundColor: '#00c2ff', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8 },
     botonTexto: { color: '#000', fontWeight: 'bold', textAlign: 'center' },
     botonTextoClaro: { color: '#fff', fontWeight: 'bold', textAlign: 'center' },
-    modal: { flex: 1, backgroundColor: '#0f1115', padding: 20 },
-    input: { backgroundColor: '#1c1f26', color: '#fff', padding: 12, borderRadius: 8, marginBottom: 8, borderWidth: 1.5, borderColor: '#00c2ff' },    label: { color: '#999', marginTop: 8, marginBottom: 4 },
-    picker: { backgroundColor: '#1c1f26', color: '#fff', marginBottom: 8 },
+
+    input: {
+        backgroundColor: '#1c1f26', color: '#fff', padding: 12, borderRadius: 8, marginBottom: 8,
+        borderWidth: 1.5, borderColor: '#00c2ff',
+    },
+    label: { color: '#999', marginTop: 8, marginBottom: 4 },
     chipsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
     chip: {
         paddingVertical: 8, paddingHorizontal: 14, borderRadius: 20,
@@ -336,7 +503,6 @@ const styles = StyleSheet.create({
     chipTextoActivo: { color: '#0f1115' },
     chipsVacio: { color: '#666', fontStyle: 'italic', marginBottom: 8 },
 
-    
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginTop: 16 },
     botonSecundario: { backgroundColor: '#333', padding: 14, borderRadius: 8, marginTop: 8 },
 
@@ -359,4 +525,8 @@ const styles = StyleSheet.create({
     detalleLabel: { color: '#999' },
     detalleValor: { color: '#fff', fontWeight: '600' },
     detalleBotones: { marginTop: 20 },
+
+    vacio: { alignItems: 'center', paddingVertical: 60 },
+    vacioEmoji: { fontSize: 34, marginBottom: 10 },
+    vacioTexto: { color: '#5b6478', fontSize: 13, fontStyle: 'italic', textAlign: 'center', paddingHorizontal: 30 },
 });

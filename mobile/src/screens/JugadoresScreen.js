@@ -335,6 +335,7 @@ const styles = StyleSheet.create({
     chipTexto: { color: '#ccc', fontWeight: '600', fontSize: 13 },
     chipTextoActivo: { color: '#0f1115' },
     chipsVacio: { color: '#666', fontStyle: 'italic', marginBottom: 8 },
+
     
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginTop: 16 },
     botonSecundario: { backgroundColor: '#333', padding: 14, borderRadius: 8, marginTop: 8 },

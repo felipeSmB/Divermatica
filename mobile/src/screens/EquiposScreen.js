@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
+import * as SMS from 'expo-sms';
 import { apiFetch } from '../api/client';
 import { generarEquiposBalanceados } from '../utils/teamBalancer';
 import FormationPitch from '../components/FormationPitch';
@@ -21,6 +22,11 @@ export default function EquiposScreen() {
     const [campoVisible, setCampoVisible] = useState(false);
     const [equipoActivo, setEquipoActivo] = useState(0);
     const [guardando, setGuardando] = useState(false);
+    const [notificacionVisible, setNotificacionVisible] = useState(false);
+    const [fechaPartida, setFechaPartida] = useState('');
+    const [horaPartida, setHoraPartida] = useState('');
+    const [localPartida, setLocalPartida] = useState('');
+    const [notificando, setNotificando] = useState(false);
 
     const scrollRef = useRef(null);
     const deporteSeleccionado = deportes.find(d => String(d.id) === deporteId);
@@ -97,6 +103,79 @@ export default function EquiposScreen() {
             Alert.alert('Listo', 'Equipo guardado en el historial');
         } else {
             Alert.alert('Error', 'No se pudo guardar el partido');
+        }
+    }
+
+    async function verificarDisponibilidadSMS() {
+        const disponible = await SMS.isAvailableAsync();
+        return disponible;
+    }
+
+    function construirMensajeSMS(jugador, numEquipo, equipoJugadores) {
+        const colegas = equipoJugadores
+            .filter(j => j.id !== jugador.id)
+            .map(j => j.nombre)
+            .join(', ');
+
+        const mensaje = `Hola ${jugador.nombre},\n\nHas sido asignado al Equipo ${numEquipo}.\n\nColegas: ${colegas}\n\nPartida:\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
+        return mensaje;
+    }
+
+    async function enviarNotificaciones() {
+        if (!fechaPartida || !horaPartida || !localPartida) {
+            Alert.alert('Atención', 'Por favor completa todos los campos');
+            return;
+        }
+
+        setNotificando(true);
+
+        try {
+            const smsDisponible = await verificarDisponibilidadSMS();
+
+            if (!smsDisponible) {
+                Alert.alert('Error', 'SMS no está disponible en este dispositivo');
+                setNotificando(false);
+                return;
+            }
+
+            let enviados = 0;
+            let fallidos = 0;
+            const noNotificados = [];
+
+            for (let i = 0; i < equipos.length; i++) {
+                const equipo = equipos[i];
+                for (const jugador of equipo) {
+                    // El campo telefono siempre está presente según el enunciado
+                    if (jugador.telefono) {
+                        const mensaje = construirMensajeSMS(jugador, i + 1, equipo);
+                        try {
+                            await SMS.sendSMSAsync(
+                                [jugador.telefono],
+                                mensaje
+                            );
+                            enviados++;
+                        } catch (error) {
+                            console.error('Error enviando SMS a', jugador.nombre, error);
+                            fallidos++;
+                        }
+                    } else {
+                        noNotificados.push(jugador.nombre);
+                    }
+                }
+            }
+
+            const mensajeResultado = `✅ SMS enviados: ${enviados}\n❌ SMS fallidos: ${fallidos}${noNotificados.length > 0 ? `\n⚠️ Sin notificar: ${noNotificados.join(', ')}` : ''}`;
+            Alert.alert('Resultados de notificación', mensajeResultado);
+
+            setNotificacionVisible(false);
+            setFechaPartida('');
+            setHoraPartida('');
+            setLocalPartida('');
+        } catch (error) {
+            console.error('Error en proceso de notificación:', error);
+            Alert.alert('Error', 'Ocurrió un error al intentar notificar');
+        } finally {
+            setNotificando(false);
         }
     }
 
@@ -180,6 +259,63 @@ export default function EquiposScreen() {
                         <TouchableOpacity style={styles.botonGuardar} onPress={guardarPartido} disabled={guardando} activeOpacity={0.85}>
                             <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : '💾 Guardar en historial'}</Text>
                         </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.botonNotificar} onPress={() => setNotificacionVisible(true)} disabled={guardando} activeOpacity={0.85}>
+                            <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
+                        </TouchableOpacity>
+                    </Pressable>
+                </Pressable>
+            </Modal>
+
+            <Modal visible={notificacionVisible} animationType="fade" transparent onRequestClose={() => setNotificacionVisible(false)}>
+                <Pressable style={styles.backdrop} onPress={() => setNotificacionVisible(false)}>
+                    <Pressable style={styles.modalCard} onPress={() => {}}>
+                        <View style={styles.modalCabecera}>
+                            <Text style={styles.modalTitulo}>Notificar Jugadores</Text>
+                            <TouchableOpacity onPress={() => setNotificacionVisible(false)} style={styles.botonCerrar}>
+                                <Text style={styles.botonCerrarTexto}>✕ Cerrar</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                            <Text style={styles.label}>Fecha de la partida</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="DD/MM/YYYY"
+                                placeholderTextColor="#666"
+                                value={fechaPartida}
+                                onChangeText={setFechaPartida}
+                            />
+
+                            <Text style={styles.label}>Hora de la partida</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="HH:MM"
+                                placeholderTextColor="#666"
+                                value={horaPartida}
+                                onChangeText={setHoraPartida}
+                            />
+
+                            <Text style={styles.label}>Local de la partida</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Ej: Polideportivo Municipal"
+                                placeholderTextColor="#666"
+                                value={localPartida}
+                                onChangeText={setLocalPartida}
+                            />
+
+                            <TouchableOpacity
+                                style={[styles.botonNotificar, notificando && styles.botonDeshabilitado]}
+                                onPress={enviarNotificaciones}
+                                disabled={notificando}
+                                activeOpacity={0.85}
+                            >
+                                <Text style={styles.botonTextoClaro}>
+                                    {notificando ? 'Enviando notificaciones…' : `📨 Enviar SMS a ${equipos.flat().length} jugadores`}
+                                </Text>
+                            </TouchableOpacity>
+                        </ScrollView>
                     </Pressable>
                 </Pressable>
             </Modal>
@@ -243,4 +379,6 @@ const styles = StyleSheet.create({
     nombreEquipo: { color: '#00c2ff', fontWeight: '800', fontSize: 14, textAlign: 'center', marginBottom: 8 },
 
     botonGuardar: { backgroundColor: '#00e676', padding: 14, marginHorizontal: 12, marginVertical: 12, borderRadius: 10 },
+    botonNotificar: { backgroundColor: '#ff9800', padding: 14, marginHorizontal: 12, marginVertical: 8, borderRadius: 10 },
+    botonDeshabilitado: { opacity: 0.5 },
 });

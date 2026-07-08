@@ -210,6 +210,7 @@ export default function EquiposScreen() {
             Alert.alert('Listo', partes.length ? partes.join('\n') : 'No se envió ningún mensaje');
 
             setNotificacionVisible(false);
+            setCampoVisible(true);
             setFechaPartida('');
             setHoraPartida('');
             setLocalPartida('');
@@ -354,20 +355,22 @@ export default function EquiposScreen() {
                             <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : '💾 Guardar en historial'}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.botonNotificar} onPress={() => setNotificacionVisible(true)} disabled={guardando} activeOpacity={0.85}>
-                            <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
+                    <TouchableOpacity
+                    style={styles.botonNotificar}
+                onPress={() => { setCampoVisible(false); setNotificacionVisible(true); }}
+                    disabled={guardando}
+                    activeOpacity={0.85}
+>                            <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
                         </TouchableOpacity>
                     </Pressable>
                 </Pressable>
             </Modal>
 
             <Modal visible={notificacionVisible} animationType="fade" transparent onRequestClose={() => setNotificacionVisible(false)}>
-                <Pressable style={styles.backdrop} onPress={() => setNotificacionVisible(false)}>
-                    <Pressable style={styles.modalCard} onPress={() => {}}>
+<Pressable style={styles.backdrop} onPress={() => { setNotificacionVisible(false); setCampoVisible(true); }}>                    <Pressable style={styles.modalCard} onPress={() => {}}>
                         <View style={styles.modalCabecera}>
                             <Text style={styles.modalTitulo}>Notificar Jugadores</Text>
-                            <TouchableOpacity onPress={() => setNotificacionVisible(false)} style={styles.botonCerrar}>
-                                <Text style={styles.botonCerrarTexto}>✕ Cerrar</Text>
+<TouchableOpacity onPress={() => { setNotificacionVisible(false); setCampoVisible(true); }} style={styles.botonCerrar}>                                <Text style={styles.botonCerrarTexto}>✕ Cerrar</Text>
                             </TouchableOpacity>
                         </View>
 

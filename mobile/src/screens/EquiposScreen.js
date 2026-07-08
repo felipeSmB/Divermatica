@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
     Alert, Modal, Pressable, Dimensions,
@@ -7,10 +7,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as SMS from 'expo-sms';
 import { apiFetch } from '../api/client';
 import { generarEquiposBalanceados } from '../utils/teamBalancer';
+import { obtenerFormacion, generarEquiposConFormacion } from '../utils/formaciones';
+import { detetarDeporte } from '../utils/posicionamento';
 import FormationPitch from '../components/FormationPitch';
 import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
 
-const { width: ANCHO_PANTALLA } = Dimensions.get('window');
+const { width: ANCHO_PANTALLA, height: ALTURA_PANTALLA } = Dimensions.get('window');
+const ALTURA_CAMPO_DISPONIVEL = ALTURA_PANTALLA * 0.46;
 
 export default function EquiposScreen() {
     const [deportes, setDeportes] = useState([]);
@@ -30,6 +33,14 @@ export default function EquiposScreen() {
 
     const scrollRef = useRef(null);
     const deporteSeleccionado = deportes.find(d => String(d.id) === deporteId);
+
+    const tipoSeleccionado = deporteSeleccionado ? detetarDeporte(deporteSeleccionado.nombre) : null;
+    const formacionSeleccionada = deporteSeleccionado
+        ? obtenerFormacion(tipoSeleccionado, deporteSeleccionado.num_jugadores)
+        : null;
+    const totalPorEquipoFormacion = formacionSeleccionada
+        ? formacionSeleccionada.postos.reduce((s, p) => s + p.cantidad, 0)
+        : null;
 
     const cargarDeportes = useCallback(async () => {
         const res = await apiFetch('/deportes.php');
@@ -55,11 +66,33 @@ export default function EquiposScreen() {
         if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'No hay jugadores para este deporte'); return; }
 
         const n = Math.max(2, parseInt(numEquipos, 10) || 2);
+
+        if (formacionSeleccionada) {
+            const necesarios = totalPorEquipoFormacion * n;
+            if (jugadoresDeporte.length < necesarios) {
+                Alert.alert(
+                    'Pocos jugadores',
+                    `La formación fija (${formacionSeleccionada.etiqueta}) necesita ${totalPorEquipoFormacion} jugadores por equipo — ${necesarios} en total para ${n} equipos — pero solo hay ${jugadoresDeporte.length} disponibles. Se generará lo que sea posible; algunos puestos pueden quedar incompletos.`
+                );
+            }
+
+            const { equipos: eq, faltantes } = generarEquiposConFormacion(jugadoresDeporte, n, formacionSeleccionada);
+            if (faltantes.length > 0) {
+                Alert.alert('Formación incompleta', faltantes.join('\n'));
+            }
+            if (eq.every(e => e.length === 0)) return;
+
+            setEquipos(eq);
+            setEquipoActivo(0);
+            setCampoVisible(true);
+            return;
+        }
+
+        // Deporte sin formación fija definida: reparto equilibrado genérico
         if (n > jugadoresDeporte.length) {
             Alert.alert('Atención', 'No puedes crear más equipos que jugadores disponibles');
             return;
         }
-
         setEquipos(generarEquiposBalanceados(jugadoresDeporte, n));
         setEquipoActivo(0);
         setCampoVisible(true);
@@ -122,7 +155,7 @@ export default function EquiposScreen() {
         const numeros = equipoJugadores
             .map(j => limpiarTelefono(j.telefono))
             .filter(Boolean);
-        return [...new Set(numeros)]; // sin duplicados
+        return [...new Set(numeros)];
     }
 
     function construirMensajeSMS(numEquipo, equipoJugadores) {
@@ -137,7 +170,7 @@ export default function EquiposScreen() {
         }
 
         setNotificando(true);
-        setCampoVisible(false); // fecha o modal de Formación pra não ter 2 Modals abertos ao mesmo tempo
+        setCampoVisible(false);
 
         try {
             const smsDisponible = await verificarDisponibilidadSMS();
@@ -177,7 +210,6 @@ export default function EquiposScreen() {
             Alert.alert('Listo', partes.length ? partes.join('\n') : 'No se envió ningún mensaje');
 
             setNotificacionVisible(false);
-            setCampoVisible(true);
             setFechaPartida('');
             setHoraPartida('');
             setLocalPartida('');
@@ -221,6 +253,31 @@ export default function EquiposScreen() {
                 </ScrollView>
                 {deportes.length === 0 && (
                     <Text style={styles.hint}>Aún no hay deportes creados</Text>
+                )}
+
+                {/* Card de formación — a peça que faltava: mostra sempre, de
+                    forma clara, que composição exata vai ser usada. */}
+                {deporteSeleccionado && (
+                    <View style={styles.formacionCard}>
+                        <View style={styles.formacionCabecera}>
+                            <Text style={styles.formacionIcono}>{iconoDeporte(deporteSeleccionado.nombre)}</Text>
+                            <Text style={styles.formacionNombre}>{deporteSeleccionado.nombre}</Text>
+                        </View>
+                        {formacionSeleccionada ? (
+                            <>
+                                <Text style={styles.formacionEtiqueta}>
+                                    Formación fija: <Text style={styles.formacionEtiquetaDestaque}>{formacionSeleccionada.etiqueta}</Text>
+                                </Text>
+                                <Text style={styles.formacionDetalle}>
+                                    {totalPorEquipoFormacion} jugadores por equipo · {formacionSeleccionada.postos.map(p => `${p.cantidad} ${p.etiqueta}`).join(', ')}
+                                </Text>
+                            </>
+                        ) : (
+                            <Text style={styles.formacionDetalle}>
+                                Este deporte no tiene formación fija — reparto equilibrado por nivel.
+                            </Text>
+                        )}
+                    </View>
                 )}
 
                 <Text style={styles.label}>Número de equipos</Text>
@@ -282,7 +339,13 @@ export default function EquiposScreen() {
                             {equipos.map((eq, i) => (
                                 <ScrollView key={i} style={{ width: ANCHO_PANTALLA - 24 }} contentContainerStyle={styles.paginaCampo}>
                                     <Text style={styles.nombreEquipo}>Equipo {i + 1} · {eq.length} jugadores</Text>
-                                    <FormationPitch equipo={eq} posicionesInfo={posicionesDeporte} deporte={deporteSeleccionado?.nombre} />
+                                    <FormationPitch
+                                        equipo={eq}
+                                        posicionesInfo={posicionesDeporte}
+                                        deporte={deporteSeleccionado?.nombre}
+                                        maxHeight={ALTURA_CAMPO_DISPONIVEL}
+                                        maxWidth={ANCHO_PANTALLA - 24}
+                                    />
                                 </ScrollView>
                             ))}
                         </ScrollView>
@@ -291,22 +354,20 @@ export default function EquiposScreen() {
                             <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : '💾 Guardar en historial'}</Text>
                         </TouchableOpacity>
 
-                                <TouchableOpacity
-                                style={styles.botonNotificar}
-                                onPress={() => { setCampoVisible(false); setNotificacionVisible(true); }}
-                        disabled={guardando}
-                        activeOpacity={0.85}
->                            <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
+                        <TouchableOpacity style={styles.botonNotificar} onPress={() => setNotificacionVisible(true)} disabled={guardando} activeOpacity={0.85}>
+                            <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
                         </TouchableOpacity>
                     </Pressable>
                 </Pressable>
             </Modal>
 
             <Modal visible={notificacionVisible} animationType="fade" transparent onRequestClose={() => setNotificacionVisible(false)}>
-                    <Pressable style={styles.backdrop} onPress={() => { setNotificacionVisible(false); setCampoVisible(true); }}>                    <Pressable style={styles.modalCard} onPress={() => {}}>
+                <Pressable style={styles.backdrop} onPress={() => setNotificacionVisible(false)}>
+                    <Pressable style={styles.modalCard} onPress={() => {}}>
                         <View style={styles.modalCabecera}>
                             <Text style={styles.modalTitulo}>Notificar Jugadores</Text>
-                            <TouchableOpacity onPress={() => { setNotificacionVisible(false); setCampoVisible(true); }} style={styles.botonCerrar}>                                <Text style={styles.botonCerrarTexto}>✕ Cerrar</Text>
+                            <TouchableOpacity onPress={() => setNotificacionVisible(false)} style={styles.botonCerrar}>
+                                <Text style={styles.botonCerrarTexto}>✕ Cerrar</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -377,6 +438,22 @@ const styles = StyleSheet.create({
     chipTexto: { color: '#ccc', fontWeight: '600', fontSize: 13 },
     chipTextoActivo: { color: '#0f1115' },
 
+    formacionCard: {
+        backgroundColor: '#1c1f26',
+        borderRadius: 12,
+        padding: 14,
+        marginTop: 14,
+        marginBottom: 4,
+        borderWidth: 1,
+        borderColor: '#2a2f3a',
+    },
+    formacionCabecera: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+    formacionIcono: { fontSize: 18 },
+    formacionNombre: { color: '#fff', fontWeight: '800', fontSize: 15 },
+    formacionEtiqueta: { color: '#8a9bbf', fontSize: 13 },
+    formacionEtiquetaDestaque: { color: '#00e676', fontWeight: '800' },
+    formacionDetalle: { color: '#8a9bbf', fontSize: 12, marginTop: 4 },
+
     fab: {
         position: 'absolute',
         bottom: 22,
@@ -415,7 +492,7 @@ const styles = StyleSheet.create({
     tabTexto: { color: '#999', fontWeight: '700', fontSize: 12 },
     tabTextoActiva: { color: '#000' },
 
-    paginaCampo: { paddingHorizontal: 12, paddingBottom: 12 },
+    paginaCampo: { paddingHorizontal: 12, paddingBottom: 12, alignItems: 'center' },
     nombreEquipo: { color: '#00c2ff', fontWeight: '800', fontSize: 14, textAlign: 'center', marginBottom: 8 },
 
     botonGuardar: { backgroundColor: '#00e676', padding: 14, marginHorizontal: 12, marginVertical: 12, borderRadius: 10 },

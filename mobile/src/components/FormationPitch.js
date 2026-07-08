@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import PlayerJerseyCard, { JERSEY_SIZES } from './PlayerJerseyCard';
 import { detetarDeporte, calcularFormacao } from '../utils/posicionamento';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
+const { width: ANCHO_PANTALLA, height: ALTURA_PANTALLA } = Dimensions.get('window');
 
 /* =====================================================
    PEÇAS REUTILIZÁVEIS DO CAMPO
@@ -33,7 +34,6 @@ function Punto({ extremo, distanciaPorc }) {
     return <View style={[styles.punto, lado]} pointerEvents="none" />;
 }
 
-// Retângulo de área, aberto para a linha de fundo (futebol, râguebi...)
 function CajaArea({ extremo, anchoPorc = 18, altoPorc = 13 }) {
     const lado = extremo === 'arriba' ? { top: 0, borderTopWidth: 0 } : { bottom: 0, borderBottomWidth: 0 };
     return (
@@ -41,10 +41,6 @@ function CajaArea({ extremo, anchoPorc = 18, altoPorc = 13 }) {
     );
 }
 
-// Arco obtido recortando um círculo grande contra o limite do campo
-// (o "overflow: hidden" do contentor funciona como tesoura). Serve para
-// desenhar desde a grande área do futebol até à linha de 3 pontos do
-// basquetebol ou à área de 6m do andebol, só mudando o diâmetro.
 function ArcoRecortado({ extremo, diametro, distanciaBorde = 0, dashed = false }) {
     const r = diametro / 2;
     const lado = extremo === 'arriba' ? { top: distanciaBorde, marginTop: -r } : { bottom: distanciaBorde, marginBottom: -r };
@@ -56,8 +52,6 @@ function ArcoRecortado({ extremo, diametro, distanciaBorde = 0, dashed = false }
     );
 }
 
-// Pequeno arco de canto — mesma técnica de recorte, aplicada aos 4
-// cantos do campo. Só faz sentido em desportos com cantos retos (futebol/futsal).
 function ArcoCanto({ vertical, horizontal, tamanho = 16 }) {
     const posStyle = {};
     posStyle[vertical] = -tamanho / 2;
@@ -90,7 +84,6 @@ function Red() {
     );
 }
 
-// Caixas de serviço de ténis / padel / badminton, de cada lado da rede
 function CajasServicio({ profundidadPorc = 22 }) {
     const borde = `${50 - profundidadPorc}%`;
     return (
@@ -102,7 +95,6 @@ function CajasServicio({ profundidadPorc = 22 }) {
     );
 }
 
-// Postes em "H" de râguebi
 function Postes({ extremo }) {
     const lado = extremo === 'arriba' ? { top: 2 } : { bottom: 2 };
     return (
@@ -114,7 +106,6 @@ function Postes({ extremo }) {
     );
 }
 
-// Losango de basebol / softbol
 function Diamante() {
     return (
         <View style={styles.diamanteWrap} pointerEvents="none">
@@ -126,15 +117,16 @@ function Diamante() {
 
 /* =====================================================
    CONFIGURAÇÃO VISUAL POR DESPORTO
+   (aspecto = largura / altura, tal como o aspectRatio do CSS)
    ===================================================== */
 
 const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.64 },
-    futsal:     { fondo: '#1a6ea8', aspecto: 0.50 }, // era 0.62 — campo oficial 40×20m
+    futsal:     { fondo: '#1a6ea8', aspecto: 0.50 },
     baloncesto: { fondo: '#c17f3e', aspecto: 0.56 },
-    balonmano:  { fondo: '#146b52', aspecto: 0.50 }, // era 0.58 — campo oficial 40×20m
+    balonmano:  { fondo: '#146b52', aspecto: 0.50 },
     voleibol:   { fondo: '#1d6fae', aspecto: 0.50 },
-    padel:      { fondo: '#0e9488', aspecto: 0.50 }, // era 0.55 — campo oficial 20×10m
+    padel:      { fondo: '#0e9488', aspecto: 0.50 },
     tenis:      { fondo: '#b5541f', aspecto: 0.46 },
     tenisMesa:  { fondo: '#0a4f8c', aspecto: 0.60 },
     badminton:  { fondo: '#2f9e52', aspecto: 0.48 },
@@ -150,18 +142,33 @@ const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
    COMPONENTE PRINCIPAL
    ===================================================== */
 
-export default function FormationPitch({ equipo, posicionesInfo, deporte, small }) {
+export default function FormationPitch({ equipo, posicionesInfo, deporte, small, maxHeight, maxWidth }) {
     const tipo = detetarDeporte(deporte);
     const cfg = CONFIG[tipo];
     const dividePorRed = DIVIDE_POR_RED.includes(tipo);
-    const denso = equipo.length >= 9;
+    const denso = equipo.length >= 7; // baixado de 9 para 7: rosters maiores usam cartões menores, evitando aglomeração
     const tamanho = small || denso ? 'small' : 'normal';
     const { width: cardW, height: cardH } = JERSEY_SIZES[tamanho];
+
+    // --- Cálculo do tamanho do campo a partir do espaço VERTICAL
+    // disponível (em vez de partir da largura do ecrã). Isto é o que
+    // impede desportos com proporção muito "alta" (ténis, futsal,
+    // andebol, voleibol) de gerarem uma caixa gigante que ultrapassa o
+    // espaço visível do modal.
+    const anchoDisponivel = (maxWidth || ANCHO_PANTALLA) - 24;
+    const alturaDisponivel = maxHeight || ALTURA_PANTALLA * 0.48;
+
+    let anchoCampo = anchoDisponivel;
+    let alturaCampo = anchoCampo / cfg.aspecto;
+    if (alturaCampo > alturaDisponivel) {
+        alturaCampo = alturaDisponivel;
+        anchoCampo = alturaCampo * cfg.aspecto;
+    }
 
     const formacao = calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
 
     return (
-        <View style={[styles.campo, { backgroundColor: cfg.fondo, aspectRatio: cfg.aspecto }]}>
+        <View style={[styles.campo, { backgroundColor: cfg.fondo, width: anchoCampo, height: alturaCampo }]}>
             <View style={styles.franjas} pointerEvents="none">
                 {Array.from({ length: 8 }).map((_, i) => (
                     <View key={i} style={[styles.franja, { backgroundColor: i % 2 === 0 ? 'rgba(255,255,255,0.035)' : 'transparent' }]} />
@@ -291,7 +298,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
 
 const styles = StyleSheet.create({
     campo: {
-        width: '100%',
+        alignSelf: 'center',
         borderRadius: 16,
         borderWidth: 3,
         borderColor: LINEA,

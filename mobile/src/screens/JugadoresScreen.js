@@ -33,7 +33,6 @@ export default function JugadoresScreen() {
     const [posicion, setPosicion] = useState('');
     const [nivel, setNivel] = useState('');
 
-    // --- Filtragem e pesquisa ---
     const [busqueda, setBusqueda] = useState('');
     const [filtroDeporte, setFiltroDeporte] = useState(''); // '' = Todos
 
@@ -57,8 +56,6 @@ export default function JugadoresScreen() {
         })();
     }, [deporteId]);
 
-    // Mapa deporte_id -> cor de destaque, para os cards de jugador usarem
-    // sempre a mesma cor do card do desporto correspondente na outra página.
     const accentPorDeporte = useMemo(() => {
         const map = {};
         deportes.forEach((d, i) => { map[d.id] = ACCENTS[i % ACCENTS.length]; });
@@ -171,36 +168,46 @@ export default function JugadoresScreen() {
                 )}
             </View>
 
-            {/* Filtro por deporte */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.filtrosFila}
-            >
+            {/* Filtro por deporte — SEM scroll escondido: quebra de linha
+                automática, para que todos os filtros estejam sempre à vista. */}
+            <View style={styles.filtrosFila}>
                 <TouchableOpacity
-                    style={[styles.chip, filtroDeporte === '' && styles.chipActivo]}
+                    style={[styles.chip, filtroDeporte === '' && styles.chipActivoTodos]}
                     onPress={() => setFiltroDeporte('')}
+                    activeOpacity={0.8}
                 >
                     <Text style={[styles.chipTexto, filtroDeporte === '' && styles.chipTextoActivo]}>
-                        📋 Todos ({jugadores.length})
+                        📋 Todos
                     </Text>
+                    <View style={[styles.chipContador, filtroDeporte === '' && styles.chipContadorActivo]}>
+                        <Text style={[styles.chipContadorTexto, filtroDeporte === '' && styles.chipContadorTextoActivo]}>
+                            {jugadores.length}
+                        </Text>
+                    </View>
                 </TouchableOpacity>
                 {deportes.map(d => {
                     const activo = String(d.id) === filtroDeporte;
+                    const accent = accentPorDeporte[d.id] || '#00c2ff';
                     const cantidad = jugadores.filter(j => String(j.deporte_id) === String(d.id)).length;
                     return (
                         <TouchableOpacity
                             key={d.id}
-                            style={[styles.chip, activo && styles.chipActivo]}
+                            style={[styles.chip, activo && { backgroundColor: accent, borderColor: accent }]}
                             onPress={() => setFiltroDeporte(String(d.id))}
+                            activeOpacity={0.8}
                         >
-                            <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>
-                                {iconoDeporte(d.nombre)} {d.nombre} ({cantidad})
+                            <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]} numberOfLines={1}>
+                                {iconoDeporte(d.nombre)} {d.nombre}
                             </Text>
+                            <View style={[styles.chipContador, activo && { backgroundColor: 'rgba(0,0,0,0.18)' }]}>
+                                <Text style={[styles.chipContadorTexto, activo && styles.chipContadorTextoActivo]}>
+                                    {cantidad}
+                                </Text>
+                            </View>
                         </TouchableOpacity>
                     );
                 })}
-            </ScrollView>
+            </View>
 
             <FlatList
                 data={jugadoresFiltrados}
@@ -293,7 +300,7 @@ export default function JugadoresScreen() {
                                         return (
                                             <TouchableOpacity
                                                 key={d.id}
-                                                style={[styles.chip, activo && styles.chipActivo]}
+                                                style={[styles.chip, activo && styles.chipActivoTodos]}
                                                 onPress={() => { setDeporteId(String(d.id)); setPosicion(''); }}
                                             >
                                                 <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{iconoDeporte(d.nombre)} {d.nombre}</Text>
@@ -314,7 +321,7 @@ export default function JugadoresScreen() {
                                             return (
                                                 <TouchableOpacity
                                                     key={p.id}
-                                                    style={[styles.chip, activo && styles.chipActivo]}
+                                                    style={[styles.chip, activo && styles.chipActivoTodos]}
                                                     onPress={() => setPosicion(p.nombre)}
                                                 >
                                                     <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{p.nombre}</Text>
@@ -331,7 +338,7 @@ export default function JugadoresScreen() {
                                         return (
                                             <TouchableOpacity
                                                 key={n}
-                                                style={[styles.chip, activo && styles.chipActivo]}
+                                                style={[styles.chip, activo && styles.chipActivoTodos]}
                                                 onPress={() => setNivel(n)}
                                             >
                                                 <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{n}</Text>
@@ -429,7 +436,13 @@ const styles = StyleSheet.create({
     buscadorInput: { flex: 1, color: '#fff', fontSize: 14, padding: 0 },
     buscadorLimpiar: { color: '#5b6478', fontSize: 15, fontWeight: 'bold', paddingHorizontal: 4 },
 
-    filtrosFila: { gap: 8, paddingBottom: 14, paddingRight: 8 },
+    // Filtros em quebra de linha — nunca ficam escondidos fora do ecrã
+    filtrosFila: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginBottom: 14,
+    },
 
     lista: { paddingBottom: 24 },
     columna: { gap: 12 },
@@ -495,13 +508,28 @@ const styles = StyleSheet.create({
     label: { color: '#999', marginTop: 8, marginBottom: 4 },
     chipsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 },
     chip: {
-        paddingVertical: 8, paddingHorizontal: 14, borderRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingVertical: 9, paddingHorizontal: 14, borderRadius: 20,
         backgroundColor: '#1c1f26', borderWidth: 1.5, borderColor: '#2a2f3a',
     },
-    chipActivo: { backgroundColor: '#00c2ff', borderColor: '#00c2ff' },
+    chipActivoTodos: { backgroundColor: '#00c2ff', borderColor: '#00c2ff' },
     chipTexto: { color: '#ccc', fontWeight: '600', fontSize: 13 },
     chipTextoActivo: { color: '#0f1115' },
     chipsVacio: { color: '#666', fontStyle: 'italic', marginBottom: 8 },
+
+    chipContador: {
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderRadius: 10,
+        paddingHorizontal: 6,
+        paddingVertical: 1,
+        minWidth: 20,
+        alignItems: 'center',
+    },
+    chipContadorActivo: { backgroundColor: 'rgba(0,0,0,0.18)' },
+    chipContadorTexto: { color: '#ccc', fontSize: 11, fontWeight: '800' },
+    chipContadorTextoActivo: { color: '#0f1115' },
 
     boton: { backgroundColor: '#00c2ff', padding: 14, borderRadius: 8, marginTop: 16 },
     botonSecundario: { backgroundColor: '#333', padding: 14, borderRadius: 8, marginTop: 8 },

@@ -32,6 +32,36 @@ function distribuirX(cantidad, xBase, anchoMax = 46) {
     return Array.from({ length: cantidad }, (_, i) => clamp(inicio + i * passo, 8, 92));
 }
 
+// Garante uma distância mínima (minGap, em % do campo) entre linhas
+// diferentes da formação. Sem isto, dois grupos com valores de "y" muito
+// próximos (ex.: 6% e 22%) faziam os cartões/etiquetas sobreporem-se em
+// ecrãs pequenos. Devolve um mapa { yOriginal -> yAjustado }.
+function espaciarNiveis(valoresY, minGap) {
+    const unicos = [...new Set(valoresY)].sort((a, b) => a - b);
+    if (unicos.length <= 1) return { [unicos[0]]: unicos[0] };
+
+    const ajustado = [...unicos];
+    for (let i = 1; i < ajustado.length; i++) {
+        if (ajustado[i] - ajustado[i - 1] < minGap) {
+            ajustado[i] = ajustado[i - 1] + minGap;
+        }
+    }
+
+    // Se o espaçamento forçado ultrapassou o limite inferior do campo,
+    // comprime tudo proporcionalmente para caber sempre entre 4% e 96%.
+    let final = ajustado;
+    const min = ajustado[0];
+    const max = ajustado[ajustado.length - 1];
+    if (max > 96) {
+        const escala = (96 - min) / (max - min);
+        final = ajustado.map(v => min + (v - min) * escala);
+    }
+
+    const mapa = {};
+    unicos.forEach((orig, i) => { mapa[orig] = final[i]; });
+    return mapa;
+}
+
 // ---------------------------------------------------------------------
 // MAPAS DE POSIÇÕES REAIS POR DESPORTO
 // Cada entrada: [expressão regular de deteção, { y, xBase, anchoMax }]
@@ -52,6 +82,7 @@ const FUTEBOL = [
     [/interior.?(direit|derech)/, { y: 50, xBase: 68, anchoMax: 22 }],
     [/interior.?(esquerd|izquierd)/, { y: 50, xBase: 32, anchoMax: 22 }],
     [/m[eé]di[oa].?centr|centrocampista|mediocampista|m[eé]di[oa]\b/, { y: 50, xBase: 50, anchoMax: 50 }],
+    [/\bcentro\b/, { y: 58, xBase: 50, anchoMax: 30 }],
     [/segund[oa].?ponta|segund[oa].?delanter/, { y: 66, xBase: 50, anchoMax: 30 }],
     [/mia.?ponta|meia.?atacante|mediapunta|enganche/, { y: 62, xBase: 50, anchoMax: 30 }],
     [/extremo.?(direit|derech)|ponta.?direit|winger.?(direit|derech)/, { y: 72, xBase: 86, anchoMax: 14 }],
@@ -68,13 +99,12 @@ const FUTSAL = [
 ];
 
 // ---------------------------------------------------------------------
-// BASQUETEBOL — corrigido: os 5 jogadores jogam o campo todo, não faz
-// sentido "profundidade defensiva" como no futebol. Em vez disso,
-// representa-se um set ofensivo de meio-campo (o que se vê em qualquer
-// gráfico de alinhamento de basquetebol real): base no topo do
-// garrafão, escolta e alero nas alas, ala-pívot e pívot perto do cesto.
-// A ordem importa: "ala.?p[ií]vot" tem de vir ANTES de "alero|ala\b"
-// para não ser apanhada pela regex genérica de "alero".
+// BASQUETEBOL — os 5 jogadores jogam o campo todo, não faz sentido
+// "profundidade defensiva" como no futebol. Representa-se um set
+// ofensivo de meio-campo: base no topo do garrafão, escolta e alero nas
+// alas, ala-pívot e pívot perto do cesto. A ordem importa: "ala.?p[ií]vot"
+// tem de vir ANTES de "alero|ala\b" para não ser apanhada pela regex
+// genérica de "alero".
 // ---------------------------------------------------------------------
 const BASQUETEBOL = [
     [/base|armador/, { y: 30, xBase: 50, anchoMax: 20 }],
@@ -94,16 +124,6 @@ const ANDEBOL = [
     [/piv[oô]/, { y: 84, xBase: 50, anchoMax: 18 }],
 ];
 
-// ---------------------------------------------------------------------
-// RUGBY — corrigido: os 8 avançados deixam de estar todos amontoados
-// na mesma linha (y:24) e passam a respeitar as 3 linhas reais da
-// formação (1ª linha, 2ª linha, 3ª linha/nº8), o que dá uma leitura
-// muito mais realista de "packing" do scrum. Também se removeu a
-// colisão com "ponta": os extremos (wingers) só devem ser nomeados
-// "Ponta" nesta app — se forem nomeados "Ala Direita/Esquerda" seriam
-// confundidos com o "ala" avançado (3ª linha), que é ambíguo por
-// natureza no português do rugby.
-// ---------------------------------------------------------------------
 const RUGBY = [
     [/pilar|talonador/, { y: 14, xBase: 50, anchoMax: 46 }],
     [/segunda.?linha/, { y: 24, xBase: 50, anchoMax: 30 }],
@@ -122,14 +142,6 @@ const HOQUEI = [
     [/avan[cç]ado|delanter|atacante/, { y: 82, xBase: 50, anchoMax: 50 }],
 ];
 
-// ---------------------------------------------------------------------
-// BASEBOL — NOVO. Antes não existia nenhum mapa para esta modalidade,
-// pelo que os jogadores caíam sempre no fallback em filas horizontais,
-// completamente desligados do diamante desenhado no campo. As
-// coordenadas y aqui foram calibradas para o Diamante() de
-// FormationPitch.js (diamante ocupa aprox. y:48%–94%; home plate no
-// vértice inferior, 2ª base no vértice superior do diamante).
-// ---------------------------------------------------------------------
 const BEISBOL = [
     [/receptor|catcher/, { y: 92, xBase: 50, anchoMax: 10 }],
     [/lan[cç]ador|pitcher/, { y: 72, xBase: 50, anchoMax: 10 }],
@@ -153,8 +165,6 @@ const MAPAS = {
 };
 
 // Desportos "divididos pela rede" (mostram só o próprio meio-campo).
-// Aqui não há linhas de ataque/defesa no mesmo sentido dos anteriores,
-// mas sim jogadores de rede (perto da rede) e jogadores de fundo.
 const REDE = {
     voleibol: [
         [/l[ií]bero/, { y: 88, xBase: 50, anchoMax: 20 }],
@@ -197,24 +207,27 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
     });
 
     const nomesGrupo = Object.keys(grupos);
-    const todosReconhecidos = nomesGrupo.every(n => classificarPosicao(n, tipoDeporte) !== null);
+    const infosPorGrupo = {};
+    nomesGrupo.forEach(nome => { infosPorGrupo[nome] = classificarPosicao(nome, tipoDeporte); });
+    const todosReconhecidos = nomesGrupo.length > 0 && nomesGrupo.every(n => infosPorGrupo[n] !== null);
 
     const resultado = [];
 
-    if (todosReconhecidos && nomesGrupo.length > 0) {
-        // --- Caminho "realista": usamos coordenadas táticas verdadeiras ---
+    if (todosReconhecidos) {
+        // --- Caminho "realista": usamos coordenadas táticas verdadeiras,
+        // mas com as linhas sempre bem espaçadas (nunca sobrepostas) ---
+        const minGap = jugadores.length >= 7 ? 12 : 16;
+        const valoresY = nomesGrupo.map(n => infosPorGrupo[n].y);
+        const mapaY = espaciarNiveis(valoresY, minGap);
+
         nomesGrupo.forEach(nome => {
-            const info = classificarPosicao(nome, tipoDeporte);
+            const info = infosPorGrupo[nome];
+            const yBase = mapaY[info.y] ?? info.y;
             const jogadoresGrupo = grupos[nome];
             const n = jogadoresGrupo.length;
             const xs = distribuirX(n, info.xBase, info.anchoMax);
 
             jogadoresGrupo.forEach((j, i) => {
-                // Ciclo de 3 níveis (-1, 0, +1) em vez de apenas 2 — com
-                // apenas 2 níveis, o 3º, 5º, 7º... jogador do mesmo grupo
-                // ficava exatamente sobreposto ao 1º. A amplitude cresce
-                // ligeiramente em grupos maiores (>4), para compensar
-                // equipas grandes com muitos jogadores na mesma posição.
                 let jitterY = 0;
                 if (n > 1) {
                     const ciclo = i % 3;
@@ -225,7 +238,7 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
                 resultado.push({
                     jogador: j,
                     xPorc: xs[i],
-                    yPorc: clamp(info.y + jitterY, 5, 95),
+                    yPorc: clamp(yBase + jitterY, 5, 95),
                 });
             });
         });
@@ -253,8 +266,7 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
     }
 
     // Desportos divididos por rede: só existe o próprio meio-campo, por
-    // isso comprimimos o eixo Y para a faixa inferior do campo (perto da
-    // rede fica com y baixo, fundo do campo fica com y alto).
+    // isso comprimimos o eixo Y para a faixa inferior do campo.
     if (dividePorRed) {
         return resultado.map(r => ({ ...r, yPorc: 58 + (r.yPorc / 100) * 38 }));
     }

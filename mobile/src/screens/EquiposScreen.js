@@ -142,35 +142,21 @@ export default function EquiposScreen() {
             let fallidos = 0;
             const noNotificados = [];
 
-            for (let i = 0; i < equipos.length; i++) {
-                const equipo = equipos[i];
-                for (const jugador of equipo) {
-                    // El campo telefono siempre está presente según el enunciado
-                    if (jugador.telefono) {
-                        const mensaje = construirMensajeSMS(jugador, i + 1, equipo);
-                        try {
-                            await SMS.sendSMSAsync(
-                                [jugador.telefono],
-                                mensaje
-                            );
-                            enviados++;
-                        } catch (error) {
-                            console.error('Error enviando SMS a', jugador.nombre, error);
-                            fallidos++;
-                        }
-                    } else {
-                        noNotificados.push(jugador.nombre);
-                    }
-                }
-            }
+            const numeros = equipos.flat().map(j => j.telefono);
+const mensagemGeral = equipos.map((eq, i) => {
+    const nomes = eq.map(j => j.nombre).join(', ');
+    return `Equipo ${i + 1}: ${nomes}`;
+}).join('\n');
 
-            const mensajeResultado = `✅ SMS enviados: ${enviados}\n❌ SMS fallidos: ${fallidos}${noNotificados.length > 0 ? `\n⚠️ Sin notificar: ${noNotificados.join(', ')}` : ''}`;
-            Alert.alert('Resultados de notificación', mensajeResultado);
+const mensagem = `MATCHORA - Partida\n${mensagemGeral}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
 
-            setNotificacionVisible(false);
-            setFechaPartida('');
-            setHoraPartida('');
-            setLocalPartida('');
+await SMS.sendSMSAsync(numeros, mensagem);
+Alert.alert('Listo', `SMS enviado a ${numeros.length} jugadores`);
+
+setNotificacionVisible(false);
+setFechaPartida('');
+setHoraPartida('');
+setLocalPartida('');
         } catch (error) {
             console.error('Error en proceso de notificación:', error);
             Alert.alert('Error', 'Ocurrió un error al intentar notificar');

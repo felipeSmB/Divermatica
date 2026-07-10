@@ -45,7 +45,20 @@ export default function EquiposScreen() {
     const totalPorEquipoFormacion = formacionAUsar
         ? formacionAUsar.postos.reduce((s, p) => s + p.cantidad, 0)
         : null;
-    const generarDisabled = formacionesDisponibles.length > 0 && !selectedFormacion;
+
+    // Determine whether the "Generar equipos" button must be disabled:
+    // - If the sport offers fixed formations, a formation must be selected
+    // - There must be enough players for the requested number of teams
+    const nEquiposSolicitados = Math.max(2, parseInt(numEquipos, 10) || 2);
+    let generarDisabled = false;
+    if (formacionesDisponibles.length > 0 && !selectedFormacion) {
+        generarDisabled = true;
+    } else if (formacionAUsar) {
+        const necesarios = totalPorEquipoFormacion * nEquiposSolicitados;
+        if (jugadoresDeporte.length < necesarios) generarDisabled = true;
+    } else {
+        if (jugadoresDeporte.length < nEquiposSolicitados) generarDisabled = true;
+    }
 
     const cargarDeportes = useCallback(async () => {
         const res = await apiFetch('/deportes.php');
@@ -73,23 +86,21 @@ export default function EquiposScreen() {
 
     function generar() {
         if (!deporteId) { Alert.alert('Atención', 'Selecciona un deporte'); return; }
-        if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'No hay jugadores para este deporte'); return; }
+        if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.'); return; }
 
         const n = Math.max(2, parseInt(numEquipos, 10) || 2);
 
         // If the sport has available fixed formations, require the user to select one
         if (formacionesDisponibles.length > 0 && !selectedFormacion) {
-            Alert.alert('Escolhe uma formação', 'Escolhe uma formação antes de gerar as equipas.');
+            Alert.alert('Atención', 'Escolhe primeiro uma formação antes de gerar as equipas.');
             return;
         }
 
         if (formacionAUsar) {
             const necesarios = totalPorEquipoFormacion * n;
             if (jugadoresDeporte.length < necesarios) {
-                Alert.alert(
-                    'Pocos jugadores',
-                    `La formación fija (${formacionAUsar.etiqueta}) necesita ${totalPorEquipoFormacion} jugadores por equipo — ${necesarios} en total para ${n} equipos — pero solo hay ${jugadoresDeporte.length} disponibles. Se generará lo que sea posible; algunos puestos pueden quedar incompletos.`
-                );
+                Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.');
+                return;
             }
 
             const { equipos: eq, faltantes } = generarEquiposConFormacion(jugadoresDeporte, n, formacionAUsar);
@@ -106,7 +117,7 @@ export default function EquiposScreen() {
 
         // Deporte sin formación fixa definida: reparto equilibrado genérico
         if (n > jugadoresDeporte.length) {
-            Alert.alert('Atención', 'No puedes crear más equipos que jugadores disponibles');
+            Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.');
             return;
         }
         setEquipos(generarEquiposBalanceados(jugadoresDeporte, n));
@@ -316,7 +327,7 @@ export default function EquiposScreen() {
 
                 <Text style={styles.hint}>Jugadores disponibles para este deporte: {jugadoresDeporte.length}</Text>
 
-                <TouchableOpacity style={[styles.boton, generarDisabled && styles.botonDeshabilitado]} onPress={generar} activeOpacity={0.85}>
+                <TouchableOpacity style={[styles.boton, generarDisabled && styles.botonDeshabilitado]} onPress={generar} activeOpacity={0.85} disabled={generarDisabled}>
                     <Text style={styles.botonTexto}>⚡ Generar equipos</Text>
                 </TouchableOpacity>
 

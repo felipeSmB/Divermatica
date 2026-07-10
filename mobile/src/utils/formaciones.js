@@ -28,28 +28,52 @@ const FUTBOL_11_4231 = { etiqueta: '4-2-3-1', postos: [ { etiqueta: 'Portero', r
 
 const FUTBOL_11_343 = { etiqueta: '3-4-3', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /central|zagueiro|l[ií]bero/, cantidad: 3 }, { etiqueta: 'Centrocampista', regex: /medi|volante|pivote|centrocampista|interior|\bcentro\b/, cantidad: 4 }, { etiqueta: 'Delantero', regex: /extremo|delanter|punta|centro.?forward|mediapunta/, cantidad: 3 }, ] };
 
-const FUTBOL_11_532 = { etiqueta: '5-3-2', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /lateral|central|zagueiro|defensa/, cantidad: 5 }, { etiqueta: 'Centrocampista', regex: /medi|volante|pivote|centrocampista/, cantidad: 3 }, { etiqueta: 'Delantero', regex: /centroavante|delanter|punta|atacante/, cantidad: 2 }, ] };
+// Removed 5-3-2 and 5-4-1 for Futebol 11 (no longer used)
 
-const FUTBOL_11_541 = { etiqueta: '5-4-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /lateral|central|zagueiro|defensa/, cantidad: 5 }, { etiqueta: 'Centrocampista', regex: /medi|volante|pivote|centrocampista/, cantidad: 4 }, { etiqueta: 'Delantero', regex: /centroavante|delanter|punta|atacante/, cantidad: 1 }, ] };
+// Futebol 7: novas formações conforme pedido
+const FUTBOL_7_321 = { etiqueta: '3-2-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 3 }, { etiqueta: 'Centrocampista', regex: /medi|volante|centrocampista|interior/, cantidad: 2 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 1 }, ] };
 
-const FUTBOL_7_A = { etiqueta: '3-2-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 3 }, { etiqueta: 'Centrocampista', regex: /medi|volante|centrocampista|interior/, cantidad: 2 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 1 }, ] };
+const FUTBOL_7_231 = { etiqueta: '2-3-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 2 }, { etiqueta: 'Centrocampista', regex: /medi|volante|centrocampista|interior/, cantidad: 3 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 1 }, ] };
 
-const FUTBOL_7_B = { etiqueta: '2-3-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 2 }, { etiqueta: 'Centrocampista', regex: /medi|volante|centrocampista|interior/, cantidad: 3 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 1 }, ] };
+const FUTBOL_7_1212 = { etiqueta: '1-2-1-2', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 1 }, { etiqueta: 'Centrocampista', regex: /medi|volante|centrocampista|interior/, cantidad: 2 }, { etiqueta: 'Mediapunta', regex: /mediapunta|enganche|interior/, cantidad: 1 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 2 }, ] };
 
-const FUTSAL_232 = { etiqueta: '2-2', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /cierre|fixo|defensa/, cantidad: 2 }, { etiqueta: 'Atacante', regex: /ala|piv[oô]|delanter/, cantidad: 2 }, ] };
+const FUTBOL_7_2121 = { etiqueta: '2-1-2-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 2 }, { etiqueta: 'Centrocampista', regex: /medi|volante|centrocampista|interior/, cantidad: 1 }, { etiqueta: 'Ala', regex: /ala|carrileiro/, cantidad: 2 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 1 }, ] };
 
-const FUTSAL_31 = { etiqueta: '3-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /cierre|fixo|defensa/, cantidad: 3 }, { etiqueta: 'Atacante', regex: /ala|piv[oô]|delanter/, cantidad: 1 }, ] };
+const FUTBOL_7_222 = { etiqueta: '2-2-2', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /defensa|lateral|central/, cantidad: 2 }, { etiqueta: 'Ala', regex: /ala|carrileiro/, cantidad: 2 }, { etiqueta: 'Delantero', regex: /delanter|punta|atacante/, cantidad: 2 }, ] };
+
+// Futsal: formações solicitadas (etiquetas compatíveis com o motor)
+const FUTSAL_31 = { etiqueta: '3-1', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Fixo', regex: /fixo|cierre/, cantidad: 1 }, { etiqueta: 'Ala', regex: /ala/, cantidad: 2 }, { etiqueta: 'Pivô', regex: /piv[oô]/, cantidad: 1 }, ] };
+
+const FUTSAL_22 = { etiqueta: '2-2', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /cierre|fixo|defensa/, cantidad: 2 }, { etiqueta: 'Atacante', regex: /ala|piv[oô]|delanter|atacante/, cantidad: 2 }, ] };
+
+const FUTSAL_40 = { etiqueta: '4-0', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Ala', regex: /ala/, cantidad: 2 }, { etiqueta: 'Centrocampista', regex: /medi|centrocampista|interior/, cantidad: 2 }, ] };
+
+const FUTSAL_AU = { etiqueta: 'Australiano (1-2-1)', postos: [ { etiqueta: 'Portero', regex: /porter|guarda.?redes|arquero|portero/, cantidad: 1 }, { etiqueta: 'Fixo', regex: /fixo|cierre/, cantidad: 1 }, { etiqueta: 'Ala', regex: /ala/, cantidad: 2 }, { etiqueta: 'Pivô', regex: /piv[oô]/, cantidad: 1 }, ] };
+
+const FUTSAL_GOL_LINHA_32 = { etiqueta: 'Goleiro-Linha (3-2)', postos: [ { etiqueta: 'Goleiro-Linha', regex: /goleiro.?linha|goleiro-linha|goleiro linha|goleiro/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /cierre|fixo|defensa/, cantidad: 3 }, { etiqueta: 'Atacante', regex: /ala|piv[oô]|delanter|atacante/, cantidad: 1 }, ] };
+
+const FUTSAL_GOL_LINHA_23 = { etiqueta: 'Goleiro-Linha (2-3)', postos: [ { etiqueta: 'Goleiro-Linha', regex: /goleiro.?linha|goleiro-linha|goleiro linha|goleiro/, cantidad: 1 }, { etiqueta: 'Defensa', regex: /cierre|fixo|defensa/, cantidad: 2 }, { etiqueta: 'Atacante', regex: /ala|piv[oô]|delanter|atacante/, cantidad: 2 }, ] };
 
 const BALONCESTO = { etiqueta: 'Quinteto titular', postos: [ { etiqueta: 'Base', regex: /base|armador/, cantidad: 1 }, { etiqueta: 'Escolta', regex: /escolta/, cantidad: 1 }, { etiqueta: 'Ala-Pívot', regex: /ala.?p[ií]vot/, cantidad: 1 }, { etiqueta: 'Alero', regex: /alero|ala\b/, cantidad: 1 }, { etiqueta: 'Pívot', regex: /p[ií]vo[t]?|center|centro\b/, cantidad: 1 }, ] };
+
+const BALONCESTO_2_3 = { etiqueta: 'Zona 2-3', postos: [ { etiqueta: 'Escolta', regex: /escolta/, cantidad: 2 }, { etiqueta: 'Pívot', regex: /p[ií]vo[t]?|center|centro\b/, cantidad: 3 }, ] };
+
+const BALONCESTO_3_2 = { etiqueta: 'Zona 3-2', postos: [ { etiqueta: 'Escolta', regex: /escolta/, cantidad: 3 }, { etiqueta: 'Pívot', regex: /p[ií]vo[t]?|center|centro\b/, cantidad: 2 }, ] };
+
+const BALONCESTO_INDIV = { etiqueta: 'Defesa Individual', postos: [ { etiqueta: 'Base', regex: /base|armador/, cantidad: 1 }, { etiqueta: 'Escolta', regex: /escolta/, cantidad: 1 }, { etiqueta: 'Alero', regex: /alero|ala\b/, cantidad: 1 }, { etiqueta: 'Ala-Pívot', regex: /ala.?p[ií]vot/, cantidad: 1 }, { etiqueta: 'Pívot', regex: /p[ií]vo[t]?|center|centro\b/, cantidad: 1 }, ] };
+
+const BALONCESTO_MOTION = { etiqueta: 'Motion Offense', postos: [ { etiqueta: 'Base', regex: /base|armador/, cantidad: 1 }, { etiqueta: 'Escolta', regex: /escolta/, cantidad: 1 }, { etiqueta: 'Alero', regex: /alero|ala\b/, cantidad: 1 }, { etiqueta: 'Ala-Pívot', regex: /ala.?p[ií]vot/, cantidad: 1 }, { etiqueta: 'Pívot', regex: /p[ií]vo[t]?|center|centro\b/, cantidad: 1 }, ] };
+
+const BALONCESTO_PICK = { etiqueta: 'Pick and Roll', postos: [ { etiqueta: 'Base', regex: /base|armador/, cantidad: 1 }, { etiqueta: 'Ala-Pívot', regex: /ala.?p[ií]vot/, cantidad: 1 }, { etiqueta: 'Escolta', regex: /escolta/, cantidad: 1 }, { etiqueta: 'Alero', regex: /alero|ala\b/, cantidad: 1 }, { etiqueta: 'Pívot', regex: /p[ií]vo[t]?|center|centro\b/, cantidad: 1 }, ] };
 
 const TENIS = { etiqueta: 'Dobles (2 jugadores)', postos: [ { etiqueta: 'Jugador', regex: /.*/, cantidad: 2 }, ] };
 
 // Mapa de formações possíveis por tipo — usado pela UI para obrigar escolha
 const FORMACIONES_POR_TIPO = {
-    futbol: [FUTBOL_11, FUTBOL_11_442, FUTBOL_11_352, FUTBOL_11_4231, FUTBOL_11_343, FUTBOL_11_532, FUTBOL_11_541],
-    futbol7: [FUTBOL_7_A, FUTBOL_7_B],
-    futsal: [FUTSAL_232, FUTSAL_31],
-    baloncesto: [BALONCESTO],
+    futbol: [FUTBOL_11, FUTBOL_11_442, FUTBOL_11_352, FUTBOL_11_4231, FUTBOL_11_343],
+    futbol7: [FUTBOL_7_321, FUTBOL_7_231, FUTBOL_7_1212, FUTBOL_7_2121, FUTBOL_7_222],
+    futsal: [FUTSAL_31, FUTSAL_22, FUTSAL_40, FUTSAL_AU, FUTSAL_GOL_LINHA_32, FUTSAL_GOL_LINHA_23],
+    baloncesto: [BALONCESTO, BALONCESTO_2_3, BALONCESTO_3_2, BALONCESTO_INDIV, BALONCESTO_MOTION, BALONCESTO_PICK],
     tenis: [TENIS],
 };
 

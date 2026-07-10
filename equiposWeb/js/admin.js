@@ -140,12 +140,19 @@ async function cargarUsuarios() {
             const roleActual = user.role;
             const roleNuevo = roleActual === 'admin' ? 'user' : 'admin';
             const textoBoton = roleActual === 'admin' ? 'Tornar User' : 'Tornar Admin';
+            const planoActual = user.plano === 'pro' ? 'pro' : 'demo';
+            const planoNuevo = planoActual === 'pro' ? 'demo' : 'pro';
+            const textoPlanoBoton = planoActual === 'pro' ? 'Tornar Demo' : 'Tornar Pro';
             
             // No mostrar botón eliminar si es el propio usuario o último admin
             let botonesAccion = `
                 <button class="btn-pequeño btn-role" 
                     onclick="alterarRole(${user.id}, '${roleActual}')">
                     ${textoBoton}
+                </button>
+                <button class="btn-pequeño btn-role" 
+                    onclick="alterarPlano(${user.id}, '${planoActual}')">
+                    ${textoPlanoBoton}
                 </button>
             `;
             
@@ -163,6 +170,7 @@ async function cargarUsuarios() {
                 <td>${escapeHtml(String(user.id))}</td>
                 <td>${escapeHtml(user.username)}</td>
                 <td>${badgeRole(user.role)}</td>
+                <td>${badgePlano(user.plano)}</td>
                 <td>${escapeHtml(fecha)}</td>
                 <td>
                     <div class="tabla-acciones">
@@ -172,7 +180,7 @@ async function cargarUsuarios() {
             </tr>`;
         });
         
-        document.getElementById('tabla-usuarios').innerHTML = html || '<tr><td colspan="5" class="sin-datos">No hay usuarios</td></tr>';
+        document.getElementById('tabla-usuarios').innerHTML = html || '<tr><td colspan="6" class="sin-datos">No hay usuarios</td></tr>';
         
     } catch (error) {
         console.error('Error en cargarUsuarios:', error);
@@ -201,6 +209,31 @@ async function alterarRole(id, roleActual) {
     } catch (error) {
         console.error('Error alterando role:', error);
         alert('Error al cambiar rol');
+    }
+}
+
+async function alterarPlano(id, planoActual) {
+    const planoNuevo = planoActual === 'pro' ? 'demo' : 'pro';
+    const textoConfirmar = `¿Cambiar el plan de este usuario a "${planoNuevo === 'pro' ? 'Pro' : 'Demo'}"?`;
+    
+    if (!confirm(textoConfirmar)) return;
+    
+    try {
+        const response = await apiFetch(`${API_URL}/admin_usuarios.php`, {
+            method: 'PUT',
+            body: JSON.stringify({ id, plano: planoNuevo })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            cargarUsuarios();
+        } else {
+            alert('Error: ' + (data.erro || 'Error desconocido'));
+        }
+    } catch (error) {
+        console.error('Error alterando plan:', error);
+        alert('Error al cambiar plan');
     }
 }
 
@@ -301,6 +334,13 @@ function badgeRole(role) {
     const esAdmin = role === 'admin';
     const clase = esAdmin ? 'nivel-muybueno' : 'nivel-medio';
     const texto = esAdmin ? 'Admin' : 'Usuario';
+    return `<span class="${clase}">${texto}</span>`;
+}
+
+function badgePlano(plano) {
+    const esPro = plano === 'pro';
+    const clase = esPro ? 'nivel-muybueno' : 'nivel-medio';
+    const texto = esPro ? 'Pro' : 'Demo';
     return `<span class="${clase}">${texto}</span>`;
 }
 

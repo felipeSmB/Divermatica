@@ -11,11 +11,14 @@ import { obtenerFormacion, generarEquiposConFormacion, listarFormaciones } from 
 import { detetarDeporte } from '../utils/posicionamento';
 import FormationPitch from '../components/FormationPitch';
 import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
+import usePlano from '../hooks/usePlano';
+import ProBadge from '../components/ProBadge';
 
 const { width: ANCHO_PANTALLA, height: ALTURA_PANTALLA } = Dimensions.get('window');
 const ALTURA_CAMPO_DISPONIVEL = ALTURA_PANTALLA * 0.46;
 
 export default function EquiposScreen() {
+    const { isDemo } = usePlano();
     const [deportes, setDeportes] = useState([]);
     const [deporteId, setDeporteId] = useState('');
     const [jugadoresDeporte, setJugadoresDeporte] = useState([]);
@@ -89,6 +92,10 @@ export default function EquiposScreen() {
         if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.'); return; }
 
         const n = Math.max(2, parseInt(numEquipos, 10) || 2);
+        if (isDemo && n > 2) {
+            Alert.alert('Límite demo', 'Demo: máximo 2 equipos. Actualiza a Pro para equipos ilimitados.');
+            return;
+        }
 
         // If the sport has available fixed formations, require the user to select one
         if (formacionesDisponibles.length > 0 && !selectedFormacion) {
@@ -263,17 +270,25 @@ export default function EquiposScreen() {
                     {deportes.map((d, i) => {
                         const activo = String(d.id) === deporteId;
                         const accent = ACCENTS[i % ACCENTS.length];
+                        const bloqueado = isDemo && detetarDeporte(d.nombre) !== 'futbol';
                         return (
                             <TouchableOpacity
                                 key={d.id}
                                 style={[
                                     styles.chip,
                                     activo && { backgroundColor: accent, borderColor: accent },
+                                    bloqueado && { opacity: 0.5 },
                                 ]}
-                                onPress={() => setDeporteId(String(d.id))}
+                                onPress={() => {
+                                    if (bloqueado) {
+                                        Alert.alert('Funcionalidad Pro', 'Actualiza a Pro para usar este deporte.');
+                                        return;
+                                    }
+                                    setDeporteId(String(d.id));
+                                }}
                             >
                                 <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>
-                                    {iconoDeporte(d.nombre)} {d.nombre}
+                                    {iconoDeporte(d.nombre)} {d.nombre}{bloqueado ? ' (Pro)' : ''}
                                 </Text>
                             </TouchableOpacity>
                         );
@@ -393,16 +408,40 @@ export default function EquiposScreen() {
                             ))}
                         </ScrollView>
 
-                        <TouchableOpacity style={styles.botonGuardar} onPress={guardarPartido} disabled={guardando} activeOpacity={0.85}>
-                            <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : '💾 Guardar en historial'}</Text>
+                        <TouchableOpacity
+                            style={[styles.botonGuardar, isDemo && { opacity: 0.5 }]}
+                            onPress={() => {
+                                if (isDemo) {
+                                    Alert.alert('Funcionalidad Pro', 'Funcionalidad Pro. Actualiza para guardar el historial de partidas.');
+                                    return;
+                                }
+                                guardarPartido();
+                            }}
+                            disabled={guardando}
+                            activeOpacity={0.85}
+                        >
+                            <View style={styles.botonTextoRow}>
+                                <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : '💾 Guardar en historial'}</Text>
+                                {isDemo && <ProBadge />}
+                            </View>
                         </TouchableOpacity>
 
-                    <TouchableOpacity
-                    style={styles.botonNotificar}
-                onPress={() => { setCampoVisible(false); setNotificacionVisible(true); }}
-                    disabled={guardando}
-                    activeOpacity={0.85}
->                            <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
+                        <TouchableOpacity
+                            style={[styles.botonNotificar, isDemo && { opacity: 0.5 }]}
+                            onPress={() => {
+                                if (isDemo) {
+                                    Alert.alert('Funcionalidad Pro', 'Funcionalidad Pro. Actualiza para enviar notificaciones a los jugadores.');
+                                    return;
+                                }
+                                setCampoVisible(false); setNotificacionVisible(true);
+                            }}
+                            disabled={guardando}
+                            activeOpacity={0.85}
+                        >
+                            <View style={styles.botonTextoRow}>
+                                <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
+                                {isDemo && <ProBadge />}
+                            </View>
                         </TouchableOpacity>
                     </Pressable>
                 </Pressable>
@@ -543,4 +582,5 @@ const styles = StyleSheet.create({
     botonGuardar: { backgroundColor: '#00e676', padding: 14, marginHorizontal: 12, marginVertical: 12, borderRadius: 10 },
     botonNotificar: { backgroundColor: '#ff9800', padding: 14, marginHorizontal: 12, marginVertical: 8, borderRadius: 10 },
     botonDeshabilitado: { opacity: 0.5 },
+    botonTextoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' },
 });

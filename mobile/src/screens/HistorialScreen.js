@@ -1,9 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
+import usePlano from '../hooks/usePlano';
+import ProBadge from '../components/ProBadge';
 
 export default function HistorialScreen() {
+    const { isDemo } = usePlano();
     const [partidos, setPartidos] = useState([]);
     const [detalle, setDetalle] = useState(null);
 
@@ -40,6 +43,16 @@ export default function HistorialScreen() {
 
     return (
         <View style={styles.container}>
+            {isDemo && (
+                <View style={styles.overlay}>
+                    <Text style={styles.overlayIcon}>🔒</Text>
+                    <Text style={styles.overlayTitle}>Funcionalidad Pro</Text>
+                    <Text style={styles.overlaySubtitle}>Actualiza para ver el historial de partidas.</Text>
+                    <TouchableOpacity style={styles.overlayButton} onPress={() => Alert.alert('MATCHORA Pro', 'Contacta al administrador para actualizar tu plan.')}>
+                        <Text style={styles.overlayButtonText}>Saber más</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             <Text style={styles.titulo}>Historial de partidos</Text>
             <FlatList
                 data={partidos}

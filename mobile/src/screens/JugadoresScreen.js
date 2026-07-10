@@ -8,6 +8,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
 import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/nivel';
 import { ACCENTS, iconoDeporte, normalizarTexto } from '../utils/deporteVisual';
+import { detetarDeporte } from '../utils/posicionamento';
+import usePlano from '../hooks/usePlano';
+import ProBadge from '../components/ProBadge';
 
 const NIVELES = ['Medio', 'Bueno', 'Muy Bueno'];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,6 +23,7 @@ function inicialesNombre(nombre) {
 }
 
 export default function JugadoresScreen() {
+    const { isDemo } = usePlano();
     const [jugadores, setJugadores] = useState([]);
     const [deportes, setDeportes] = useState([]);
     const [posiciones, setPosiciones] = useState([]);
@@ -73,6 +77,10 @@ export default function JugadoresScreen() {
     }, [jugadores, busqueda, filtroDeporte]);
 
     function abrirNuevo() {
+        if (isDemo && jugadores.length >= 22) {
+            Alert.alert('Límite demo', 'Límite demo: 22 jugadores. Actualiza a Pro para jugadores ilimitados.');
+            return;
+        }
         setEditandoId(null);
         setNombre(''); setTelefono(''); setMail(''); setDeporteId(''); setPosicion(''); setNivel('');
         setModalVisible(true);
@@ -93,6 +101,10 @@ export default function JugadoresScreen() {
 
     async function guardar() {
         if (!nombre.trim()) return Alert.alert('Atención', 'El nombre es obligatorio');
+        if (isDemo && !editandoId && jugadores.length >= 22) {
+            Alert.alert('Límite demo', 'Límite demo: 22 jugadores. Actualiza a Pro para jugadores ilimitados.');
+            return;
+        }
         if (!telefono.trim()) return Alert.alert('Atención', 'El teléfono es obligatorio');
         if (!mail.trim() || !EMAIL_REGEX.test(mail.trim())) return Alert.alert('Atención', 'Introduce un correo válido');
         if (!posicion) return Alert.alert('Atención', 'Selecciona una posición');
@@ -146,7 +158,7 @@ export default function JugadoresScreen() {
                         {jugadoresFiltrados.length} de {jugadores.length} {jugadores.length === 1 ? 'jugador' : 'jugadores'}
                     </Text>
                 </View>
-                <TouchableOpacity style={styles.botonPeq} onPress={abrirNuevo}>
+                <TouchableOpacity style={[styles.botonPeq, isDemo && jugadores.length >= 22 && { opacity: 0.5 }]} onPress={abrirNuevo}>
                     <Text style={styles.botonTexto}>+ Nuevo</Text>
                 </TouchableOpacity>
             </View>
@@ -190,15 +202,22 @@ export default function JugadoresScreen() {
                     const activo = String(d.id) === filtroDeporte;
                     const accent = accentPorDeporte[d.id] || '#00c2ff';
                     const cantidad = jugadores.filter(j => String(j.deporte_id) === String(d.id)).length;
+                    const bloqueado = isDemo && detetarDeporte(d.nombre) !== 'futbol';
                     return (
                         <TouchableOpacity
                             key={d.id}
-                            style={[styles.chip, activo && { backgroundColor: accent, borderColor: accent }]}
-                            onPress={() => setFiltroDeporte(String(d.id))}
+                            style={[styles.chip, activo && { backgroundColor: accent, borderColor: accent }, bloqueado && { opacity: 0.5 }]}
+                            onPress={() => {
+                                if (bloqueado) {
+                                    Alert.alert('Funcionalidad Pro', 'Actualiza a Pro para usar este deporte.');
+                                    return;
+                                }
+                                setFiltroDeporte(String(d.id));
+                            }}
                             activeOpacity={0.8}
                         >
                             <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]} numberOfLines={1}>
-                                {iconoDeporte(d.nombre)} {d.nombre}
+                                {iconoDeporte(d.nombre)} {d.nombre}{bloqueado ? ' (Pro)' : ''}
                             </Text>
                             <View style={[styles.chipContador, activo && { backgroundColor: 'rgba(0,0,0,0.18)' }]}>
                                 <Text style={[styles.chipContadorTexto, activo && styles.chipContadorTextoActivo]}>
@@ -298,13 +317,20 @@ export default function JugadoresScreen() {
                                 <View style={styles.chipsContainer}>
                                     {deportes.map(d => {
                                         const activo = String(d.id) === deporteId;
+                                        const bloqueado = isDemo && detetarDeporte(d.nombre) !== 'futbol';
                                         return (
                                             <TouchableOpacity
                                                 key={d.id}
-                                                style={[styles.chip, activo && styles.chipActivoTodos]}
-                                                onPress={() => { setDeporteId(String(d.id)); setPosicion(''); }}
+                                                style={[styles.chip, activo && styles.chipActivoTodos, bloqueado && { opacity: 0.5 }]}
+                                                onPress={() => {
+                                                    if (bloqueado) {
+                                                        Alert.alert('Funcionalidad Pro', 'Actualiza a Pro para usar este deporte.');
+                                                        return;
+                                                    }
+                                                    setDeporteId(String(d.id)); setPosicion('');
+                                                }}
                                             >
-                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{iconoDeporte(d.nombre)} {d.nombre}</Text>
+                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{iconoDeporte(d.nombre)} {d.nombre}{bloqueado ? ' (Pro)' : ''}</Text>
                                             </TouchableOpacity>
                                         );
                                     })}

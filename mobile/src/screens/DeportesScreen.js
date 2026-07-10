@@ -3,8 +3,12 @@ import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert } 
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
 import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
+import { detetarDeporte } from '../utils/posicionamento';
+import usePlano from '../hooks/usePlano';
+import ProBadge from '../components/ProBadge';
 
 export default function DeportesScreen() {
+    const { isDemo } = usePlano();
     const [deportes, setDeportes] = useState([]);
     const [nombre, setNombre] = useState('');
     const [numJugadores, setNumJugadores] = useState('7');
@@ -18,6 +22,10 @@ export default function DeportesScreen() {
 
     async function crear() {
         if (!nombre) return;
+        if (isDemo && detetarDeporte(nombre) !== 'futbol') {
+            Alert.alert('Límite demo', 'Solo puedes crear deportes de Fútbol. Actualiza a Pro para desbloquear todos los deportes.');
+            return;
+        }
         const res = await apiFetch('/deportes.php', {
             method: 'POST',
             body: JSON.stringify({ nombre, num_jugadores: parseInt(numJugadores, 10) || 7 }),
@@ -76,6 +84,7 @@ export default function DeportesScreen() {
                 </View>
                 <TouchableOpacity style={styles.boton} onPress={crear} activeOpacity={0.85}>
                     <Text style={styles.botonTexto}>+ Añadir deporte</Text>
+                    {isDemo && <ProBadge />}
                 </TouchableOpacity>
             </View>
 

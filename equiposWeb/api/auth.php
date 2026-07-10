@@ -65,6 +65,7 @@ $token = jwt_generate([
     'sub'      => $utilizador['id'],
     'username' => $utilizador['username'],
     'role'     => $utilizador['role'],
+    'plano'    => $utilizador['plano'],
 ], $secret, $expiry);
 
 try {

@@ -250,54 +250,54 @@ const POSICIONES_FORMACION = {
     },
     baloncesto: {
         'Quinteto titular': {
-            Base: [{ x: 50, y: 28 }],
-            Escolta: [{ x: 22, y: 42 }],
-            Alero: [{ x: 78, y: 42 }],
-            'Ala-Pívot': [{ x: 32, y: 68 }],
-            'Pívot': [{ x: 50, y: 86 }],
+            Base: [{ x: 50, y: 24 }],
+            Escolta: [{ x: 28, y: 38 }],
+            Alero: [{ x: 72, y: 38 }],
+            'Ala-Pívot': [{ x: 34, y: 62 }],
+            'Pívot': [{ x: 56, y: 78 }],
         },
         'Zona 2-3': {
             Escolta: [
-                { x: 24, y: 36 },
-                { x: 76, y: 36 },
+                { x: 26, y: 30 },
+                { x: 74, y: 30 },
             ],
             'Pívot': [
-                { x: 32, y: 66 },
+                { x: 24, y: 66 },
                 { x: 50, y: 78 },
-                { x: 68, y: 66 },
+                { x: 76, y: 66 },
             ],
         },
         'Zona 3-2': {
             Escolta: [
-                { x: 18, y: 32 },
-                { x: 50, y: 32 },
-                { x: 82, y: 32 },
+                { x: 20, y: 28 },
+                { x: 50, y: 28 },
+                { x: 80, y: 28 },
             ],
             'Pívot': [
-                { x: 36, y: 74 },
-                { x: 64, y: 74 },
+                { x: 36, y: 68 },
+                { x: 64, y: 68 },
             ],
         },
         'Defesa Individual': {
-            Base: [{ x: 50, y: 28 }],
-            Escolta: [{ x: 24, y: 40 }],
-            Alero: [{ x: 76, y: 40 }],
-            'Ala-Pívot': [{ x: 32, y: 72 }],
-            'Pívot': [{ x: 50, y: 86 }],
+            Base: [{ x: 50, y: 24 }],
+            Escolta: [{ x: 26, y: 38 }],
+            Alero: [{ x: 74, y: 38 }],
+            'Ala-Pívot': [{ x: 34, y: 64 }],
+            'Pívot': [{ x: 56, y: 78 }],
         },
         'Motion Offense': {
-            Base: [{ x: 44, y: 22 }],
-            Escolta: [{ x: 20, y: 42 }],
-            Alero: [{ x: 80, y: 42 }],
-            'Ala-Pívot': [{ x: 34, y: 68 }],
-            'Pívot': [{ x: 54, y: 82 }],
+            Base: [{ x: 44, y: 24 }],
+            Escolta: [{ x: 22, y: 40 }],
+            Alero: [{ x: 78, y: 40 }],
+            'Ala-Pívot': [{ x: 36, y: 64 }],
+            'Pívot': [{ x: 54, y: 76 }],
         },
         'Pick and Roll': {
-            Base: [{ x: 42, y: 28 }],
+            Base: [{ x: 44, y: 28 }],
             'Ala-Pívot': [{ x: 50, y: 34 }],
-            Escolta: [{ x: 18, y: 44 }],
-            Alero: [{ x: 82, y: 44 }],
-            'Pívot': [{ x: 56, y: 78 }],
+            Escolta: [{ x: 20, y: 40 }],
+            Alero: [{ x: 80, y: 40 }],
+            'Pívot': [{ x: 56, y: 74 }],
         },
     },
 };
@@ -438,14 +438,15 @@ function FieldFutbol7() {
 function FieldFutsal() {
     const W = 200, H = 400;
     const cx = W / 2;
-    const postHalf = 15;
-    const archR = 60;
-    const spot1 = 60, spot2 = 100;
+    const goalHalf = 15;
+    const penaltyArcR = 60;
+    const spot1 = 60;
+    const spot2 = 100;
     const circleR = 30;
-    const spotR = 2.6;
+    const spotR = 3;
 
-    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} 0 Z`;
-    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} ${H} Z`;
+    const arcTop = `M ${cx - goalHalf - penaltyArcR} 0 A ${penaltyArcR} ${penaltyArcR} 0 0 0 ${cx - goalHalf} ${penaltyArcR} L ${cx + goalHalf} ${penaltyArcR} A ${penaltyArcR} ${penaltyArcR} 0 0 1 ${cx + goalHalf + penaltyArcR} 0 Z`;
+    const arcBot = `M ${cx - goalHalf - penaltyArcR} ${H} A ${penaltyArcR} ${penaltyArcR} 0 0 1 ${cx - goalHalf} ${H - penaltyArcR} L ${cx + goalHalf} ${H - penaltyArcR} A ${penaltyArcR} ${penaltyArcR} 0 0 0 ${cx + goalHalf + penaltyArcR} ${H} Z`;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
@@ -460,26 +461,22 @@ function FieldFutsal() {
                 </RadialGradient>
             </Defs>
 
-            {/* Piso com ligeiro brilho, em vez de cor plana */}
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalPiso)" />
-
             <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
 
-            {/* Áreas pintadas com um tom ligeiramente mais claro, como num piso real */}
             <Path d={arcTop} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={3} />
+            <Line x1={cx - goalHalf} y1={0} x2={cx + goalHalf} y2={0} stroke={LINEA} strokeWidth={7} />
             <Circle cx={cx} cy={spot1} r={spotR} fill={LINEA} />
             <Circle cx={cx} cy={spot2} r={spotR} fill={LINEA} />
-            <Line x1={cx - postHalf} y1={0} x2={cx + postHalf} y2={0} stroke={LINEA} strokeWidth={7} />
 
             <Path d={arcBot} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={3} />
+            <Line x1={cx - goalHalf} y1={H} x2={cx + goalHalf} y2={H} stroke={LINEA} strokeWidth={7} />
             <Circle cx={cx} cy={H - spot1} r={spotR} fill={LINEA} />
             <Circle cx={cx} cy={H - spot2} r={spotR} fill={LINEA} />
-            <Line x1={cx - postHalf} y1={H} x2={cx + postHalf} y2={H} stroke={LINEA} strokeWidth={7} />
 
-            {/* Marcas da zona de substituição, 5m de cada lado do meio-campo */}
             <Line x1={0} y1={H / 2 - 50} x2={6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
             <Line x1={0} y1={H / 2 + 50} x2={6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
             <Line x1={W} y1={H / 2 - 50} x2={W - 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
@@ -500,7 +497,7 @@ function FieldTenis() {
     const netY = oy + ch / 2;
 
     return (
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <Defs>
                 <RadialGradient id="tenisVig" cx="50%" cy="50%" r="72%">
                     <Stop offset="55%" stopColor="#000000" stopOpacity="0" />

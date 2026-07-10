@@ -2,18 +2,26 @@ import React from 'react';
 import Svg, { Rect, Line, Circle, Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 const LINE = 'rgba(255,255,255,0.95)';
-const COURT_A = '#d17f3e';
-const COURT_B = '#c36f31';
+const COURT_A = '#d18b42';
+const COURT_B = '#b1692a';
 
 export default function FieldBasketball() {
-    // Dimensions in arbitrary units keeping aspect ratio ~0.54 (NBA court 28x15m)
-    const W = 560, H = 300; // scaled 28x15m court
+    const W = 560, H = 300;
+    const margin = 20;
     const cx = W / 2;
-    const keyW = 180; // scaled from 16ft lane width
-    const keyH = 140; // scaled distance from baseline to free throw line
-    const threeR = 250; // scaled 6.75m 3-point radius
-    const rimYTop = 40;
-    const freeThrowR = 28;
+    const cy = H / 2;
+    const topY = margin;
+    const botY = H - margin;
+    const keyW = 170;
+    const keyH = 120;
+    const hoopYTop = topY + 32;
+    const hoopYBot = botY - 32;
+    const rimR = 6;
+    const restrictedR = 42;
+    const centerCircleR = 40;
+    const threePointSide = 86;
+    const threePointR = 226;
+    const freeThrowR = 38;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
@@ -25,32 +33,49 @@ export default function FieldBasketball() {
             </Defs>
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#courtGrad)" />
+            <Rect x={margin} y={margin} width={W - margin * 2} height={H - margin * 2} fill="none" stroke={LINE} strokeWidth={4} rx={8} />
 
-            {/* Outer boundary */}
-            <Rect x={6} y={6} width={W - 12} height={H - 12} fill="none" stroke={LINE} strokeWidth={4} rx={6} />
+            <Line x1={cx} y1={margin} x2={cx} y2={H - margin} stroke={LINE} strokeWidth={3} />
+            <Circle cx={cx} cy={cy} r={centerCircleR} fill="none" stroke={LINE} strokeWidth={3} />
+            <Circle cx={cx} cy={cy} r={4} fill={LINE} />
 
-            {/* Half court */}
-            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINE} strokeWidth={3} />
-            <Circle cx={cx} cy={H / 2} r={28} fill="none" stroke={LINE} strokeWidth={3} />
+            <Rect x={cx - keyW / 2} y={topY} width={keyW} height={keyH} fill="none" stroke={LINE} strokeWidth={3} />
+            <Rect x={cx - keyW / 2} y={botY - keyH} width={keyW} height={keyH} fill="none" stroke={LINE} strokeWidth={3} />
 
-            {/* Paint areas (both ends) */}
-            <Rect x={cx - keyW / 2} y={0} width={keyW} height={keyH} fill="none" stroke={LINE} strokeWidth={3} />
-            <Rect x={cx - keyW / 2} y={H - keyH} width={keyW} height={keyH} fill="none" stroke={LINE} strokeWidth={3} />
+            <Line x1={cx - keyW / 2} y1={topY + 72} x2={cx + keyW / 2} y2={topY + 72} stroke={LINE} strokeWidth={2.5} />
+            <Line x1={cx - keyW / 2} y1={botY - 72} x2={cx + keyW / 2} y2={botY - 72} stroke={LINE} strokeWidth={2.5} />
 
-            {/* Free throw circles */}
-            <Circle cx={cx} cy={keyH} r={28} fill="none" stroke={LINE} strokeWidth={2} />
-            <Circle cx={cx} cy={H - keyH} r={28} fill="none" stroke={LINE} strokeWidth={2} />
+            <Path d={`M ${cx - freeThrowR} ${topY + 72} A ${freeThrowR} ${freeThrowR} 0 0 1 ${cx + freeThrowR} ${topY + 72}`} stroke={LINE} strokeWidth={2.5} fill="none" />
+            <Path d={`M ${cx - freeThrowR} ${botY - 72} A ${freeThrowR} ${freeThrowR} 0 0 0 ${cx + freeThrowR} ${botY - 72}`} stroke={LINE} strokeWidth={2.5} fill="none" />
 
-            {/* 3-point arcs (approximated) */}
-            <Path d={`M ${cx - threeR} ${rimYTop} A ${threeR} ${threeR} 0 0 1 ${cx + threeR} ${rimYTop}`} stroke={LINE} strokeWidth={3} fill="none" />
-            <Path d={`M ${cx - threeR} ${H - rimYTop} A ${threeR} ${threeR} 0 0 0 ${cx + threeR} ${H - rimYTop}`} stroke={LINE} strokeWidth={3} fill="none" />
+            <Line x1={cx - threePointSide} y1={topY} x2={cx - threePointSide} y2={topY + 72} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx + threePointSide} y1={topY} x2={cx + threePointSide} y2={topY + 72} stroke={LINE} strokeWidth={3} />
+            <Path d={`M ${cx - threePointSide} ${topY + 72} A ${threePointR} ${threePointR} 0 0 1 ${cx + threePointSide} ${topY + 72}`} stroke={LINE} strokeWidth={3} fill="none" />
 
-            {/* Rims and backboards */}
-            <Line x1={cx - 36} y1={12} x2={cx + 36} y2={12} stroke={LINE} strokeWidth={6} />
-            <Line x1={cx - 36} y1={H - 12} x2={cx + 36} y2={H - 12} stroke={LINE} strokeWidth={6} />
-            <Circle cx={cx} cy={rimYTop + 10} r={6} fill={LINE} />
-            <Circle cx={cx} cy={H - rimYTop - 10} r={6} fill={LINE} />
+            <Line x1={cx - threePointSide} y1={botY} x2={cx - threePointSide} y2={botY - 72} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx + threePointSide} y1={botY} x2={cx + threePointSide} y2={botY - 72} stroke={LINE} strokeWidth={3} />
+            <Path d={`M ${cx - threePointSide} ${botY - 72} A ${threePointR} ${threePointR} 0 0 0 ${cx + threePointSide} ${botY - 72}`} stroke={LINE} strokeWidth={3} fill="none" />
 
+            <Path d={`M ${cx - restrictedR} ${hoopYTop} A ${restrictedR} ${restrictedR} 0 0 1 ${cx + restrictedR} ${hoopYTop}`} stroke={LINE} strokeWidth={2.5} fill="none" />
+            <Path d={`M ${cx - restrictedR} ${hoopYBot} A ${restrictedR} ${restrictedR} 0 0 0 ${cx + restrictedR} ${hoopYBot}`} stroke={LINE} strokeWidth={2.5} fill="none" />
+
+            <Line x1={cx - 30} y1={topY + 18} x2={cx + 30} y2={topY + 18} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx - 30} y1={botY - 18} x2={cx + 30} y2={botY - 18} stroke={LINE} strokeWidth={3} />
+
+            <Line x1={cx - keyW / 2} y1={topY} x2={cx - keyW / 2} y2={topY + 20} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx + keyW / 2} y1={topY} x2={cx + keyW / 2} y2={topY + 20} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx - keyW / 2} y1={botY} x2={cx - keyW / 2} y2={botY - 20} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx + keyW / 2} y1={botY} x2={cx + keyW / 2} y2={botY - 20} stroke={LINE} strokeWidth={3} />
+
+            <Line x1={cx - 12} y1={topY + 12} x2={cx + 12} y2={topY + 12} stroke={LINE} strokeWidth={3} />
+            <Line x1={cx - 12} y1={botY - 12} x2={cx + 12} y2={botY - 12} stroke={LINE} strokeWidth={3} />
+            <Circle cx={cx} cy={hoopYTop} r={rimR} fill={LINE} />
+            <Circle cx={cx} cy={hoopYBot} r={rimR} fill={LINE} />
+
+            <Line x1={cx - 24} y1={topY + 64} x2={cx - 24} y2={topY + 70} stroke={LINE} strokeWidth={2} />
+            <Line x1={cx + 24} y1={topY + 64} x2={cx + 24} y2={topY + 70} stroke={LINE} strokeWidth={2} />
+            <Line x1={cx - 24} y1={botY - 64} x2={cx - 24} y2={botY - 70} stroke={LINE} strokeWidth={2} />
+            <Line x1={cx + 24} y1={botY - 64} x2={cx + 24} y2={botY - 70} stroke={LINE} strokeWidth={2} />
         </Svg>
     );
 }

@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
 import LoginScreen from '../screens/LoginScreen';
@@ -25,12 +26,75 @@ function BotonSalir() {
 }
 
 function AppTabs() {
+    const insets = useSafeAreaInsets();
+
     return (
-        <Tab.Navigator screenOptions={{ headerRight: () => <BotonSalir /> }}>
-            <Tab.Screen name="Jugadores" component={JugadoresScreen} />
-            <Tab.Screen name="Deportes" component={DeportesScreen} />
-            <Tab.Screen name="Equipos" component={EquiposScreen} />
-            <Tab.Screen name="Historial" component={HistorialScreen} />
+        <Tab.Navigator
+            screenOptions={{
+                headerRight: () => <BotonSalir />,
+                headerStyle: {
+                    backgroundColor: '#0f1115',
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#1c1f26',
+                    elevation: 0,
+                    shadowOpacity: 0,
+                },
+                headerShadowVisible: false,
+                headerTitle: 'MATCHORA',
+                headerTitleStyle: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
+                headerTitleAlign: 'left',
+                sceneContainerStyle: { backgroundColor: '#0f1115' },
+                tabBarStyle: {
+                    backgroundColor: '#0f1115',
+                    borderTopWidth: 1,
+                    borderTopColor: '#1c1f26',
+                    elevation: 0,
+                    shadowOpacity: 0,
+                    height: 56 + insets.bottom,
+                    paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
+                    paddingTop: 8,
+                },
+                tabBarActiveTintColor: '#00c2ff',
+                tabBarInactiveTintColor: '#5b6478',
+                tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+                tabBarShowLabel: true,
+            }}>
+            <Tab.Screen
+                name="Jugadores"
+                component={JugadoresScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>👥</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Deportes"
+                component={DeportesScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>🏅</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Equipos"
+                component={EquiposScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>⚡</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Historial"
+                component={HistorialScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>📖</Text>
+                    ),
+                }}
+            />
         </Tab.Navigator>
     );
 }

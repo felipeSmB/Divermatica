@@ -44,6 +44,7 @@ export default function HistorialScreen() {
             <FlatList
                 data={partidos}
                 keyExtractor={item => String(item.id)}
+                contentContainerStyle={{ flexGrow: 1 }}
                 renderItem={({ item }) => (
                     <TouchableOpacity style={styles.item} onPress={() => verDetalle(item.id)}>
                         <Text style={styles.itemNombre}>{item.deporte_nombre}</Text>
@@ -57,6 +58,7 @@ export default function HistorialScreen() {
 }
 
 const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#0f1115' },
     titulo: { fontSize: 20, fontWeight: 'bold', color: '#fff', marginBottom: 12 },
     item: { backgroundColor: '#1c1f26', padding: 12, borderRadius: 8, marginBottom: 8 },
     itemNombre: { color: '#fff', fontWeight: 'bold' },

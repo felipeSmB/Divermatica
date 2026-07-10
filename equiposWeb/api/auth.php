@@ -24,7 +24,7 @@ if ($username === '' || $password === '') {
     exit;
 }
 
-$stmt = $pdo->prepare('SELECT id, username, password_hash, role FROM usuarios WHERE username = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT id, username, password_hash, role, bloqueado FROM usuarios WHERE username = ? LIMIT 1');
 $stmt->execute([$username]);
 $utilizador = $stmt->fetch();
 
@@ -38,6 +38,17 @@ if (!$utilizador || !password_verify($password, $utilizador['password_hash'])) {
 
     http_response_code(401);
     echo json_encode(['erro' => 'Credenciais inválidas']);
+    exit;
+}
+
+if ($utilizador['bloqueado'] == 1) {
+    try {
+        $stmtLog = $pdo->prepare('INSERT INTO admin_logs (tipo, username, ip, detalhes) VALUES (?, ?, ?, ?)');
+        $stmtLog->execute(['login_bloqueado', $utilizador['username'], $ip, 'Intento de login en cuenta bloqueada']);
+    } catch (Exception $e) {}
+
+    http_response_code(403);
+    echo json_encode(['erro' => 'Cuenta bloqueada. Contacta el administrador.']);
     exit;
 }
 

@@ -13,6 +13,7 @@ import DeportesScreen from '../screens/DeportesScreen';
 import EquiposScreen from '../screens/EquiposScreen';
 import HistorialScreen from '../screens/HistorialScreen';
 import BrandTitle from '../components/BrandTitle';
+import AdminScreen from '../screens/AdminScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,7 +27,7 @@ function BotonSalir() {
     );
 }
 
-function AppTabs() {
+function AppTabs({ role }) {
     const insets = useSafeAreaInsets();
 
     return (
@@ -96,12 +97,23 @@ function AppTabs() {
                     ),
                 }}
             />
+            {role === 'admin' && (
+                <Tab.Screen
+                    name="Admin"
+                    component={AdminScreen}
+                    options={{
+                        tabBarIcon: ({ focused }) => (
+                            <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>🛠️</Text>
+                        ),
+                    }}
+                />
+            )}
         </Tab.Navigator>
     );
 }
 
 export default function AppNavigator() {
-    const { autenticado, cargando } = useAuth();
+    const { autenticado, cargando, role } = useAuth();
 
     if (cargando) return null;
 
@@ -109,7 +121,9 @@ export default function AppNavigator() {
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {autenticado ? (
-                    <Stack.Screen name="App" component={AppTabs} />
+                    <Stack.Screen name="App">
+                        {() => <AppTabs role={role} />}
+                    </Stack.Screen>
                 ) : (
                     <>
                         <Stack.Screen name="Login" component={LoginScreen} />

@@ -40,6 +40,7 @@ function AppTabs() {
                     shadowOpacity: 0,
                 },
                 headerShadowVisible: false,
+                headerTitle: 'MATCHORA',
                 headerTitleStyle: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
                 headerTitleAlign: 'left',
                 sceneContainerStyle: { backgroundColor: '#0f1115' },

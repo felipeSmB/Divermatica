@@ -27,10 +27,9 @@ export default function FieldPadel() {
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINE} strokeWidth={1} opacity={0.9} />
 
             {/* Service boxes */}
-            <Line x1={6} y1={H / 4} x2={W - 6} y2={H / 4} stroke={LINE} strokeWidth={2} />
-            <Line x1={6} y1={(H / 4) * 3} x2={W - 6} y2={(H / 4) * 3} stroke={LINE} strokeWidth={2} />
-            <Line x1={W / 2} y1={6} x2={W / 2} y2={H / 2 - 6} stroke={LINE} strokeWidth={2} />
-            <Line x1={W / 2} y1={H / 2 + 6} x2={W / 2} y2={H - 6} stroke={LINE} strokeWidth={2} />
+            <Line x1={6} y1={H / 2 - 60} x2={W - 6} y2={H / 2 - 60} stroke={LINE} strokeWidth={2} />
+            <Line x1={6} y1={H / 2 + 60} x2={W - 6} y2={H / 2 + 60} stroke={LINE} strokeWidth={2} />
+            <Line x1={W / 2} y1={H / 2 - 60} x2={W / 2} y2={H / 2 + 60} stroke={LINE} strokeWidth={2} />
 
         </Svg>
     );

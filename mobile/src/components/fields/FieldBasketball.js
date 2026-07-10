@@ -7,12 +7,13 @@ const COURT_B = '#c36f31';
 
 export default function FieldBasketball() {
     // Dimensions in arbitrary units keeping aspect ratio ~0.54 (NBA court 28x15m)
-    const W = 560, H = 300; // scale for clarity
+    const W = 560, H = 300; // scaled 28x15m court
     const cx = W / 2;
-    const keyW = 160; // width of the painted area
-    const keyH = 120; // distance from baseline to free throw line
-    const threeR = 220; // approx radius for 3pt line
-    const rimYTop = 28;
+    const keyW = 180; // scaled from 16ft lane width
+    const keyH = 140; // scaled distance from baseline to free throw line
+    const threeR = 250; // scaled 6.75m 3-point radius
+    const rimYTop = 40;
+    const freeThrowR = 28;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">

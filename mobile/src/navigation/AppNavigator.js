@@ -42,6 +42,7 @@ function AppTabs() {
                 headerShadowVisible: false,
                 headerTitleStyle: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
                 headerTitleAlign: 'left',
+                sceneContainerStyle: { backgroundColor: '#0f1115' },
                 tabBarStyle: {
                     backgroundColor: '#0f1115',
                     borderTopWidth: 1,

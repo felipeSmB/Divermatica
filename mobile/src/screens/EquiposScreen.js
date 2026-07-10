@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as SMS from 'expo-sms';
 import { apiFetch } from '../api/client';
 import { generarEquiposBalanceados } from '../utils/teamBalancer';
-import { obtenerFormacion, generarEquiposConFormacion } from '../utils/formaciones';
+import { obtenerFormacion, generarEquiposConFormacion, listarFormaciones } from '../utils/formaciones';
 import { detetarDeporte } from '../utils/posicionamento';
 import FormationPitch from '../components/FormationPitch';
 import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
@@ -37,10 +37,15 @@ export default function EquiposScreen() {
     const tipoSeleccionado = deporteSeleccionado ? detetarDeporte(deporteSeleccionado.nombre) : null;
     const formacionSeleccionada = deporteSeleccionado
         ? obtenerFormacion(tipoSeleccionado, deporteSeleccionado.num_jugadores)
+        : null; // fallback
+    const [selectedFormacion, setSelectedFormacion] = useState(null);
+
+    const formacionesDisponibles = deporteSeleccionado ? listarFormaciones(tipoSeleccionado, deporteSeleccionado.num_jugadores) : [];
+    const formacionAUsar = formacionesDisponibles.length > 0 ? selectedFormacion : formacionSeleccionada;
+    const totalPorEquipoFormacion = formacionAUsar
+        ? formacionAUsar.postos.reduce((s, p) => s + p.cantidad, 0)
         : null;
-    const totalPorEquipoFormacion = formacionSeleccionada
-        ? formacionSeleccionada.postos.reduce((s, p) => s + p.cantidad, 0)
-        : null;
+    const generarDisabled = formacionesDisponibles.length > 0 && !selectedFormacion;
 
     const cargarDeportes = useCallback(async () => {
         const res = await apiFetch('/deportes.php');
@@ -61,22 +66,33 @@ export default function EquiposScreen() {
         })();
     }, [deporteId]);
 
+    // Reset selected formation when sport changes
+    useEffect(() => {
+        setSelectedFormacion(null);
+    }, [deporteId]);
+
     function generar() {
         if (!deporteId) { Alert.alert('Atención', 'Selecciona un deporte'); return; }
         if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'No hay jugadores para este deporte'); return; }
 
         const n = Math.max(2, parseInt(numEquipos, 10) || 2);
 
-        if (formacionSeleccionada) {
+        // If the sport has available fixed formations, require the user to select one
+        if (formacionesDisponibles.length > 0 && !selectedFormacion) {
+            Alert.alert('Escolhe uma formação', 'Escolhe uma formação antes de gerar as equipas.');
+            return;
+        }
+
+        if (formacionAUsar) {
             const necesarios = totalPorEquipoFormacion * n;
             if (jugadoresDeporte.length < necesarios) {
                 Alert.alert(
                     'Pocos jugadores',
-                    `La formación fija (${formacionSeleccionada.etiqueta}) necesita ${totalPorEquipoFormacion} jugadores por equipo — ${necesarios} en total para ${n} equipos — pero solo hay ${jugadoresDeporte.length} disponibles. Se generará lo que sea posible; algunos puestos pueden quedar incompletos.`
+                    `La formación fija (${formacionAUsar.etiqueta}) necesita ${totalPorEquipoFormacion} jugadores por equipo — ${necesarios} en total para ${n} equipos — pero solo hay ${jugadoresDeporte.length} disponibles. Se generará lo que sea posible; algunos puestos pueden quedar incompletos.`
                 );
             }
 
-            const { equipos: eq, faltantes } = generarEquiposConFormacion(jugadoresDeporte, n, formacionSeleccionada);
+            const { equipos: eq, faltantes } = generarEquiposConFormacion(jugadoresDeporte, n, formacionAUsar);
             if (faltantes.length > 0) {
                 Alert.alert('Formación incompleta', faltantes.join('\n'));
             }
@@ -88,7 +104,7 @@ export default function EquiposScreen() {
             return;
         }
 
-        // Deporte sin formación fija definida: reparto equilibrado genérico
+        // Deporte sin formación fixa definida: reparto equilibrado genérico
         if (n > jugadoresDeporte.length) {
             Alert.alert('Atención', 'No puedes crear más equipos que jugadores disponibles');
             return;
@@ -264,14 +280,28 @@ export default function EquiposScreen() {
                             <Text style={styles.formacionIcono}>{iconoDeporte(deporteSeleccionado.nombre)}</Text>
                             <Text style={styles.formacionNombre}>{deporteSeleccionado.nombre}</Text>
                         </View>
-                        {formacionSeleccionada ? (
+                        {formacionesDisponibles && formacionesDisponibles.length > 0 ? (
                             <>
-                                <Text style={styles.formacionEtiqueta}>
-                                    Formación fija: <Text style={styles.formacionEtiquetaDestaque}>{formacionSeleccionada.etiqueta}</Text>
-                                </Text>
-                                <Text style={styles.formacionDetalle}>
-                                    {totalPorEquipoFormacion} jugadores por equipo · {formacionSeleccionada.postos.map(p => `${p.cantidad} ${p.etiqueta}`).join(', ')}
-                                </Text>
+                                <Text style={styles.formacionEtiqueta}>Escolhe una formación:</Text>
+                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, marginTop: 8 }}>
+                                    {formacionesDisponibles.map((f, i) => {
+                                        const activo = selectedFormacion && selectedFormacion.etiqueta === f.etiqueta;
+                                        return (
+                                            <TouchableOpacity
+                                                key={i}
+                                                style={[styles.chip, activo && { backgroundColor: '#00c2ff', borderColor: '#00c2ff' }]}
+                                                onPress={() => setSelectedFormacion(f)}
+                                            >
+                                                <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{f.etiqueta}</Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </ScrollView>
+                                {selectedFormacion ? (
+                                    <Text style={styles.formacionDetalle}>{totalPorEquipoFormacion} jugadores por equipo · {selectedFormacion.postos.map(p => `${p.cantidad} ${p.etiqueta}`).join(', ')}</Text>
+                                ) : (
+                                    <Text style={[styles.formacionDetalle, { marginTop: 8 }]}>Escolhe uma formação antes de gerar as equipas.</Text>
+                                )}
                             </>
                         ) : (
                             <Text style={styles.formacionDetalle}>
@@ -286,7 +316,7 @@ export default function EquiposScreen() {
 
                 <Text style={styles.hint}>Jugadores disponibles para este deporte: {jugadoresDeporte.length}</Text>
 
-                <TouchableOpacity style={styles.boton} onPress={generar} activeOpacity={0.85}>
+                <TouchableOpacity style={[styles.boton, generarDisabled && styles.botonDeshabilitado]} onPress={generar} activeOpacity={0.85}>
                     <Text style={styles.botonTexto}>⚡ Generar equipos</Text>
                 </TouchableOpacity>
 

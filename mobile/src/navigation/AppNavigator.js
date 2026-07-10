@@ -39,11 +39,57 @@ function AppTabs() {
                 headerShadowVisible: false,
                 headerTitleStyle: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
                 headerTitleAlign: 'left',
+                tabBarStyle: {
+                    backgroundColor: '#0f1115',
+                    borderTopWidth: 1,
+                    borderTopColor: '#1c1f26',
+                    elevation: 0,
+                    shadowOpacity: 0,
+                    height: 60,
+                    paddingBottom: 8,
+                    paddingTop: 8,
+                },
+                tabBarActiveTintColor: '#00c2ff',
+                tabBarInactiveTintColor: '#5b6478',
+                tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+                tabBarShowLabel: true,
             }}>
-            <Tab.Screen name="Jugadores" component={JugadoresScreen} />
-            <Tab.Screen name="Deportes" component={DeportesScreen} />
-            <Tab.Screen name="Equipos" component={EquiposScreen} />
-            <Tab.Screen name="Historial" component={HistorialScreen} />
+            <Tab.Screen
+                name="Jugadores"
+                component={JugadoresScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>👥</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Deportes"
+                component={DeportesScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>🏅</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Equipos"
+                component={EquiposScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>⚡</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Historial"
+                component={HistorialScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>📖</Text>
+                    ),
+                }}
+            />
         </Tab.Navigator>
     );
 }

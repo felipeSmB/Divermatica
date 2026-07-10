@@ -132,7 +132,11 @@ export function generarEquiposConFormacion(jugadores, numEquipos, formacion) {
             elegibles = elegibles.filter(i => puntuacionEquipos[i] === menorPuntuacion);
             const elegido = elegibles[Math.floor(Math.random() * elegibles.length)];
 
-            equipos[elegido].push(jugador);
+            // Insert a shallow copy with the assigned position label so the
+            // front-end can position the player exactly according to the
+            // chosen formation without mutating the original source list.
+            const asignado = { ...jugador, posicion: posto.etiqueta };
+            equipos[elegido].push(asignado);
             puntuacionEquipos[elegido] += puntajeNivel(jugador.nivel);
             countPos[elegido] += 1;
             usados.add(jugador.id);

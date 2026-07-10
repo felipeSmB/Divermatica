@@ -57,7 +57,6 @@ export default function HistorialScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0f1115', padding: 16 },
     titulo: { fontSize: 20, fontWeight: 'bold', color: '#fff', marginBottom: 12 },
     item: { backgroundColor: '#1c1f26', padding: 12, borderRadius: 8, marginBottom: 8 },
     itemNombre: { color: '#fff', fontWeight: 'bold' },

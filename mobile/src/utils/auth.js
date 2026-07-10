@@ -15,10 +15,21 @@ export async function eliminarToken() {
     await AsyncStorage.removeItem(TOKEN_KEY);
 }
 
+export function decodificarPayload(token) {
+    try {
+        if (!token) return null;
+        const [, payloadBase64] = token.split('.');
+        if (!payloadBase64) return null;
+        return JSON.parse(atobPolyfill(payloadBase64));
+    } catch {
+        return null;
+    }
+}
+
 export function tokenExpirado(token) {
     try {
-        const payload = JSON.parse(atobPolyfill(token.split('.')[1]));
-        return Date.now() / 1000 > payload.exp;
+        const payload = decodificarPayload(token);
+        return !payload || Date.now() / 1000 > payload.exp;
     } catch {
         return true;
     }

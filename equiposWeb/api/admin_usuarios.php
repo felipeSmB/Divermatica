@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['id'])) {
         // Obtener usuario específico
         $id = (int)$_GET['id'];
-        $stmt = $pdo->prepare('SELECT id, username, created_at, role FROM usuarios WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT id, username, created_at, role, bloqueado FROM usuarios WHERE id = ?');
         $stmt->execute([$id]);
         $usuario = $stmt->fetch();
         
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode($usuario);
     } else {
         // Listar todos los usuarios
-        $stmt = $pdo->prepare('SELECT id, username, created_at, role FROM usuarios ORDER BY created_at DESC');
+        $stmt = $pdo->prepare('SELECT id, username, created_at, role, bloqueado FROM usuarios ORDER BY created_at DESC');
         $stmt->execute();
         $usuarios = $stmt->fetchAll();
         echo json_encode(['usuarios' => $usuarios]);
@@ -93,36 +93,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     exit;
 }
 
-// PUT - actualizar role
+// PUT - actualizar role o bloqueo
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $datos = json_decode(file_get_contents('php://input'), true);
     
-    if (!isset($datos['id']) || !isset($datos['role'])) {
+    if (!isset($datos['id'])) {
         http_response_code(400);
-        echo json_encode(['erro' => 'ID y role son requeridos']);
+        echo json_encode(['erro' => 'ID requerido']);
         exit;
     }
     
     $id = (int)$datos['id'];
-    $role = $datos['role'];
-    
-    // Validar role
-    if (!in_array($role, ['admin', 'user'])) {
+
+    if ($payload['sub'] == $id) {
         http_response_code(400);
-        echo json_encode(['erro' => 'Role inválido. Debe ser "admin" o "user"']);
+        echo json_encode(['erro' => 'No puedes modificar tu propia cuenta']);
         exit;
     }
-    
-    // No permitir cambiar el role del propio usuario
-    if ($payload['sub'] == $id && $role === 'user') {
+
+    $updates = [];
+    $params = [];
+
+    if (isset($datos['role'])) {
+        $role = $datos['role'];
+        if (!in_array($role, ['admin', 'user'])) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Role inválido. Debe ser "admin" o "user"']);
+            exit;
+        }
+        $updates[] = 'role = ?';
+        $params[] = $role;
+    }
+
+    if (isset($datos['bloqueado'])) {
+        $bloqueado = (int)$datos['bloqueado'];
+        if (!in_array($bloqueado, [0, 1], true)) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Bloqueado inválido. Debe ser 0 o 1']);
+            exit;
+        }
+        $updates[] = 'bloqueado = ?';
+        $params[] = $bloqueado;
+    }
+
+    if (empty($updates)) {
         http_response_code(400);
-        echo json_encode(['erro' => 'No puedes remover tu propio rol de administrador']);
+        echo json_encode(['erro' => 'Se requiere role o bloqueado']);
         exit;
     }
-    
-    // Actualizar role
-    $stmt = $pdo->prepare('UPDATE usuarios SET role = ? WHERE id = ?');
-    $stmt->execute([$role, $id]);
+
+    $params[] = $id;
+    $stmt = $pdo->prepare('UPDATE usuarios SET ' . implode(', ', $updates) . ' WHERE id = ?');
+    $stmt->execute($params);
     
     echo json_encode(['ok' => true]);
     exit;

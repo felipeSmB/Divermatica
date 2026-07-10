@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Svg, { Rect, Circle, Line, Path, Defs, ClipPath } from 'react-native-svg';
+import Svg, { Rect, Circle, Line, Path, Defs, ClipPath, RadialGradient, LinearGradient, Stop } from 'react-native-svg';
 import PlayerJerseyCard, { JERSEY_SIZES } from './PlayerJerseyCard';
 import { detetarDeporte, calcularFormacao } from '../utils/posicionamento';
 
@@ -8,6 +8,25 @@ const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
 const TENIS_APRON = '#155a92';
 const TENIS_COURT = '#2f86c9';
+const GRASS_A = '#0e6b39';
+const GRASS_B = '#125f34';
+
+// Gera as faixas de relva cortada (mowing stripes), com a largura real
+// de uma faixa de corte de relvado profissional (~9m), em vez de bandas
+// fixas arbitrárias — por isso o nº de faixas muda consoante o
+// comprimento real de cada campo (Futebol 11 tem mais faixas que o 7).
+function FaixasRelva({ W, H, largura = 90 }) {
+    const n = Math.ceil(H / largura);
+    return (
+        <>
+            {Array.from({ length: n }).map((_, i) => {
+                const y = i * largura;
+                const h = Math.min(largura, H - y);
+                return <Rect key={i} x={0} y={y} width={W} height={h} fill={i % 2 === 0 ? GRASS_A : GRASS_B} />;
+            })}
+        </>
+    );
+}
 
 /* =====================================================
    CAMPOS EM SVG — Futebol 11, Futebol 7, Futsal, Ténis
@@ -17,23 +36,27 @@ const TENIS_COURT = '#2f86c9';
 
 // --- FUTEBOL 11 — 100,6 × 64m (imagem "Dimensiones del campo de fútbol 11") ---
 function FieldFutbol11() {
-    const W = 640, H = 1006; // largura x comprimento (baliza-a-baliza no eixo vertical)
+    const W = 640, H = 1006;
     const cx = W / 2;
-    const boxW = 403.2, boxD = 165;   // grande área: 40,32m largura / 16,5m profundidade
-    const goalW = 183.2, goalD = 55;  // pequena área: 18,32m largura / 5,5m profundidade
-    const penaltyDist = 110;          // grande penalidade a 11m
-    const circleR = 91.5;             // círculo central e arco: 9,15m
-    const cornerR = 9;                // cantos: 0,9m
+    const boxW = 403.2, boxD = 165;
+    const goalW = 183.2, goalD = 55;
+    const penaltyDist = 110;
+    const circleR = 91.5;
+    const cornerR = 9;
     const spotR = 3.2;
-    const dy = boxD - penaltyDist;
-    const dx = Math.sqrt(circleR * circleR - dy * dy);
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
             <Defs>
                 <ClipPath id="f11ArcTop"><Rect x={0} y={boxD} width={W} height={H - boxD} /></ClipPath>
                 <ClipPath id="f11ArcBot"><Rect x={0} y={0} width={W} height={H - boxD} /></ClipPath>
+                <RadialGradient id="f11Vig" cx="50%" cy="50%" r="72%">
+                    <Stop offset="55%" stopColor="#000000" stopOpacity="0" />
+                    <Stop offset="100%" stopColor="#000000" stopOpacity="0.28" />
+                </RadialGradient>
             </Defs>
+
+            <FaixasRelva W={W} H={H} largura={90} />
 
             <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
@@ -59,6 +82,9 @@ function FieldFutbol11() {
             <Path d={`M ${W - cornerR} 0 A ${cornerR} ${cornerR} 0 0 1 ${W} ${cornerR}`} stroke={LINEA} strokeWidth={3} fill="none" />
             <Path d={`M 0 ${H - cornerR} A ${cornerR} ${cornerR} 0 0 1 ${cornerR} ${H}`} stroke={LINEA} strokeWidth={3} fill="none" />
             <Path d={`M ${W} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${W - cornerR} ${H}`} stroke={LINEA} strokeWidth={3} fill="none" />
+
+            {/* Luz de estádio: escurece ligeiramente os cantos */}
+            <Rect x={0} y={0} width={W} height={H} fill="url(#f11Vig)" />
         </Svg>
     );
 }
@@ -67,20 +93,24 @@ function FieldFutbol11() {
 function FieldFutbol7() {
     const W = 365, H = 550;
     const cx = W / 2;
-    const boxW = 165, boxD = 91;  // área: 16,5m largura / 9,1m profundidade
-    const goalW = 60;             // baliza: 6m
-    const penaltyDist = 73;       // penalidade a 7,3m
-    const circleR = 55;           // círculo central: 5,5m
+    const boxW = 165, boxD = 91;
+    const goalW = 60;
+    const penaltyDist = 73;
+    const circleR = 55;
     const spotR = 3;
-    const dy = boxD - penaltyDist;
-    const dx = Math.sqrt(Math.max(circleR * circleR - dy * dy, 0));
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
             <Defs>
                 <ClipPath id="f7ArcTop"><Rect x={0} y={boxD} width={W} height={H - boxD} /></ClipPath>
                 <ClipPath id="f7ArcBot"><Rect x={0} y={0} width={W} height={H - boxD} /></ClipPath>
+                <RadialGradient id="f7Vig" cx="50%" cy="50%" r="72%">
+                    <Stop offset="55%" stopColor="#000000" stopOpacity="0" />
+                    <Stop offset="100%" stopColor="#000000" stopOpacity="0.28" />
+                </RadialGradient>
             </Defs>
+
+            <FaixasRelva W={W} H={H} largura={90} />
 
             <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
@@ -89,7 +119,6 @@ function FieldFutbol7() {
 
             <Rect x={cx - boxW / 2} y={0} width={boxW} height={boxD} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={penaltyDist} r={spotR} fill={LINEA} />
-            {/* Arco de penalização a tracejado — a própria referência assinala-o como "opcional" */}
             <Circle cx={cx} cy={penaltyDist} r={circleR} clipPath="url(#f7ArcTop)" fill="none" stroke={LINEA_SUAVE} strokeWidth={2.5} strokeDasharray="7,6" />
             <Line x1={cx - goalW / 2} y1={0} x2={cx + goalW / 2} y2={0} stroke={LINEA} strokeWidth={7} />
 
@@ -97,6 +126,8 @@ function FieldFutbol7() {
             <Circle cx={cx} cy={H - penaltyDist} r={spotR} fill={LINEA} />
             <Circle cx={cx} cy={H - penaltyDist} r={circleR} clipPath="url(#f7ArcBot)" fill="none" stroke={LINEA_SUAVE} strokeWidth={2.5} strokeDasharray="7,6" />
             <Line x1={cx - goalW / 2} y1={H} x2={cx + goalW / 2} y2={H} stroke={LINEA} strokeWidth={7} />
+
+            <Rect x={0} y={0} width={W} height={H} fill="url(#f7Vig)" />
         </Svg>
     );
 }
@@ -105,28 +136,43 @@ function FieldFutbol7() {
 function FieldFutsal() {
     const W = 200, H = 400;
     const cx = W / 2;
-    const postHalf = 15;   // meia-largura da baliza: 3m
-    const archR = 60;      // raio do arco: 6m
-    const spot1 = 60, spot2 = 100; // marcas de penálti: 6m e 10m
-    const circleR = 30;    // círculo central: 3m
+    const postHalf = 15;
+    const archR = 60;
+    const spot1 = 60, spot2 = 100;
+    const circleR = 30;
     const spotR = 2.6;
 
-    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} 0`;
-    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} ${H}`;
+    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} 0 Z`;
+    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} ${H} Z`;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+            <Defs>
+                <LinearGradient id="futsalPiso" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor="#1f7ab8" />
+                    <Stop offset="1" stopColor="#155d94" />
+                </LinearGradient>
+                <RadialGradient id="futsalVig" cx="50%" cy="50%" r="72%">
+                    <Stop offset="55%" stopColor="#000000" stopOpacity="0" />
+                    <Stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+                </RadialGradient>
+            </Defs>
+
+            {/* Piso com ligeiro brilho, em vez de cor plana */}
+            <Rect x={0} y={0} width={W} height={H} fill="url(#futsalPiso)" />
+
             <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
 
-            <Path d={arcTop} fill="none" stroke={LINEA} strokeWidth={3} />
+            {/* Áreas pintadas com um tom ligeiramente mais claro, como num piso real */}
+            <Path d={arcTop} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={spot1} r={spotR} fill={LINEA} />
             <Circle cx={cx} cy={spot2} r={spotR} fill={LINEA} />
             <Line x1={cx - postHalf} y1={0} x2={cx + postHalf} y2={0} stroke={LINEA} strokeWidth={7} />
 
-            <Path d={arcBot} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Path d={arcBot} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H - spot1} r={spotR} fill={LINEA} />
             <Circle cx={cx} cy={H - spot2} r={spotR} fill={LINEA} />
             <Line x1={cx - postHalf} y1={H} x2={cx + postHalf} y2={H} stroke={LINEA} strokeWidth={7} />
@@ -136,14 +182,16 @@ function FieldFutsal() {
             <Line x1={0} y1={H / 2 + 50} x2={6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
             <Line x1={W} y1={H / 2 - 50} x2={W - 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
             <Line x1={W} y1={H / 2 + 50} x2={W - 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
+
+            <Rect x={0} y={0} width={W} height={H} fill="url(#futsalVig)" />
         </Svg>
     );
 }
 
 // --- TÉNIS — pista de pares 23,77 × 10,97m, com zona de recuo (imagem "Marcación de pistas de tenis") ---
 function FieldTenis() {
-    const ox = 12, oy = 18; // zona de recuo (apron)
-    const cw = 109.7, ch = 237.7; // pista de pares
+    const ox = 12, oy = 18;
+    const cw = 109.7, ch = 237.7;
     const singlesInset = 13.7;
     const serviceOffset = 64;
     const W = cw + ox * 2, H = ch + oy * 2;
@@ -151,6 +199,13 @@ function FieldTenis() {
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+            <Defs>
+                <RadialGradient id="tenisVig" cx="50%" cy="50%" r="72%">
+                    <Stop offset="55%" stopColor="#000000" stopOpacity="0" />
+                    <Stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+                </RadialGradient>
+            </Defs>
+
             <Rect x={0} y={0} width={W} height={H} fill={TENIS_APRON} />
             <Rect x={ox} y={oy} width={cw} height={ch} fill={TENIS_COURT} />
 
@@ -168,6 +223,8 @@ function FieldTenis() {
 
             <Line x1={ox + cw / 2} y1={oy} x2={ox + cw / 2} y2={oy + 3.5} stroke={LINEA} strokeWidth={2.5} />
             <Line x1={ox + cw / 2} y1={oy + ch} x2={ox + cw / 2} y2={oy + ch - 3.5} stroke={LINEA} strokeWidth={2.5} />
+
+            <Rect x={0} y={0} width={W} height={H} fill="url(#tenisVig)" />
         </Svg>
     );
 }
@@ -270,7 +327,7 @@ function Diamante() {
 
 const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.6362 },
-    futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 }, // NOVO
+    futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 },
     futsal:     { fondo: '#1a6ea8', aspecto: 0.50 },
     baloncesto: { fondo: '#c17f3e', aspecto: 0.56 },
     balonmano:  { fondo: '#146b52', aspecto: 0.50 },
@@ -286,6 +343,7 @@ const CONFIG = {
 };
 
 const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
+const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis'];
 
 /* =====================================================
    COMPONENTE PRINCIPAL
@@ -300,17 +358,18 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
     const { width: cardW, height: cardH } = JERSEY_SIZES[tamanho];
 
     const formacao = calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
+    const usaSVG = SVG_FIELDS.includes(tipo);
 
     return (
         <View style={[styles.campo, { backgroundColor: cfg.fondo, aspectRatio: cfg.aspecto }]}>
-            {tipo !== 'tenis' && (
+            {!usaSVG && (
                 <View style={styles.franjas} pointerEvents="none">
                     {Array.from({ length: 8 }).map((_, i) => (
                         <View key={i} style={[styles.franja, { backgroundColor: i % 2 === 0 ? 'rgba(255,255,255,0.035)' : 'transparent' }]} />
                     ))}
                 </View>
             )}
-            <View style={styles.vinheta} pointerEvents="none" />
+            {!usaSVG && <View style={styles.vinheta} pointerEvents="none" />}
 
             {tipo === 'futbol' && <FieldFutbol11 />}
             {tipo === 'futbol7' && <FieldFutbol7 />}

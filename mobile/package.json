@@ -26,11 +26,8 @@
     "react-native": "0.81.5",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-<<<<<<< HEAD
+    "react-native-svg": "15.12.1",
     "typescript": "~5.9.2"
-=======
-    "react-native-svg": "15.12.1"
->>>>>>> 4221d0e315241de3704a6021c2cf018c3da47d1c
   },
   "private": true
 }

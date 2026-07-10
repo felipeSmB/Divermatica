@@ -374,6 +374,7 @@ export default function EquiposScreen() {
                                         equipo={eq}
                                         posicionesInfo={posicionesDeporte}
                                         deporte={deporteSeleccionado?.nombre}
+                                        formacion={formacionAUsar}
                                         maxHeight={ALTURA_CAMPO_DISPONIVEL}
                                         maxWidth={ANCHO_PANTALLA - 24}
                                     />

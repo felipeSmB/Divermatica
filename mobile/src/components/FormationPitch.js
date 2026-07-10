@@ -3,6 +3,16 @@ import { View, StyleSheet } from 'react-native';
 import Svg, { Rect, Circle, Line, Path, Defs, ClipPath, RadialGradient, LinearGradient, Stop } from 'react-native-svg';
 import PlayerJerseyCard, { JERSEY_SIZES } from './PlayerJerseyCard';
 import { detetarDeporte, calcularFormacao } from '../utils/posicionamento';
+import { classificarPosicao, distribuirX } from '../utils/posicionamento';
+import FieldBasketball from './fields/FieldBasketball';
+import FieldVolleyball from './fields/FieldVolleyball';
+import FieldRugby from './fields/FieldRugby';
+import FieldHandball from './fields/FieldHandball';
+import FieldHockey from './fields/FieldHockey';
+import FieldBaseball from './fields/FieldBaseball';
+import FieldPadel from './fields/FieldPadel';
+import FieldBadminton from './fields/FieldBadminton';
+import FieldTableTennis from './fields/FieldTableTennis';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
@@ -343,13 +353,13 @@ const CONFIG = {
 };
 
 const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
-const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis'];
+const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis', 'baloncesto', 'balonmano', 'rugby', 'hockey', 'beisbol', 'padel', 'badminton', 'tenisMesa'];
 
 /* =====================================================
    COMPONENTE PRINCIPAL
    ===================================================== */
 
-export default function FormationPitch({ equipo, posicionesInfo, deporte, small }) {
+export default function FormationPitch({ equipo, posicionesInfo, deporte, small, formacion }) {
     const tipo = detetarDeporte(deporte);
     const cfg = CONFIG[tipo];
     const dividePorRed = DIVIDE_POR_RED.includes(tipo);
@@ -357,7 +367,52 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
     const tamanho = small || denso ? 'small' : 'normal';
     const { width: cardW, height: cardH } = JERSEY_SIZES[tamanho];
 
-    const formacao = calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
+    // If a fixed formation was passed from the UI, compute precise positions
+    // using the formation template; otherwise fall back to the generic engine.
+    function calcularFormacaoPrecisa(equipoLocal, formacionTemplate) {
+        const resultado = [];
+        if (!formacionTemplate) return [];
+
+        // Agrupa jogadores por etiqueta de posto (asigna em generarEquiposConFormacion)
+        const grupos = {};
+        equipoLocal.forEach(j => {
+            const pos = j.posicion || 'Sem posición';
+            if (!grupos[pos]) grupos[pos] = [];
+            grupos[pos].push(j);
+        });
+
+        formacionTemplate.postos.forEach(posto => {
+            const jugadoresGrupo = grupos[posto.etiqueta] || [];
+            const n = jugadoresGrupo.length;
+            const info = classificarPosicao(posto.etiqueta, tipo) || { y: 50, xBase: 50, anchoMax: 40 };
+            const xs = distribuirX(n || 1, info.xBase, info.anchoMax);
+
+            jugadoresGrupo.forEach((j, i) => {
+                // Menos jitter vertical — usamos a profundidade do mapa para
+                // posicionamento consistente por rol, ajustando ligeiramente
+                // para múltiplos jogadores pela mesma posição.
+                let offsetY = 0;
+                if (n > 1) {
+                    const step = Math.min(6, 3 + Math.floor(n / 2));
+                    offsetY = (i - (n - 1) / 2) * step;
+                }
+                resultado.push({ jogador: j, xPorc: xs[i] ?? xs[0], yPorc: Math.min(95, Math.max(5, info.y + offsetY)) });
+            });
+        });
+
+        // Fallback: se houver jogadores não classificados pela formação, distribui-os em linhas
+        const usados = new Set(resultado.map(r => r.jogador.id));
+        const sobrantes = equipoLocal.filter(j => !usados.has(j.id));
+        if (sobrantes.length > 0) {
+            const xs = distribuirX(sobrantes.length, 50, 80);
+            sobrantes.forEach((j, i) => resultado.push({ jogador: j, xPorc: xs[i], yPorc: 50 }));
+        }
+
+        if (dividePorRed) return resultado.map(r => ({ ...r, yPorc: 58 + (r.yPorc / 100) * 38 }));
+        return resultado;
+    }
+
+    const formacao = formacion ? calcularFormacaoPrecisa(equipo, formacion) : calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
     const usaSVG = SVG_FIELDS.includes(tipo);
 
     return (
@@ -377,82 +432,38 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small 
             {tipo === 'tenis' && <FieldTenis />}
 
             {tipo === 'baloncesto' && (
-                <>
-                    <LineaCentral /><CirculoCentro diametro={64} />
-                    <CajaArea extremo="arriba" anchoPorc={30} altoPorc={20} />
-                    <ArcoRecortado extremo="arriba" diametro={70} distanciaBorde="20%" />
-                    <ArcoRecortado extremo="arriba" diametro={26} distanciaBorde="8%" />
-                    <ArcoRecortado extremo="arriba" diametro={300} distanciaBorde={0} />
-                    <CajaArea extremo="abajo" anchoPorc={30} altoPorc={20} />
-                    <ArcoRecortado extremo="abajo" diametro={70} distanciaBorde="20%" />
-                    <ArcoRecortado extremo="abajo" diametro={26} distanciaBorde="8%" />
-                    <ArcoRecortado extremo="abajo" diametro={300} distanciaBorde={0} />
-                </>
+                <FieldBasketball />
             )}
 
             {tipo === 'balonmano' && (
-                <>
-                    <LineaCentral />
-                    <ArcoRecortado extremo="arriba" diametro={170} distanciaBorde={0} />
-                    <ArcoRecortado extremo="arriba" diametro={230} distanciaBorde={0} dashed />
-                    <Punto extremo="arriba" distanciaPorc={11} />
-                    <ArcoRecortado extremo="abajo" diametro={170} distanciaBorde={0} />
-                    <ArcoRecortado extremo="abajo" diametro={230} distanciaBorde={0} dashed />
-                    <Punto extremo="abajo" distanciaPorc={11} />
-                </>
+                <FieldHandball />
             )}
 
             {tipo === 'hockey' && (
-                <>
-                    <LineaCentral />
-                    <ArcoRecortado extremo="arriba" diametro={150} distanciaBorde={0} />
-                    <ArcoRecortado extremo="abajo" diametro={150} distanciaBorde={0} />
-                </>
+                <FieldHockey />
             )}
 
             {tipo === 'rugby' && (
-                <>
-                    <LineaCentral />
-                    <LineaPunteada extremo="arriba" distanciaPorc={22} />
-                    <LineaPunteada extremo="abajo" distanciaPorc={22} />
-                    <CajaArea extremo="arriba" anchoPorc={10} altoPorc={6} />
-                    <CajaArea extremo="abajo" anchoPorc={10} altoPorc={6} />
-                    <Postes extremo="arriba" />
-                    <Postes extremo="abajo" />
-                </>
+                <FieldRugby />
             )}
 
             {tipo === 'voleibol' && (
-                <>
-                    <Red />
-                    <LineaPunteada extremo="arriba" distanciaPorc={25} />
-                    <LineaPunteada extremo="abajo" distanciaPorc={25} />
-                </>
+                <FieldVolleyball />
             )}
 
             {tipo === 'padel' && (
-                <>
-                    <Red />
-                    <CajasServicio profundidadPorc={30} />
-                </>
+                <FieldPadel />
             )}
 
             {tipo === 'badminton' && (
-                <>
-                    <Red />
-                    <CajasServicio profundidadPorc={16} />
-                </>
+                <FieldBadminton />
             )}
 
             {tipo === 'tenisMesa' && (
-                <>
-                    <Red />
-                    <LineaPunteada extremo="arriba" distanciaPorc={4} />
-                    <LineaPunteada extremo="abajo" distanciaPorc={4} />
-                </>
+                <FieldTableTennis />
             )}
 
-            {tipo === 'beisbol' && <Diamante />}
+            {tipo === 'beisbol' && <FieldBaseball />}
 
             {tipo === 'generico' && (
                 <>

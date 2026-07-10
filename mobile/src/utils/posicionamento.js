@@ -21,7 +21,7 @@ function clamp(v, min, max) {
 // ultrapassar os limites do campo nem o `anchoMax` disponível para essa
 // posição (ex.: um extremo não se deve espalhar tanto quanto um grupo de
 // centrais).
-function distribuirX(cantidad, xBase, anchoMax = 46) {
+export function distribuirX(cantidad, xBase, anchoMax = 46) {
     if (cantidad <= 1) return [xBase];
     const spread = Math.min(anchoMax, 14 + cantidad * 9);
     let inicio = xBase - spread / 2;
@@ -146,7 +146,7 @@ const REDE = {
     ],
 };
 
-function classificarPosicao(nomePosicao, tipoDeporte) {
+export function classificarPosicao(nomePosicao, tipoDeporte) {
     const alvo = normalizar(nomePosicao);
     const mapa = MAPAS[tipoDeporte] || REDE[tipoDeporte];
     if (!mapa) return null;

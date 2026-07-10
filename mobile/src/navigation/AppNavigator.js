@@ -26,7 +26,20 @@ function BotonSalir() {
 
 function AppTabs() {
     return (
-        <Tab.Navigator screenOptions={{ headerRight: () => <BotonSalir /> }}>
+        <Tab.Navigator
+            screenOptions={{
+                headerRight: () => <BotonSalir />,
+                headerStyle: {
+                    backgroundColor: '#0f1115',
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#1c1f26',
+                    elevation: 0,
+                    shadowOpacity: 0,
+                },
+                headerShadowVisible: false,
+                headerTitleStyle: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
+                headerTitleAlign: 'left',
+            }}>
             <Tab.Screen name="Jugadores" component={JugadoresScreen} />
             <Tab.Screen name="Deportes" component={DeportesScreen} />
             <Tab.Screen name="Equipos" component={EquiposScreen} />

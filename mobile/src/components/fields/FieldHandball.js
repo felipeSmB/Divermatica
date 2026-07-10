@@ -10,8 +10,9 @@ export default function FieldHandball() {
     const W = 400, H = 200;
     const cx = W / 2;
     const goalW = 96;
-    const goalDepth = 12;
-    const arcR = 46; // 6m line approx scaled
+    const goalDepth = 60;
+    const arcR = 120; // 6m line scaled
+    const freeThrowR = 180; // 9m line scaled
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
@@ -34,9 +35,9 @@ export default function FieldHandball() {
             <Rect x={cx - goalW / 2} y={H - goalDepth} width={goalW} height={goalDepth} fill="none" stroke={LINE} strokeWidth={4} />
             <Path d={`M ${cx - arcR} ${H - goalDepth} A ${arcR} ${arcR} 0 0 0 ${cx + arcR} ${H - goalDepth}`} stroke={LINE} strokeWidth={3} fill="none" />
 
-            {/* 9m dashed line (approx) */}
-            <Path d={`M ${cx - arcR - 20} ${goalDepth + 10} A ${arcR + 20} ${arcR + 20} 0 0 1 ${cx + arcR + 20} ${goalDepth + 10}`} stroke={LINE} strokeWidth={1.8} strokeDasharray="6,6" fill="none" />
-            <Path d={`M ${cx - arcR - 20} ${H - goalDepth - 10} A ${arcR + 20} ${arcR + 20} 0 0 0 ${cx + arcR + 20} ${H - goalDepth - 10}`} stroke={LINE} strokeWidth={1.8} strokeDasharray="6,6" fill="none" />
+            {/* 9m dashed line */}
+            <Path d={`M ${cx - freeThrowR} ${goalDepth + 12} A ${freeThrowR} ${freeThrowR} 0 0 1 ${cx + freeThrowR} ${goalDepth + 12}`} stroke={LINE} strokeWidth={1.8} strokeDasharray="6,6" fill="none" />
+            <Path d={`M ${cx - freeThrowR} ${H - goalDepth - 12} A ${freeThrowR} ${freeThrowR} 0 0 0 ${cx + freeThrowR} ${H - goalDepth - 12}`} stroke={LINE} strokeWidth={1.8} strokeDasharray="6,6" fill="none" />
 
         </Svg>
     );

@@ -12,6 +12,12 @@ require_once __DIR__ . '/middleware/rate_limit.php';
 require_once __DIR__ . '/middleware/jwt.php';
 require_once __DIR__ . '/conexion.php';
 
+$planoColExists = false;
+try {
+    $colCheck = $pdo->query("SHOW COLUMNS FROM usuarios LIKE 'plano'");
+    $planoColExists = (bool)$colCheck->fetch();
+} catch (Exception $e) {}
+
 rate_limit_verificar();
 
 $dados    = json_decode(file_get_contents('php://input'), true);
@@ -24,7 +30,9 @@ if ($username === '' || $password === '') {
     exit;
 }
 
-$stmt = $pdo->prepare('SELECT id, username, password_hash, role, bloqueado FROM usuarios WHERE username = ? LIMIT 1');
+$stmt = $pdo->prepare($planoColExists
+    ? 'SELECT id, username, password_hash, role, bloqueado, plano FROM usuarios WHERE username = ? LIMIT 1'
+    : 'SELECT id, username, password_hash, role, bloqueado FROM usuarios WHERE username = ? LIMIT 1');
 $stmt->execute([$username]);
 $utilizador = $stmt->fetch();
 
@@ -61,11 +69,13 @@ if ($secret === '' || $secret === 'CHANGE_THIS_TO_A_RANDOM_64_CHAR_STRING_BEFORE
     exit;
 }
 
+$plano = $planoColExists && isset($utilizador['plano']) ? ($utilizador['plano'] ?? 'demo') : 'demo';
+
 $token = jwt_generate([
     'sub'      => $utilizador['id'],
     'username' => $utilizador['username'],
     'role'     => $utilizador['role'],
-    'plano'    => $utilizador['plano'],
+    'plano'    => $plano,
 ], $secret, $expiry);
 
 try {

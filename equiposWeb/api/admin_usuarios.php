@@ -18,6 +18,12 @@ require_once __DIR__ . '/admin_verificar.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/middleware/rate_limit.php';
 
+$planoColExists = false;
+try {
+    $colCheck = $pdo->query("SHOW COLUMNS FROM usuarios LIKE 'plano'");
+    $planoColExists = (bool)$colCheck->fetch();
+} catch (Exception $e) {}
+
 rate_limit_verificar();
 
 // GET - listar o un usuario específico
@@ -25,7 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['id'])) {
         // Obtener usuario específico
         $id = (int)$_GET['id'];
-        $stmt = $pdo->prepare('SELECT id, username, created_at, role, bloqueado FROM usuarios WHERE id = ?');
+        $stmt = $pdo->prepare($planoColExists
+            ? 'SELECT id, username, created_at, role, bloqueado, plano FROM usuarios WHERE id = ?'
+            : 'SELECT id, username, created_at, role, bloqueado FROM usuarios WHERE id = ?');
         $stmt->execute([$id]);
         $usuario = $stmt->fetch();
         
@@ -38,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode($usuario);
     } else {
         // Listar todos los usuarios
-        $stmt = $pdo->prepare('SELECT id, username, created_at, role, bloqueado FROM usuarios ORDER BY created_at DESC');
+        $stmt = $pdo->prepare($planoColExists
+            ? 'SELECT id, username, created_at, role, bloqueado, plano FROM usuarios ORDER BY created_at DESC'
+            : 'SELECT id, username, created_at, role, bloqueado FROM usuarios ORDER BY created_at DESC');
         $stmt->execute();
         $usuarios = $stmt->fetchAll();
         echo json_encode(['usuarios' => $usuarios]);
@@ -136,9 +146,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $params[] = $bloqueado;
     }
 
+    if (isset($datos['plano'])) {
+        if (!$planoColExists) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Plano não disponível nesta base de dados']);
+            exit;
+        }
+        $plano = $datos['plano'];
+        if (!in_array($plano, ['demo', 'pro'], true)) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Plano inválido. Debe ser demo ou pro']);
+            exit;
+        }
+        $updates[] = 'plano = ?';
+        $params[] = $plano;
+    }
+
     if (empty($updates)) {
         http_response_code(400);
-        echo json_encode(['erro' => 'Se requiere role o bloqueado']);
+        echo json_encode(['erro' => 'Se requiere role, bloqueado o plano']);
         exit;
     }
 

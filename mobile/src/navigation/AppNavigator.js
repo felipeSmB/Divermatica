@@ -12,6 +12,7 @@ import JugadoresScreen from '../screens/JugadoresScreen';
 import DeportesScreen from '../screens/DeportesScreen';
 import EquiposScreen from '../screens/EquiposScreen';
 import HistorialScreen from '../screens/HistorialScreen';
+import BrandTitle from '../components/BrandTitle';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,7 +41,7 @@ function AppTabs() {
                     shadowOpacity: 0,
                 },
                 headerShadowVisible: false,
-                headerTitle: 'MATCHORA',
+                headerTitle: () => <BrandTitle />,
                 headerTitleStyle: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
                 headerTitleAlign: 'left',
                 sceneContainerStyle: { backgroundColor: '#0f1115' },

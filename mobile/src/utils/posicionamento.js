@@ -65,6 +65,7 @@ const FUTEBOL = [
 
 const FUTSAL = [
     [/porteiro|guarda.?redes|arquero|portero/, { y: 6, xBase: 50, anchoMax: 14 }],
+    [/goleiro.?linha|goleiro-linha|goleiro linha|goleiro/, { y: 46, xBase: 50, anchoMax: 14 }],
     [/fixo|cierre/, { y: 28, xBase: 50, anchoMax: 20 }],
     [/ala.?(direit|derech)/, { y: 52, xBase: 82, anchoMax: 16 }],
     [/ala.?(esquerd|izquierd)/, { y: 52, xBase: 18, anchoMax: 16 }],

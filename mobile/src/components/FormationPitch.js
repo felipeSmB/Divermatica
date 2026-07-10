@@ -1,14 +1,180 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import Svg, { Rect, Circle, Line, Path, Defs, ClipPath } from 'react-native-svg';
 import PlayerJerseyCard, { JERSEY_SIZES } from './PlayerJerseyCard';
 import { detetarDeporte, calcularFormacao } from '../utils/posicionamento';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
-const { width: ANCHO_PANTALLA, height: ALTURA_PANTALLA } = Dimensions.get('window');
+const TENIS_APRON = '#155a92';
+const TENIS_COURT = '#2f86c9';
 
 /* =====================================================
-   PEÇAS REUTILIZÁVEIS DO CAMPO
+   CAMPOS EM SVG — Futebol 11, Futebol 7, Futsal, Ténis
+   Medidas reais convertidas para unidades = decímetros
+   (1 unidade = 0,1m), para ficarem exatas e legíveis.
+   ===================================================== */
+
+// --- FUTEBOL 11 — 100,6 × 64m (imagem "Dimensiones del campo de fútbol 11") ---
+function FieldFutbol11() {
+    const W = 640, H = 1006; // largura x comprimento (baliza-a-baliza no eixo vertical)
+    const cx = W / 2;
+    const boxW = 403.2, boxD = 165;   // grande área: 40,32m largura / 16,5m profundidade
+    const goalW = 183.2, goalD = 55;  // pequena área: 18,32m largura / 5,5m profundidade
+    const penaltyDist = 110;          // grande penalidade a 11m
+    const circleR = 91.5;             // círculo central e arco: 9,15m
+    const cornerR = 9;                // cantos: 0,9m
+    const spotR = 3.2;
+    const dy = boxD - penaltyDist;
+    const dx = Math.sqrt(circleR * circleR - dy * dy);
+
+    return (
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+            <Defs>
+                <ClipPath id="f11ArcTop"><Rect x={0} y={boxD} width={W} height={H - boxD} /></ClipPath>
+                <ClipPath id="f11ArcBot"><Rect x={0} y={0} width={W} height={H - boxD} /></ClipPath>
+            </Defs>
+
+            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
+
+            {/* Baliza de cima */}
+            <Rect x={cx - boxW / 2} y={0} width={boxW} height={boxD} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Rect x={cx - goalW / 2} y={0} width={goalW} height={goalD} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={penaltyDist} r={spotR} fill={LINEA} />
+            <Circle cx={cx} cy={penaltyDist} r={circleR} clipPath="url(#f11ArcTop)" fill="none" stroke={LINEA} strokeWidth={3} />
+            <Line x1={cx - goalW / 2 + 10} y1={0} x2={cx + goalW / 2 - 10} y2={0} stroke={LINEA} strokeWidth={7} />
+
+            {/* Baliza de baixo (espelhada) */}
+            <Rect x={cx - boxW / 2} y={H - boxD} width={boxW} height={boxD} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Rect x={cx - goalW / 2} y={H - goalD} width={goalW} height={goalD} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H - penaltyDist} r={spotR} fill={LINEA} />
+            <Circle cx={cx} cy={H - penaltyDist} r={circleR} clipPath="url(#f11ArcBot)" fill="none" stroke={LINEA} strokeWidth={3} />
+            <Line x1={cx - goalW / 2 + 10} y1={H} x2={cx + goalW / 2 - 10} y2={H} stroke={LINEA} strokeWidth={7} />
+
+            {/* Cantos */}
+            <Path d={`M ${cornerR} 0 A ${cornerR} ${cornerR} 0 0 0 0 ${cornerR}`} stroke={LINEA} strokeWidth={3} fill="none" />
+            <Path d={`M ${W - cornerR} 0 A ${cornerR} ${cornerR} 0 0 1 ${W} ${cornerR}`} stroke={LINEA} strokeWidth={3} fill="none" />
+            <Path d={`M 0 ${H - cornerR} A ${cornerR} ${cornerR} 0 0 1 ${cornerR} ${H}`} stroke={LINEA} strokeWidth={3} fill="none" />
+            <Path d={`M ${W} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${W - cornerR} ${H}`} stroke={LINEA} strokeWidth={3} fill="none" />
+        </Svg>
+    );
+}
+
+// --- FUTEBOL 7 — 55 × 36,5m (imagem "Dimensiones del campo de fútbol 7") ---
+function FieldFutbol7() {
+    const W = 365, H = 550;
+    const cx = W / 2;
+    const boxW = 165, boxD = 91;  // área: 16,5m largura / 9,1m profundidade
+    const goalW = 60;             // baliza: 6m
+    const penaltyDist = 73;       // penalidade a 7,3m
+    const circleR = 55;           // círculo central: 5,5m
+    const spotR = 3;
+    const dy = boxD - penaltyDist;
+    const dx = Math.sqrt(Math.max(circleR * circleR - dy * dy, 0));
+
+    return (
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+            <Defs>
+                <ClipPath id="f7ArcTop"><Rect x={0} y={boxD} width={W} height={H - boxD} /></ClipPath>
+                <ClipPath id="f7ArcBot"><Rect x={0} y={0} width={W} height={H - boxD} /></ClipPath>
+            </Defs>
+
+            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
+
+            <Rect x={cx - boxW / 2} y={0} width={boxW} height={boxD} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={penaltyDist} r={spotR} fill={LINEA} />
+            {/* Arco de penalização a tracejado — a própria referência assinala-o como "opcional" */}
+            <Circle cx={cx} cy={penaltyDist} r={circleR} clipPath="url(#f7ArcTop)" fill="none" stroke={LINEA_SUAVE} strokeWidth={2.5} strokeDasharray="7,6" />
+            <Line x1={cx - goalW / 2} y1={0} x2={cx + goalW / 2} y2={0} stroke={LINEA} strokeWidth={7} />
+
+            <Rect x={cx - boxW / 2} y={H - boxD} width={boxW} height={boxD} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H - penaltyDist} r={spotR} fill={LINEA} />
+            <Circle cx={cx} cy={H - penaltyDist} r={circleR} clipPath="url(#f7ArcBot)" fill="none" stroke={LINEA_SUAVE} strokeWidth={2.5} strokeDasharray="7,6" />
+            <Line x1={cx - goalW / 2} y1={H} x2={cx + goalW / 2} y2={H} stroke={LINEA} strokeWidth={7} />
+        </Svg>
+    );
+}
+
+// --- FUTSAL — 40 × 20m, área em arco (imagem "Medidas de campo de fútbol sala") ---
+function FieldFutsal() {
+    const W = 200, H = 400;
+    const cx = W / 2;
+    const postHalf = 15;   // meia-largura da baliza: 3m
+    const archR = 60;      // raio do arco: 6m
+    const spot1 = 60, spot2 = 100; // marcas de penálti: 6m e 10m
+    const circleR = 30;    // círculo central: 3m
+    const spotR = 2.6;
+
+    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} 0`;
+    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} ${H}`;
+
+    return (
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
+
+            <Path d={arcTop} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={spot1} r={spotR} fill={LINEA} />
+            <Circle cx={cx} cy={spot2} r={spotR} fill={LINEA} />
+            <Line x1={cx - postHalf} y1={0} x2={cx + postHalf} y2={0} stroke={LINEA} strokeWidth={7} />
+
+            <Path d={arcBot} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Circle cx={cx} cy={H - spot1} r={spotR} fill={LINEA} />
+            <Circle cx={cx} cy={H - spot2} r={spotR} fill={LINEA} />
+            <Line x1={cx - postHalf} y1={H} x2={cx + postHalf} y2={H} stroke={LINEA} strokeWidth={7} />
+
+            {/* Marcas da zona de substituição, 5m de cada lado do meio-campo */}
+            <Line x1={0} y1={H / 2 - 50} x2={6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={0} y1={H / 2 + 50} x2={6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={W} y1={H / 2 - 50} x2={W - 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={W} y1={H / 2 + 50} x2={W - 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
+        </Svg>
+    );
+}
+
+// --- TÉNIS — pista de pares 23,77 × 10,97m, com zona de recuo (imagem "Marcación de pistas de tenis") ---
+function FieldTenis() {
+    const ox = 12, oy = 18; // zona de recuo (apron)
+    const cw = 109.7, ch = 237.7; // pista de pares
+    const singlesInset = 13.7;
+    const serviceOffset = 64;
+    const W = cw + ox * 2, H = ch + oy * 2;
+    const netY = oy + ch / 2;
+
+    return (
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+            <Rect x={0} y={0} width={W} height={H} fill={TENIS_APRON} />
+            <Rect x={ox} y={oy} width={cw} height={ch} fill={TENIS_COURT} />
+
+            <Rect x={ox} y={oy} width={cw} height={ch} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Line x1={ox + singlesInset} y1={oy} x2={ox + singlesInset} y2={oy + ch} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={ox + cw - singlesInset} y1={oy} x2={ox + cw - singlesInset} y2={oy + ch} stroke={LINEA} strokeWidth={2.5} />
+
+            <Line x1={ox - 5} y1={netY} x2={ox + cw + 5} y2={netY} stroke="#1c2733" strokeWidth={4} />
+            <Circle cx={ox - 5} cy={netY} r={3} fill="#1c2733" />
+            <Circle cx={ox + cw + 5} cy={netY} r={3} fill="#1c2733" />
+
+            <Line x1={ox + singlesInset} y1={netY - serviceOffset} x2={ox + cw - singlesInset} y2={netY - serviceOffset} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={ox + singlesInset} y1={netY + serviceOffset} x2={ox + cw - singlesInset} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={ox + cw / 2} y1={netY - serviceOffset} x2={ox + cw / 2} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
+
+            <Line x1={ox + cw / 2} y1={oy} x2={ox + cw / 2} y2={oy + 3.5} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={ox + cw / 2} y1={oy + ch} x2={ox + cw / 2} y2={oy + ch - 3.5} stroke={LINEA} strokeWidth={2.5} />
+        </Svg>
+    );
+}
+
+/* =====================================================
+   PEÇAS REUTILIZÁVEIS DO CAMPO (View) — inalteradas,
+   usadas pelos desportos que não mudaram nesta ronda.
    ===================================================== */
 
 function LineaCentral() {
@@ -48,23 +214,6 @@ function ArcoRecortado({ extremo, diametro, distanciaBorde = 0, dashed = false }
         <View
             style={[styles.arco, { width: diametro, height: diametro, borderRadius: r, left: '50%', marginLeft: -r, borderStyle: dashed ? 'dashed' : 'solid' }, lado]}
             pointerEvents="none"
-        />
-    );
-}
-
-function ArcoCanto({ vertical, horizontal, tamanho = 16 }) {
-    const posStyle = {};
-    posStyle[vertical] = -tamanho / 2;
-    posStyle[horizontal] = -tamanho / 2;
-    const raioStyle = {};
-    if (vertical === 'top' && horizontal === 'left') raioStyle.borderBottomRightRadius = tamanho;
-    if (vertical === 'top' && horizontal === 'right') raioStyle.borderBottomLeftRadius = tamanho;
-    if (vertical === 'bottom' && horizontal === 'left') raioStyle.borderTopRightRadius = tamanho;
-    if (vertical === 'bottom' && horizontal === 'right') raioStyle.borderTopLeftRadius = tamanho;
-    return (
-        <View
-            pointerEvents="none"
-            style={[styles.cantoBase, posStyle, raioStyle, { width: tamanho, height: tamanho }]}
         />
     );
 }
@@ -117,17 +266,17 @@ function Diamante() {
 
 /* =====================================================
    CONFIGURAÇÃO VISUAL POR DESPORTO
-   (aspecto = largura / altura, tal como o aspectRatio do CSS)
    ===================================================== */
 
 const CONFIG = {
-    futbol:     { fondo: '#0f6b3a', aspecto: 0.64 },
+    futbol:     { fondo: '#0f6b3a', aspecto: 0.6362 },
+    futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 }, // NOVO
     futsal:     { fondo: '#1a6ea8', aspecto: 0.50 },
     baloncesto: { fondo: '#c17f3e', aspecto: 0.56 },
     balonmano:  { fondo: '#146b52', aspecto: 0.50 },
     voleibol:   { fondo: '#1d6fae', aspecto: 0.50 },
     padel:      { fondo: '#0e9488', aspecto: 0.50 },
-    tenis:      { fondo: '#b5541f', aspecto: 0.46 },
+    tenis:      { fondo: TENIS_APRON, aspecto: 0.4885 },
     tenisMesa:  { fondo: '#0a4f8c', aspecto: 0.60 },
     badminton:  { fondo: '#2f9e52', aspecto: 0.48 },
     rugby:      { fondo: '#0c5c33', aspecto: 0.60 },
@@ -142,55 +291,31 @@ const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
    COMPONENTE PRINCIPAL
    ===================================================== */
 
-export default function FormationPitch({ equipo, posicionesInfo, deporte, small, maxHeight, maxWidth }) {
+export default function FormationPitch({ equipo, posicionesInfo, deporte, small }) {
     const tipo = detetarDeporte(deporte);
     const cfg = CONFIG[tipo];
     const dividePorRed = DIVIDE_POR_RED.includes(tipo);
-    const denso = equipo.length >= 7; // baixado de 9 para 7: rosters maiores usam cartões menores, evitando aglomeração
+    const denso = equipo.length >= 9;
     const tamanho = small || denso ? 'small' : 'normal';
     const { width: cardW, height: cardH } = JERSEY_SIZES[tamanho];
-
-    // --- Cálculo do tamanho do campo a partir do espaço VERTICAL
-    // disponível (em vez de partir da largura do ecrã). Isto é o que
-    // impede desportos com proporção muito "alta" (ténis, futsal,
-    // andebol, voleibol) de gerarem uma caixa gigante que ultrapassa o
-    // espaço visível do modal.
-    const anchoDisponivel = (maxWidth || ANCHO_PANTALLA) - 24;
-    const alturaDisponivel = maxHeight || ALTURA_PANTALLA * 0.48;
-
-    let anchoCampo = anchoDisponivel;
-    let alturaCampo = anchoCampo / cfg.aspecto;
-    if (alturaCampo > alturaDisponivel) {
-        alturaCampo = alturaDisponivel;
-        anchoCampo = alturaCampo * cfg.aspecto;
-    }
 
     const formacao = calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
 
     return (
-        <View style={[styles.campo, { backgroundColor: cfg.fondo, width: anchoCampo, height: alturaCampo }]}>
-            <View style={styles.franjas} pointerEvents="none">
-                {Array.from({ length: 8 }).map((_, i) => (
-                    <View key={i} style={[styles.franja, { backgroundColor: i % 2 === 0 ? 'rgba(255,255,255,0.035)' : 'transparent' }]} />
-                ))}
-            </View>
+        <View style={[styles.campo, { backgroundColor: cfg.fondo, aspectRatio: cfg.aspecto }]}>
+            {tipo !== 'tenis' && (
+                <View style={styles.franjas} pointerEvents="none">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <View key={i} style={[styles.franja, { backgroundColor: i % 2 === 0 ? 'rgba(255,255,255,0.035)' : 'transparent' }]} />
+                    ))}
+                </View>
+            )}
             <View style={styles.vinheta} pointerEvents="none" />
 
-            {(tipo === 'futbol' || tipo === 'futsal') && (
-                <>
-                    <LineaCentral /><CirculoCentro diametro={78} /><PuntoCentro />
-                    <CajaArea extremo="arriba" anchoPorc={18} altoPorc={13} />
-                    <CajaArea extremo="arriba" anchoPorc={34} altoPorc={6} />
-                    <ArcoRecortado extremo="arriba" diametro={90} distanciaBorde="13%" />
-                    <CajaArea extremo="abajo" anchoPorc={18} altoPorc={13} />
-                    <CajaArea extremo="abajo" anchoPorc={34} altoPorc={6} />
-                    <ArcoRecortado extremo="abajo" diametro={90} distanciaBorde="13%" />
-                    <ArcoCanto vertical="top" horizontal="left" />
-                    <ArcoCanto vertical="top" horizontal="right" />
-                    <ArcoCanto vertical="bottom" horizontal="left" />
-                    <ArcoCanto vertical="bottom" horizontal="right" />
-                </>
-            )}
+            {tipo === 'futbol' && <FieldFutbol11 />}
+            {tipo === 'futbol7' && <FieldFutbol7 />}
+            {tipo === 'futsal' && <FieldFutsal />}
+            {tipo === 'tenis' && <FieldTenis />}
 
             {tipo === 'baloncesto' && (
                 <>
@@ -246,10 +371,10 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
                 </>
             )}
 
-            {(tipo === 'tenis' || tipo === 'padel') && (
+            {tipo === 'padel' && (
                 <>
                     <Red />
-                    <CajasServicio profundidadPorc={tipo === 'padel' ? 30 : 26} />
+                    <CajasServicio profundidadPorc={30} />
                 </>
             )}
 
@@ -298,7 +423,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
 
 const styles = StyleSheet.create({
     campo: {
-        alignSelf: 'center',
+        width: '100%',
         borderRadius: 16,
         borderWidth: 3,
         borderColor: LINEA,
@@ -325,7 +450,6 @@ const styles = StyleSheet.create({
 
     caja: { position: 'absolute', borderWidth: 2, borderColor: LINEA },
     arco: { position: 'absolute', borderWidth: 2, borderColor: LINEA, backgroundColor: 'transparent' },
-    cantoBase: { position: 'absolute', borderWidth: 2, borderColor: LINEA, backgroundColor: 'transparent' },
     lineaPunteada: { position: 'absolute', height: 0, borderTopWidth: 2, borderColor: LINEA_SUAVE, borderStyle: 'dashed' },
 
     red: { position: 'absolute', left: 0, right: 0, top: '50%', height: 4, marginTop: -2, backgroundColor: 'rgba(255,255,255,0.9)' },

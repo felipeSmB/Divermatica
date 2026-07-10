@@ -32,36 +32,6 @@ function distribuirX(cantidad, xBase, anchoMax = 46) {
     return Array.from({ length: cantidad }, (_, i) => clamp(inicio + i * passo, 8, 92));
 }
 
-// Garante uma distância mínima (minGap, em % do campo) entre linhas
-// diferentes da formação. Sem isto, dois grupos com valores de "y" muito
-// próximos (ex.: 6% e 22%) faziam os cartões/etiquetas sobreporem-se em
-// ecrãs pequenos. Devolve um mapa { yOriginal -> yAjustado }.
-function espaciarNiveis(valoresY, minGap) {
-    const unicos = [...new Set(valoresY)].sort((a, b) => a - b);
-    if (unicos.length <= 1) return { [unicos[0]]: unicos[0] };
-
-    const ajustado = [...unicos];
-    for (let i = 1; i < ajustado.length; i++) {
-        if (ajustado[i] - ajustado[i - 1] < minGap) {
-            ajustado[i] = ajustado[i - 1] + minGap;
-        }
-    }
-
-    // Se o espaçamento forçado ultrapassou o limite inferior do campo,
-    // comprime tudo proporcionalmente para caber sempre entre 4% e 96%.
-    let final = ajustado;
-    const min = ajustado[0];
-    const max = ajustado[ajustado.length - 1];
-    if (max > 96) {
-        const escala = (96 - min) / (max - min);
-        final = ajustado.map(v => min + (v - min) * escala);
-    }
-
-    const mapa = {};
-    unicos.forEach((orig, i) => { mapa[orig] = final[i]; });
-    return mapa;
-}
-
 // ---------------------------------------------------------------------
 // MAPAS DE POSIÇÕES REAIS POR DESPORTO
 // Cada entrada: [expressão regular de deteção, { y, xBase, anchoMax }]
@@ -78,16 +48,19 @@ const FUTEBOL = [
     [/carrileiro.?(direit|derech)|ala.?(direit|derech)a?\b/, { y: 34, xBase: 86, anchoMax: 14 }],
     [/carrileiro.?(esquerd|izquierd)|ala.?(esquerd|izquierd)a?\b/, { y: 34, xBase: 14, anchoMax: 14 }],
     [/central|zagueiro|l[ií]bero/, { y: 22, xBase: 50, anchoMax: 46 }],
+    // NOVO: fallback genérico — necessário para o Futebol 7, onde muitos
+    // clubes usam apenas "Defesa" em vez de "Central"/"Lateral".
+    [/defesa|defensa/, { y: 24, xBase: 50, anchoMax: 50 }],
     [/pivote|volante|medio.?defensiv|primeiro.?volante/, { y: 42, xBase: 50, anchoMax: 40 }],
     [/interior.?(direit|derech)/, { y: 50, xBase: 68, anchoMax: 22 }],
     [/interior.?(esquerd|izquierd)/, { y: 50, xBase: 32, anchoMax: 22 }],
     [/m[eé]di[oa].?centr|centrocampista|mediocampista|m[eé]di[oa]\b/, { y: 50, xBase: 50, anchoMax: 50 }],
-    [/\bcentro\b/, { y: 58, xBase: 50, anchoMax: 30 }],
     [/segund[oa].?ponta|segund[oa].?delanter/, { y: 66, xBase: 50, anchoMax: 30 }],
     [/mia.?ponta|meia.?atacante|mediapunta|enganche/, { y: 62, xBase: 50, anchoMax: 30 }],
     [/extremo.?(direit|derech)|ponta.?direit|winger.?(direit|derech)/, { y: 72, xBase: 86, anchoMax: 14 }],
     [/extremo.?(esquerd|izquierd)|ponta.?esquerd|winger.?(esquerd|izquierd)/, { y: 72, xBase: 14, anchoMax: 14 }],
-    [/centroavante|ponta.?de.?lan[cç]a|delanter[oa].?centro|avan[cç]ado|punta\b|centro.?forward/, { y: 84, xBase: 50, anchoMax: 44 }],
+    // NOVO: acrescentado "atacante" — outro nome comum no Futebol 7 que antes não era reconhecido.
+    [/centroavante|ponta.?de.?lan[cç]a|delanter[oa].?centro|avan[cç]ado|atacante|punta\b|centro.?forward/, { y: 84, xBase: 50, anchoMax: 44 }],
 ];
 
 const FUTSAL = [
@@ -101,10 +74,8 @@ const FUTSAL = [
 // ---------------------------------------------------------------------
 // BASQUETEBOL — os 5 jogadores jogam o campo todo, não faz sentido
 // "profundidade defensiva" como no futebol. Representa-se um set
-// ofensivo de meio-campo: base no topo do garrafão, escolta e alero nas
-// alas, ala-pívot e pívot perto do cesto. A ordem importa: "ala.?p[ií]vot"
-// tem de vir ANTES de "alero|ala\b" para não ser apanhada pela regex
-// genérica de "alero".
+// ofensivo de meio-campo: base no topo do garrafão, escolta e alero
+// nas alas, ala-pívot e pívot perto do cesto.
 // ---------------------------------------------------------------------
 const BASQUETEBOL = [
     [/base|armador/, { y: 30, xBase: 50, anchoMax: 20 }],
@@ -156,6 +127,7 @@ const BEISBOL = [
 
 const MAPAS = {
     futbol: FUTEBOL,
+    futbol7: FUTEBOL, // NOVO: Futebol 7 usa os mesmos nomes de posição do Futebol 11, só muda o desenho do campo
     futsal: FUTSAL,
     baloncesto: BASQUETEBOL,
     balonmano: ANDEBOL,
@@ -164,7 +136,6 @@ const MAPAS = {
     beisbol: BEISBOL,
 };
 
-// Desportos "divididos pela rede" (mostram só o próprio meio-campo).
 const REDE = {
     voleibol: [
         [/l[ií]bero/, { y: 88, xBase: 50, anchoMax: 20 }],
@@ -175,10 +146,6 @@ const REDE = {
     ],
 };
 
-/**
- * Tenta classificar uma posição para um desporto conhecido.
- * Devolve { y, xBase, anchoMax } ou null se não reconhecida.
- */
 function classificarPosicao(nomePosicao, tipoDeporte) {
     const alvo = normalizar(nomePosicao);
     const mapa = MAPAS[tipoDeporte] || REDE[tipoDeporte];
@@ -189,15 +156,6 @@ function classificarPosicao(nomePosicao, tipoDeporte) {
     return null;
 }
 
-/**
- * Calcula a formação completa de uma equipa: devolve os jogadores com
- * coordenadas (xPorc, yPorc) já resolvidas e sem colisões.
- *
- * @param {Array} jugadores        jogadores da equipa
- * @param {Array} posicionesInfo   metadados das posições vindos da API (campo `orden`)
- * @param {string} tipoDeporte     chave devolvida por detetarDeporte()
- * @param {boolean} dividePorRed   se o desporto só mostra o próprio meio-campo
- */
 export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, dividePorRed) {
     const grupos = {};
     jugadores.forEach(j => {
@@ -207,22 +165,13 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
     });
 
     const nomesGrupo = Object.keys(grupos);
-    const infosPorGrupo = {};
-    nomesGrupo.forEach(nome => { infosPorGrupo[nome] = classificarPosicao(nome, tipoDeporte); });
-    const todosReconhecidos = nomesGrupo.length > 0 && nomesGrupo.every(n => infosPorGrupo[n] !== null);
+    const todosReconhecidos = nomesGrupo.every(n => classificarPosicao(n, tipoDeporte) !== null);
 
     const resultado = [];
 
-    if (todosReconhecidos) {
-        // --- Caminho "realista": usamos coordenadas táticas verdadeiras,
-        // mas com as linhas sempre bem espaçadas (nunca sobrepostas) ---
-        const minGap = jugadores.length >= 7 ? 12 : 16;
-        const valoresY = nomesGrupo.map(n => infosPorGrupo[n].y);
-        const mapaY = espaciarNiveis(valoresY, minGap);
-
+    if (todosReconhecidos && nomesGrupo.length > 0) {
         nomesGrupo.forEach(nome => {
-            const info = infosPorGrupo[nome];
-            const yBase = mapaY[info.y] ?? info.y;
+            const info = classificarPosicao(nome, tipoDeporte);
             const jogadoresGrupo = grupos[nome];
             const n = jogadoresGrupo.length;
             const xs = distribuirX(n, info.xBase, info.anchoMax);
@@ -238,12 +187,11 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
                 resultado.push({
                     jogador: j,
                     xPorc: xs[i],
-                    yPorc: clamp(yBase + jitterY, 5, 95),
+                    yPorc: clamp(info.y + jitterY, 5, 95),
                 });
             });
         });
     } else {
-        // --- Fallback: linhas por 'orden', para posições/desportos livres ---
         const ordenDe = {};
         (posicionesInfo || []).forEach(p => { ordenDe[p.nombre] = p.orden ?? 0; });
 
@@ -265,8 +213,6 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
         });
     }
 
-    // Desportos divididos por rede: só existe o próprio meio-campo, por
-    // isso comprimimos o eixo Y para a faixa inferior do campo.
     if (dividePorRed) {
         return resultado.map(r => ({ ...r, yPorc: 58 + (r.yPorc / 100) * 38 }));
     }
@@ -277,6 +223,8 @@ export function calcularFormacao(jugadores, posicionesInfo, tipoDeporte, divideP
 export function detetarDeporte(nome) {
     const n = normalizar(nome);
     if (n.includes('futsal') || n.includes('futbol sala') || n.includes('futebol de sal')) return 'futsal';
+    // Tem de vir ANTES do "futbol"/"futebol" genérico, senão "Futebol 7" seria sempre apanhado pelo genérico.
+    if (n.includes('futebol 7') || n.includes('futbol 7') || n.includes('fut7') || n.includes('fut 7')) return 'futbol7';
     if (n.includes('futbol') || n.includes('futebol')) return 'futbol';
     if (n.includes('baloncesto') || n.includes('basquet') || n.includes('basquete')) return 'baloncesto';
     if (n.includes('balonmano') || n.includes('handball') || n.includes('andebol')) return 'balonmano';

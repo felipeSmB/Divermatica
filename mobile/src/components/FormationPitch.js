@@ -495,6 +495,8 @@ function FieldTenis() {
     const serviceOffset = 64;
     const W = cw + ox * 2, H = ch + oy * 2;
     const netY = oy + ch / 2;
+    const centreX = ox + cw / 2;
+    const baselineMark = 3.5;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
@@ -512,16 +514,19 @@ function FieldTenis() {
             <Line x1={ox + singlesInset} y1={oy} x2={ox + singlesInset} y2={oy + ch} stroke={LINEA} strokeWidth={2.5} />
             <Line x1={ox + cw - singlesInset} y1={oy} x2={ox + cw - singlesInset} y2={oy + ch} stroke={LINEA} strokeWidth={2.5} />
 
+            <Line x1={ox + singlesInset} y1={netY - serviceOffset} x2={ox + cw - singlesInset} y2={netY - serviceOffset} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={ox + singlesInset} y1={netY + serviceOffset} x2={ox + cw - singlesInset} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={centreX} y1={netY - serviceOffset} x2={centreX} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
+
+            <Line x1={centreX} y1={oy} x2={centreX} y2={oy + baselineMark} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={centreX} y1={oy + ch} x2={centreX} y2={oy + ch - baselineMark} stroke={LINEA} strokeWidth={2.5} />
+
             <Line x1={ox - 5} y1={netY} x2={ox + cw + 5} y2={netY} stroke="#1c2733" strokeWidth={4} />
             <Circle cx={ox - 5} cy={netY} r={3} fill="#1c2733" />
             <Circle cx={ox + cw + 5} cy={netY} r={3} fill="#1c2733" />
 
-            <Line x1={ox + singlesInset} y1={netY - serviceOffset} x2={ox + cw - singlesInset} y2={netY - serviceOffset} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={ox + singlesInset} y1={netY + serviceOffset} x2={ox + cw - singlesInset} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={ox + cw / 2} y1={netY - serviceOffset} x2={ox + cw / 2} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
-
-            <Line x1={ox + cw / 2} y1={oy} x2={ox + cw / 2} y2={oy + 3.5} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={ox + cw / 2} y1={oy + ch} x2={ox + cw / 2} y2={oy + ch - 3.5} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={ox} y1={netY} x2={ox + cw} y2={netY} stroke="rgba(255,255,255,0.35)" strokeWidth={1.5} />
+            <Line x1={centreX - 0.5} y1={netY - serviceOffset} x2={centreX - 0.5} y2={netY + serviceOffset} stroke="rgba(255,255,255,0.35)" strokeWidth={1} />
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#tenisVig)" />
         </Svg>

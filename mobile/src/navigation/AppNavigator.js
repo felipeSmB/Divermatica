@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TouchableOpacity, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
 import LoginScreen from '../screens/LoginScreen';
@@ -25,6 +26,8 @@ function BotonSalir() {
 }
 
 function AppTabs() {
+    const insets = useSafeAreaInsets();
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -45,8 +48,8 @@ function AppTabs() {
                     borderTopColor: '#1c1f26',
                     elevation: 0,
                     shadowOpacity: 0,
-                    height: 60,
-                    paddingBottom: 8,
+                    height: 56 + insets.bottom,
+                    paddingBottom: insets.bottom > 0 ? insets.bottom : 8,
                     paddingTop: 8,
                 },
                 tabBarActiveTintColor: '#00c2ff',

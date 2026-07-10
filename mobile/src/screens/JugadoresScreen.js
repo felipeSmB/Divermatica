@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, ScrollView,
-    SafeAreaView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform,
+    KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { apiFetch } from '../api/client';
 import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/nivel';

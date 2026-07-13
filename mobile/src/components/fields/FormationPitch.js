@@ -5,14 +5,8 @@ import PlayerJerseyCard, { JERSEY_SIZES } from '../PlayerJerseyCard';
 import { detetarDeporte, calcularFormacao } from '../../utils/posicionamento';
 import { classificarPosicao, distribuirX } from '../../utils/posicionamento';
 import FieldBasketball from './FieldBasketball';
-import FieldVolleyball from './FieldVolleyball';
 import FieldRugby from './FieldRugby';
 import FieldHandball from './FieldHandball';
-import FieldHockey from './FieldHockey';
-import FieldBaseball from './FieldBaseball';
-import FieldPadel from './FieldPadel';
-import FieldBadminton from './FieldBadminton';
-import FieldTableTennis from './FieldTableTennis';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';

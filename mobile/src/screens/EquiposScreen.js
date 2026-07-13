@@ -9,7 +9,7 @@ import { apiFetch } from '../api/client';
 import { generarEquiposBalanceados } from '../utils/teamBalancer';
 import { obtenerFormacion, generarEquiposConFormacion, listarFormaciones } from '../utils/formaciones';
 import { detetarDeporte } from '../utils/posicionamento';
-import FormationPitch from '../components/FormationPitch';
+import FormationPitch from '../components/fields/FormationPitch';
 import { ACCENTS, iconoDeporte } from '../utils/deporteVisual';
 import usePlano from '../hooks/usePlano';
 import ProBadge from '../components/ProBadge';

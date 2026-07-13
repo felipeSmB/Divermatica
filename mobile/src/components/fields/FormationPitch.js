@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Rect, Circle, Line, Path, Defs, ClipPath, RadialGradient, LinearGradient, Stop } from 'react-native-svg';
-import PlayerJerseyCard, { JERSEY_SIZES } from './PlayerJerseyCard';
-import { detetarDeporte, calcularFormacao } from '../utils/posicionamento';
-import { classificarPosicao, distribuirX } from '../utils/posicionamento';
-import FieldBasketball from './fields/FieldBasketball';
-import FieldVolleyball from './fields/FieldVolleyball';
-import FieldRugby from './fields/FieldRugby';
-import FieldHandball from './fields/FieldHandball';
-import FieldHockey from './fields/FieldHockey';
-import FieldBaseball from './fields/FieldBaseball';
-import FieldPadel from './fields/FieldPadel';
-import FieldBadminton from './fields/FieldBadminton';
+import PlayerJerseyCard, { JERSEY_SIZES } from '../PlayerJerseyCard';
+import { detetarDeporte, calcularFormacao } from '../../utils/posicionamento';
+import { classificarPosicao, distribuirX } from '../../utils/posicionamento';
+import FieldBasketball from './FieldBasketball';
+import FieldVolleyball from './FieldVolleyball';
+import FieldRugby from './FieldRugby';
+import FieldHandball from './FieldHandball';
+import FieldHockey from './FieldHockey';
+import FieldBaseball from './FieldBaseball';
+import FieldPadel from './FieldPadel';
+import FieldBadminton from './FieldBadminton';
 import FieldTableTennis from './fields/FieldTableTennis';
 
 const LINEA = 'rgba(255,255,255,0.85)';

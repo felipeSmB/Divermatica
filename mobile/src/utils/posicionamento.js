@@ -87,24 +87,26 @@ const BASQUETEBOL = [
 ];
 
 const ANDEBOL = [
-    [/porteiro|guarda.?redes|arquero|portero/, { y: 6, xBase: 50, anchoMax: 14 }],
-    [/central/, { y: 38, xBase: 50, anchoMax: 22 }],
-    [/lateral.?(direit|derech)/, { y: 42, xBase: 76, anchoMax: 18 }],
-    [/lateral.?(esquerd|izquierd)/, { y: 42, xBase: 24, anchoMax: 18 }],
-    [/ponta.?(direit|derech)|extremo.?(direit|derech)/, { y: 78, xBase: 92, anchoMax: 10 }],
+    [/guarda.?redes|porteiro|arquero|portero/, { y: 6, xBase: 50, anchoMax: 14 }],
     [/ponta.?(esquerd|izquierd)|extremo.?(esquerd|izquierd)/, { y: 78, xBase: 8, anchoMax: 10 }],
+    [/lateral.?(esquerd|izquierd)/, { y: 42, xBase: 24, anchoMax: 18 }],
+    [/central/, { y: 38, xBase: 50, anchoMax: 22 }],
     [/piv[oô]/, { y: 84, xBase: 50, anchoMax: 18 }],
+    [/lateral.?(direit|derech)/, { y: 42, xBase: 76, anchoMax: 18 }],
+    [/ponta.?(direit|derech)|extremo.?(direit|derech)/, { y: 78, xBase: 92, anchoMax: 10 }],
 ];
 
 const RUGBY = [
-    [/pilar|talonador/, { y: 14, xBase: 50, anchoMax: 46 }],
-    [/segunda.?linha/, { y: 24, xBase: 50, anchoMax: 30 }],
-    [/ala\b|n.?8|n[uú]mero.?8/, { y: 34, xBase: 50, anchoMax: 60 }],
-    [/m[eé]dio.?melee|meio.?scrum|m[eé]dio.?scrum/, { y: 46, xBase: 50, anchoMax: 18 }],
-    [/abertura|apertura/, { y: 54, xBase: 50, anchoMax: 18 }],
-    [/centro/, { y: 64, xBase: 50, anchoMax: 40 }],
-    [/ponta/, { y: 78, xBase: 50, anchoMax: 76 }],
-    [/zagueiro|fullback/, { y: 92, xBase: 50, anchoMax: 16 }],
+    [/talonador/, { y: 12, xBase: 50, anchoMax: 12 }],
+    [/pilar/, { y: 12, xBase: 50, anchoMax: 40 }],
+    [/segunda.?linha/, { y: 22, xBase: 50, anchoMax: 30 }],
+    [/n[uú]mero.?8|\bn.?8\b/, { y: 30, xBase: 50, anchoMax: 14 }],
+    [/\bala\b/, { y: 30, xBase: 50, anchoMax: 62 }],
+    [/m[eé]dio.?melee|meio.?scrum|m[eé]dio.?scrum/, { y: 42, xBase: 50, anchoMax: 18 }],
+    [/abertura|apertura/, { y: 52, xBase: 50, anchoMax: 18 }],
+    [/centro/, { y: 62, xBase: 50, anchoMax: 40 }],
+    [/ponta/, { y: 76, xBase: 50, anchoMax: 78 }],
+    [/zagueiro|fullback/, { y: 90, xBase: 50, anchoMax: 16 }],
 ];
 
 const HOQUEI = [
@@ -142,7 +144,7 @@ const REDE = {
         [/l[ií]bero/, { y: 88, xBase: 50, anchoMax: 20 }],
         [/central|meio.?de.?rede/, { y: 20, xBase: 50, anchoMax: 40 }],
         [/oposto|opuesto/, { y: 24, xBase: 82, anchoMax: 16 }],
-        [/levantador|colocador|armador/, { y: 24, xBase: 18, anchoMax: 16 }],
+        [/distribuidor|levantador|colocador|armador/, { y: 24, xBase: 18, anchoMax: 16 }],
         [/ponta|receptor/, { y: 60, xBase: 50, anchoMax: 60 }],
     ],
 };

@@ -300,6 +300,70 @@ const POSICIONES_FORMACION = {
             'Pívot': [{ x: 56, y: 74 }],
         },
     },
+    balonmano: {
+        'Andebol 7': {
+            'Guarda-Redes': [{ x: 50, y: 7 }],
+            'Ponta Esquerda': [{ x: 10, y: 76 }],
+            'Lateral Esquerdo': [{ x: 26, y: 42 }],
+            Central: [{ x: 50, y: 38 }],
+            Pivot: [{ x: 50, y: 82 }],
+            'Lateral Direito': [{ x: 74, y: 42 }],
+            'Ponta Direita': [{ x: 90, y: 76 }],
+        },
+    },
+    rugby: {
+        'XV Completo': {
+            Pilar: [
+                { x: 38, y: 10 },
+                { x: 62, y: 10 },
+            ],
+            Talonador: [{ x: 50, y: 8 }],
+            'Segunda Linha': [
+                { x: 42, y: 18 },
+                { x: 58, y: 18 },
+            ],
+            Ala: [
+                { x: 26, y: 26 },
+                { x: 74, y: 26 },
+            ],
+            'Número 8': [{ x: 50, y: 28 }],
+            'Médio Scrum': [{ x: 50, y: 40 }],
+            Abertura: [{ x: 50, y: 50 }],
+            Centro: [
+                { x: 36, y: 60 },
+                { x: 64, y: 60 },
+            ],
+            Ponta: [
+                { x: 10, y: 76 },
+                { x: 90, y: 76 },
+            ],
+            Zagueiro: [{ x: 50, y: 90 }],
+        },
+    },
+    voleibol: {
+        '5-1 Padrão': {
+            Distribuidor: [{ x: 82, y: 20 }],
+            Oposto: [{ x: 18, y: 80 }],
+            Central: [
+                { x: 50, y: 20 },
+                { x: 50, y: 80 },
+            ],
+            Ponta: [
+                { x: 18, y: 20 },
+                { x: 82, y: 80 },
+            ],
+        },
+        '5-1 com Líbero': {
+            Distribuidor: [{ x: 82, y: 20 }],
+            Oposto: [{ x: 18, y: 80 }],
+            Central: [
+                { x: 50, y: 20 },
+                { x: 50, y: 80 },
+            ],
+            Ponta: [{ x: 18, y: 20 }],
+            'Líbero': [{ x: 82, y: 80 }],
+        },
+    },
 };
 
 function obtenerPosicionesFormacion(tipo, etiquetaFormacion, puestoEtiqueta, cantidad) {
@@ -633,21 +697,21 @@ const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.6362 },
     futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 },
     futsal:     { fondo: '#1a6ea8', aspecto: 0.50 },
-    baloncesto: { fondo: '#c17f3e', aspecto: 0.56 },
+    baloncesto: { fondo: '#c17f3e', aspecto: 0.5357 },
     balonmano:  { fondo: '#146b52', aspecto: 0.50 },
     voleibol:   { fondo: '#1d6fae', aspecto: 0.50 },
     padel:      { fondo: '#0e9488', aspecto: 0.50 },
     tenis:      { fondo: TENIS_APRON, aspecto: 0.4885 },
     tenisMesa:  { fondo: '#0a4f8c', aspecto: 0.60 },
     badminton:  { fondo: '#2f9e52', aspecto: 0.48 },
-    rugby:      { fondo: '#0c5c33', aspecto: 0.60 },
+    rugby:      { fondo: '#0c5c33', aspecto: 0.5833 },
     hockey:     { fondo: '#1560bd', aspecto: 0.64 },
     beisbol:    { fondo: '#2e7d32', aspecto: 0.80 },
     generico:   { fondo: '#232833', aspecto: 0.70 },
 };
 
 const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
-const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis', 'baloncesto', 'balonmano', 'rugby', 'hockey', 'beisbol', 'padel', 'badminton', 'tenisMesa'];
+const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis', 'baloncesto', 'balonmano', 'rugby', 'voleibol', 'hockey', 'beisbol', 'padel', 'badminton', 'tenisMesa'];
 
 /* =====================================================
    COMPONENTE PRINCIPAL

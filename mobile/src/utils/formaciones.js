@@ -68,12 +68,57 @@ const BALONCESTO_PICK = { etiqueta: 'Pick and Roll', postos: [ { etiqueta: 'Base
 
 const TENIS = { etiqueta: 'Dobles (2 jugadores)', postos: [ { etiqueta: 'Jugador', regex: /.*/, cantidad: 2 }, ] };
 
+// Andebol: sete titulares oficiais (1 guarda-redes + 6 jogadores de campo)
+const ANDEBOL_7 = { etiqueta: 'Andebol 7', postos: [
+    { etiqueta: 'Guarda-Redes', regex: /guarda.?redes|porteiro|arquero|portero/, cantidad: 1 },
+    { etiqueta: 'Ponta Esquerda', regex: /ponta.?(esquerd|izquierd)|extremo.?(esquerd|izquierd)/, cantidad: 1 },
+    { etiqueta: 'Lateral Esquerdo', regex: /lateral.?(esquerd|izquierd)/, cantidad: 1 },
+    { etiqueta: 'Central', regex: /central/, cantidad: 1 },
+    { etiqueta: 'Pivot', regex: /piv[oô]/, cantidad: 1 },
+    { etiqueta: 'Lateral Direito', regex: /lateral.?(direit|derech)/, cantidad: 1 },
+    { etiqueta: 'Ponta Direita', regex: /ponta.?(direit|derech)|extremo.?(direit|derech)/, cantidad: 1 },
+] };
+
+// Rugby (União): XV completo, 8 avançados ("forwards") + 7 três-quartos ("backs")
+const RUGBY_XV = { etiqueta: 'XV Completo', postos: [
+    { etiqueta: 'Pilar', regex: /pilar/, cantidad: 2 },
+    { etiqueta: 'Talonador', regex: /talonador/, cantidad: 1 },
+    { etiqueta: 'Segunda Linha', regex: /segunda.?linha/, cantidad: 2 },
+    { etiqueta: 'Ala', regex: /\bala\b/, cantidad: 2 },
+    { etiqueta: 'Número 8', regex: /n[uú]mero.?8|\bn.?8\b/, cantidad: 1 },
+    { etiqueta: 'Médio Scrum', regex: /m[eé]dio.?melee|meio.?scrum|m[eé]dio.?scrum/, cantidad: 1 },
+    { etiqueta: 'Abertura', regex: /abertura|apertura/, cantidad: 1 },
+    { etiqueta: 'Centro', regex: /centro/, cantidad: 2 },
+    { etiqueta: 'Ponta', regex: /ponta/, cantidad: 2 },
+    { etiqueta: 'Zagueiro', regex: /zagueiro|fullback/, cantidad: 1 },
+] };
+
+// Voleibol: rotação padrão 5-1 (6 titulares em campo)
+const VOLEIBOL_51 = { etiqueta: '5-1 Padrão', postos: [
+    { etiqueta: 'Distribuidor', regex: /distribuidor|levantador|colocador|armador/, cantidad: 1 },
+    { etiqueta: 'Oposto', regex: /oposto|opuesto/, cantidad: 1 },
+    { etiqueta: 'Central', regex: /central|meio.?de.?rede/, cantidad: 2 },
+    { etiqueta: 'Ponta', regex: /ponta|receptor/, cantidad: 2 },
+] };
+
+// Voleibol: mesma rotação, agora com o Líbero como especialista defensivo do plantel
+const VOLEIBOL_LIBERO = { etiqueta: '5-1 com Líbero', postos: [
+    { etiqueta: 'Distribuidor', regex: /distribuidor|levantador|colocador|armador/, cantidad: 1 },
+    { etiqueta: 'Oposto', regex: /oposto|opuesto/, cantidad: 1 },
+    { etiqueta: 'Central', regex: /central|meio.?de.?rede/, cantidad: 2 },
+    { etiqueta: 'Ponta', regex: /ponta|receptor/, cantidad: 1 },
+    { etiqueta: 'Líbero', regex: /l[ií]bero/, cantidad: 1 },
+] };
+
 // Mapa de formações possíveis por tipo — usado pela UI para obrigar escolha
 const FORMACIONES_POR_TIPO = {
     futbol: [FUTBOL_11, FUTBOL_11_442, FUTBOL_11_352, FUTBOL_11_4231, FUTBOL_11_343],
     futbol7: [FUTBOL_7_321, FUTBOL_7_231, FUTBOL_7_1212, FUTBOL_7_2121, FUTBOL_7_222],
     futsal: [FUTSAL_31, FUTSAL_22, FUTSAL_40, FUTSAL_AU, FUTSAL_GOL_LINHA_32, FUTSAL_GOL_LINHA_23],
     baloncesto: [BALONCESTO, BALONCESTO_2_3, BALONCESTO_3_2, BALONCESTO_INDIV, BALONCESTO_MOTION, BALONCESTO_PICK],
+    balonmano: [ANDEBOL_7],
+    rugby: [RUGBY_XV],
+    voleibol: [VOLEIBOL_51, VOLEIBOL_LIBERO],
     tenis: [TENIS],
 };
 

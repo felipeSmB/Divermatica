@@ -194,7 +194,7 @@ export default function EquiposScreen() {
 
     function construirMensajeSMS(numEquipo, equipoJugadores) {
         const nombres = equipoJugadores.map(j => j.nombre).join(', ');
-        return `MATCHORA - Partida\n\nEstás en el Equipo ${numEquipo} con: ${nombres}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
+        return `DiverSport - Partida\n\nEstás en el Equipo ${numEquipo} con: ${nombres}\n\n📅 ${fechaPartida}\n🕐 ${horaPartida}\n📍 ${localPartida}`;
     }
 
     async function enviarNotificaciones() {

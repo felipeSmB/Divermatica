@@ -12,7 +12,7 @@ import FieldHockey from './FieldHockey';
 import FieldBaseball from './FieldBaseball';
 import FieldPadel from './FieldPadel';
 import FieldBadminton from './FieldBadminton';
-import FieldTableTennis from './fields/FieldTableTennis';
+import FieldTableTennis from './FieldTableTennis';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';

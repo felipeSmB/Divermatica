@@ -55,14 +55,14 @@ export default function AccountMenu({ visible, onClose }) {
                 <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={fechar} />
                 <Animated.View style={[styles.panel, { transform: [{ translateX }] }]}>
                     <TouchableOpacity style={styles.item} onPress={() => abrirTela('Conta')}>
-                        <Text style={styles.itemText}>👤 Mi Cuenta</Text>
+                        <Text style={styles.itemText}>Mi Cuenta</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.item} onPress={() => abrirTela('Historial')}>
-                        <Text style={styles.itemText}>📖 Historial</Text>
+                        <Text style={styles.itemText}>Historial</Text>
                     </TouchableOpacity>
                     <View style={styles.divider} />
                     <TouchableOpacity style={styles.item} onPress={handleLogout}>
-                        <Text style={styles.itemTextDanger}>🚪 Salir</Text>
+                        <Text style={styles.itemTextDanger}>Salir</Text>
                     </TouchableOpacity>
                 </Animated.View>
             </View>

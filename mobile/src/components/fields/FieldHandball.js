@@ -9,7 +9,9 @@ const FLOOR_B = '#106a4c';
 // --- ANDEBOL — pista IHF 40 x 20m (1 unidade = 0,1m), em retrato, com
 // as duas balizas em cima/baixo, tal como os restantes campos do projeto. ---
 export default function FieldHandball() {
-    const W = 200, H = 400;
+    const courtW = 200; // 20m — largura real da pista IHF
+    const W = 254, H = 400;
+    const padX = (W - courtW) / 2; // 27 — margem lateral para igualar o rácio do Futebol 11/7
     const cx = W / 2;
     const goalW = 30; // baliza 3m
     const goalD = 8;
@@ -32,15 +34,17 @@ export default function FieldHandball() {
             </Defs>
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#hbFloor)" />
-            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={2} />
 
-            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={1.6} />
+            {/* Linhas laterais da pista (dentro da margem lateral) */}
+            <Rect x={padX} y={0} width={courtW} height={H} fill="none" stroke={LINEA} strokeWidth={2} />
+
+            <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={1.6} />
 
             {/* Marcas de substituição, a 4,5m de cada lado do meio-campo */}
-            <Line x1={0} y1={H / 2 - 45} x2={5} y2={H / 2 - 45} stroke={LINEA} strokeWidth={1.4} />
-            <Line x1={0} y1={H / 2 + 45} x2={5} y2={H / 2 + 45} stroke={LINEA} strokeWidth={1.4} />
-            <Line x1={W} y1={H / 2 - 45} x2={W - 5} y2={H / 2 - 45} stroke={LINEA} strokeWidth={1.4} />
-            <Line x1={W} y1={H / 2 + 45} x2={W - 5} y2={H / 2 + 45} stroke={LINEA} strokeWidth={1.4} />
+            <Line x1={padX} y1={H / 2 - 45} x2={padX + 5} y2={H / 2 - 45} stroke={LINEA} strokeWidth={1.4} />
+            <Line x1={padX} y1={H / 2 + 45} x2={padX + 5} y2={H / 2 + 45} stroke={LINEA} strokeWidth={1.4} />
+            <Line x1={padX + courtW} y1={H / 2 - 45} x2={padX + courtW - 5} y2={H / 2 - 45} stroke={LINEA} strokeWidth={1.4} />
+            <Line x1={padX + courtW} y1={H / 2 + 45} x2={padX + courtW - 5} y2={H / 2 + 45} stroke={LINEA} strokeWidth={1.4} />
 
             {/* --- Baliza de cima --- */}
             <Path d={`M ${cx - sixMeterR} 0 A ${sixMeterR} ${sixMeterR} 0 0 0 ${cx + sixMeterR} 0`} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={1.6} />

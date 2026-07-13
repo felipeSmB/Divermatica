@@ -10,8 +10,6 @@ import FieldHandball from './FieldHandball';
 
 const LINEA = 'rgba(255,255,255,0.85)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
-const TENIS_APRON = '#155a92';
-const TENIS_COURT = '#2f86c9';
 const GRASS_A = '#0e6b39';
 const GRASS_B = '#125f34';
 
@@ -187,175 +185,151 @@ const POSICIONES_FORMACION = {
             Portero: [{ x: 50, y: 8 }],
             Fixo: [{ x: 50, y: 26 }],
             Ala: [
-                { x: 18, y: 46 },
-                { x: 82, y: 46 },
+                { x: 24.8, y: 46 },
+                { x: 75.2, y: 46 },
             ],
             'Pivô': [{ x: 50, y: 74 }],
         },
         '2-2': {
             Portero: [{ x: 50, y: 8 }],
             Defensa: [
-                { x: 22, y: 28 },
-                { x: 78, y: 28 },
+                { x: 27.9, y: 28 },
+                { x: 72.1, y: 28 },
             ],
             Atacante: [
-                { x: 36, y: 62 },
-                { x: 64, y: 62 },
+                { x: 39.0, y: 62 },
+                { x: 61.0, y: 62 },
             ],
         },
         '4-0': {
             Portero: [{ x: 50, y: 8 }],
             Ala: [
-                { x: 18, y: 38 },
-                { x: 38, y: 38 },
-                { x: 62, y: 38 },
-                { x: 82, y: 38 },
+                { x: 24.8, y: 38 },
+                { x: 40.5, y: 38 },
+                { x: 59.5, y: 38 },
+                { x: 75.2, y: 38 },
             ],
         },
         'Australiano (1-2-1)': {
             Portero: [{ x: 50, y: 8 }],
             Fixo: [{ x: 50, y: 26 }],
             Ala: [
-                { x: 18, y: 46 },
-                { x: 82, y: 46 },
+                { x: 24.8, y: 46 },
+                { x: 75.2, y: 46 },
             ],
             'Pivô': [{ x: 50, y: 74 }],
         },
         'Goleiro-Linha (3-2)': {
             'Goleiro-Linha': [{ x: 50, y: 20 }],
             Defensa: [
-                { x: 20, y: 40 },
+                { x: 26.4, y: 40 },
                 { x: 50, y: 36 },
-                { x: 80, y: 40 },
+                { x: 73.6, y: 40 },
             ],
             Atacante: [{ x: 50, y: 74 }],
         },
         'Goleiro-Linha (2-3)': {
             'Goleiro-Linha': [{ x: 50, y: 20 }],
             Defensa: [
-                { x: 28, y: 38 },
-                { x: 72, y: 38 },
+                { x: 32.7, y: 38 },
+                { x: 67.3, y: 38 },
             ],
             Atacante: [
-                { x: 28, y: 64 },
-                { x: 72, y: 64 },
+                { x: 32.7, y: 64 },
+                { x: 67.3, y: 64 },
             ],
         },
     },
     baloncesto: {
         'Quinteto titular': {
             Base: [{ x: 50, y: 24 }],
-            Escolta: [{ x: 28, y: 38 }],
-            Alero: [{ x: 72, y: 38 }],
-            'Ala-Pívot': [{ x: 34, y: 62 }],
-            'Pívot': [{ x: 56, y: 78 }],
+            Escolta: [{ x: 31.5, y: 38 }],
+            Alero: [{ x: 68.5, y: 38 }],
+            'Ala-Pívot': [{ x: 36.5, y: 62 }],
+            'Pívot': [{ x: 55.1, y: 78 }],
         },
         'Zona 2-3': {
             Escolta: [
-                { x: 26, y: 30 },
-                { x: 74, y: 30 },
+                { x: 29.8, y: 30 },
+                { x: 70.2, y: 30 },
             ],
             'Pívot': [
-                { x: 24, y: 66 },
+                { x: 28.1, y: 66 },
                 { x: 50, y: 78 },
-                { x: 76, y: 66 },
+                { x: 72.0, y: 66 },
             ],
         },
         'Zona 3-2': {
             Escolta: [
-                { x: 20, y: 28 },
+                { x: 24.7, y: 28 },
                 { x: 50, y: 28 },
-                { x: 80, y: 28 },
+                { x: 75.3, y: 28 },
             ],
             'Pívot': [
-                { x: 36, y: 68 },
-                { x: 64, y: 68 },
+                { x: 38.2, y: 68 },
+                { x: 61.8, y: 68 },
             ],
         },
         'Defesa Individual': {
             Base: [{ x: 50, y: 24 }],
-            Escolta: [{ x: 26, y: 38 }],
-            Alero: [{ x: 74, y: 38 }],
-            'Ala-Pívot': [{ x: 34, y: 64 }],
-            'Pívot': [{ x: 56, y: 78 }],
+            Escolta: [{ x: 29.8, y: 38 }],
+            Alero: [{ x: 70.2, y: 38 }],
+            'Ala-Pívot': [{ x: 36.5, y: 64 }],
+            'Pívot': [{ x: 55.1, y: 78 }],
         },
         'Motion Offense': {
-            Base: [{ x: 44, y: 24 }],
-            Escolta: [{ x: 22, y: 40 }],
-            Alero: [{ x: 78, y: 40 }],
-            'Ala-Pívot': [{ x: 36, y: 64 }],
-            'Pívot': [{ x: 54, y: 76 }],
+            Base: [{ x: 45.0, y: 24 }],
+            Escolta: [{ x: 26.4, y: 40 }],
+            Alero: [{ x: 73.6, y: 40 }],
+            'Ala-Pívot': [{ x: 38.2, y: 64 }],
+            'Pívot': [{ x: 53.4, y: 76 }],
         },
         'Pick and Roll': {
-            Base: [{ x: 44, y: 28 }],
+            Base: [{ x: 45.0, y: 28 }],
             'Ala-Pívot': [{ x: 50, y: 34 }],
-            Escolta: [{ x: 20, y: 40 }],
-            Alero: [{ x: 80, y: 40 }],
-            'Pívot': [{ x: 56, y: 74 }],
+            Escolta: [{ x: 24.7, y: 40 }],
+            Alero: [{ x: 75.3, y: 40 }],
+            'Pívot': [{ x: 55.1, y: 74 }],
         },
     },
     balonmano: {
         'Andebol 7': {
-            'Guarda-Redes': [{ x: 50, y: 7 }],
-            'Ponta Esquerda': [{ x: 10, y: 76 }],
-            'Lateral Esquerdo': [{ x: 26, y: 42 }],
+            'Guarda-Redes': [{ x: 50, y: 8 }],
+            'Ponta Esquerda': [{ x: 18.5, y: 76 }],
+            'Lateral Esquerdo': [{ x: 31.1, y: 42 }],
             Central: [{ x: 50, y: 38 }],
-            Pivot: [{ x: 50, y: 82 }],
-            'Lateral Direito': [{ x: 74, y: 42 }],
-            'Ponta Direita': [{ x: 90, y: 76 }],
+            Pivot: [{ x: 50, y: 80 }],
+            'Lateral Direito': [{ x: 68.9, y: 42 }],
+            'Ponta Direita': [{ x: 81.5, y: 76 }],
         },
     },
     rugby: {
         'XV Completo': {
             Pilar: [
-                { x: 38, y: 10 },
-                { x: 62, y: 10 },
+                { x: 39.0, y: 10 },
+                { x: 61.0, y: 10 },
             ],
             Talonador: [{ x: 50, y: 8 }],
             'Segunda Linha': [
-                { x: 42, y: 18 },
-                { x: 58, y: 18 },
+                { x: 42.7, y: 18 },
+                { x: 57.3, y: 18 },
             ],
             Ala: [
-                { x: 26, y: 26 },
-                { x: 74, y: 26 },
+                { x: 28.0, y: 26 },
+                { x: 72.0, y: 26 },
             ],
             'Número 8': [{ x: 50, y: 28 }],
             'Médio Scrum': [{ x: 50, y: 40 }],
             Abertura: [{ x: 50, y: 50 }],
             Centro: [
-                { x: 36, y: 60 },
-                { x: 64, y: 60 },
+                { x: 37.2, y: 60 },
+                { x: 62.8, y: 60 },
             ],
             Ponta: [
-                { x: 10, y: 76 },
-                { x: 90, y: 76 },
+                { x: 13.4, y: 76 },
+                { x: 86.6, y: 76 },
             ],
             Zagueiro: [{ x: 50, y: 90 }],
-        },
-    },
-    voleibol: {
-        '5-1 Padrão': {
-            Distribuidor: [{ x: 82, y: 20 }],
-            Oposto: [{ x: 18, y: 80 }],
-            Central: [
-                { x: 50, y: 20 },
-                { x: 50, y: 80 },
-            ],
-            Ponta: [
-                { x: 18, y: 20 },
-                { x: 82, y: 80 },
-            ],
-        },
-        '5-1 com Líbero': {
-            Distribuidor: [{ x: 82, y: 20 }],
-            Oposto: [{ x: 18, y: 80 }],
-            Central: [
-                { x: 50, y: 20 },
-                { x: 50, y: 80 },
-            ],
-            Ponta: [{ x: 18, y: 20 }],
-            'Líbero': [{ x: 82, y: 80 }],
         },
     },
 };
@@ -389,7 +363,7 @@ function FaixasRelva({ W, H, largura = 90 }) {
 }
 
 /* =====================================================
-   CAMPOS EM SVG — Futebol 11, Futebol 7, Futsal, Ténis
+   CAMPOS EM SVG — Futebol 11, Futebol 7, Futsal
    Medidas reais convertidas para unidades = decímetros
    (1 unidade = 0,1m), para ficarem exatas e legíveis.
    ===================================================== */
@@ -418,7 +392,6 @@ function FieldFutbol11() {
 
             <FaixasRelva W={W} H={H} largura={90} />
 
-            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
@@ -472,7 +445,6 @@ function FieldFutbol7() {
 
             <FaixasRelva W={W} H={H} largura={90} />
 
-            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
             <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
@@ -494,7 +466,9 @@ function FieldFutbol7() {
 
 // --- FUTSAL — 40 × 20m, área em arco (imagem "Medidas de campo de fútbol sala") ---
 function FieldFutsal() {
-    const W = 200, H = 400;
+    const courtW = 200; // 20m — largura real da pista
+    const W = 254, H = 400;
+    const padX = (W - courtW) / 2; // 27 — margem lateral para igualar o rácio do Futebol 11/7
     const cx = W / 2;
     const postHalf = 15;
     const archR = 60;
@@ -520,8 +494,10 @@ function FieldFutsal() {
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalPiso)" />
 
-            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={3} />
-            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
+            {/* Linhas laterais da pista (dentro da margem lateral) */}
+            <Rect x={padX} y={0} width={courtW} height={H} fill="none" stroke={LINEA} strokeWidth={3} />
+
+            <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
 
@@ -535,151 +511,13 @@ function FieldFutsal() {
             <Circle cx={cx} cy={H - spot2} r={spotR} fill={LINEA} />
             <Line x1={cx - postHalf} y1={H} x2={cx + postHalf} y2={H} stroke={LINEA} strokeWidth={7} />
 
-            <Line x1={0} y1={H / 2 - 50} x2={6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={0} y1={H / 2 + 50} x2={6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={W} y1={H / 2 - 50} x2={W - 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={W} y1={H / 2 + 50} x2={W - 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={padX} y1={H / 2 - 50} x2={padX + 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={padX} y1={H / 2 + 50} x2={padX + 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={padX + courtW} y1={H / 2 - 50} x2={padX + courtW - 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
+            <Line x1={padX + courtW} y1={H / 2 + 50} x2={padX + courtW - 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalVig)" />
         </Svg>
-    );
-}
-
-// --- TÉNIS — pista de pares 23,77 × 10,97m, com zona de recuo (imagem "Marcación de pistas de tenis") ---
-function FieldTenis() {
-    const ox = 12, oy = 18;
-    const cw = 109.7, ch = 237.7;
-    const singlesInset = 13.7;
-    const serviceOffset = 64;
-    const W = cw + ox * 2, H = ch + oy * 2;
-    const netY = oy + ch / 2;
-    const centreX = ox + cw / 2;
-    const baselineMark = 3.5;
-
-    return (
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
-            <Defs>
-                <RadialGradient id="tenisVig" cx="50%" cy="50%" r="72%">
-                    <Stop offset="55%" stopColor="#000000" stopOpacity="0" />
-                    <Stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
-                </RadialGradient>
-            </Defs>
-
-            <Rect x={0} y={0} width={W} height={H} fill={TENIS_APRON} />
-            <Rect x={ox} y={oy} width={cw} height={ch} fill={TENIS_COURT} />
-
-            <Rect x={ox} y={oy} width={cw} height={ch} fill="none" stroke={LINEA} strokeWidth={3} />
-            <Line x1={ox + singlesInset} y1={oy} x2={ox + singlesInset} y2={oy + ch} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={ox + cw - singlesInset} y1={oy} x2={ox + cw - singlesInset} y2={oy + ch} stroke={LINEA} strokeWidth={2.5} />
-
-            <Line x1={ox + singlesInset} y1={netY - serviceOffset} x2={ox + cw - singlesInset} y2={netY - serviceOffset} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={ox + singlesInset} y1={netY + serviceOffset} x2={ox + cw - singlesInset} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={centreX} y1={netY - serviceOffset} x2={centreX} y2={netY + serviceOffset} stroke={LINEA} strokeWidth={2.5} />
-
-            <Line x1={centreX} y1={oy} x2={centreX} y2={oy + baselineMark} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={centreX} y1={oy + ch} x2={centreX} y2={oy + ch - baselineMark} stroke={LINEA} strokeWidth={2.5} />
-
-            <Line x1={ox - 5} y1={netY} x2={ox + cw + 5} y2={netY} stroke="#1c2733" strokeWidth={4} />
-            <Circle cx={ox - 5} cy={netY} r={3} fill="#1c2733" />
-            <Circle cx={ox + cw + 5} cy={netY} r={3} fill="#1c2733" />
-
-            <Line x1={ox} y1={netY} x2={ox + cw} y2={netY} stroke="rgba(255,255,255,0.35)" strokeWidth={1.5} />
-            <Line x1={centreX - 0.5} y1={netY - serviceOffset} x2={centreX - 0.5} y2={netY + serviceOffset} stroke="rgba(255,255,255,0.35)" strokeWidth={1} />
-
-            <Rect x={0} y={0} width={W} height={H} fill="url(#tenisVig)" />
-        </Svg>
-    );
-}
-
-/* =====================================================
-   PEÇAS REUTILIZÁVEIS DO CAMPO (View) — inalteradas,
-   usadas pelos desportos que não mudaram nesta ronda.
-   ===================================================== */
-
-function LineaCentral() {
-    return <View style={styles.lineaMedio} pointerEvents="none" />;
-}
-
-function CirculoCentro({ diametro = 78 }) {
-    const r = diametro / 2;
-    return (
-        <View
-            style={[styles.circulo, { width: diametro, height: diametro, borderRadius: r, top: '50%', left: '50%', marginTop: -r, marginLeft: -r }]}
-            pointerEvents="none"
-        />
-    );
-}
-
-function PuntoCentro() {
-    return <View style={styles.puntoCentro} pointerEvents="none" />;
-}
-
-function Punto({ extremo, distanciaPorc }) {
-    const lado = extremo === 'arriba' ? { top: `${distanciaPorc}%` } : { bottom: `${distanciaPorc}%` };
-    return <View style={[styles.punto, lado]} pointerEvents="none" />;
-}
-
-function CajaArea({ extremo, anchoPorc = 18, altoPorc = 13 }) {
-    const lado = extremo === 'arriba' ? { top: 0, borderTopWidth: 0 } : { bottom: 0, borderBottomWidth: 0 };
-    return (
-        <View style={[styles.caja, { left: `${anchoPorc}%`, right: `${anchoPorc}%`, height: `${altoPorc}%` }, lado]} pointerEvents="none" />
-    );
-}
-
-function ArcoRecortado({ extremo, diametro, distanciaBorde = 0, dashed = false }) {
-    const r = diametro / 2;
-    const lado = extremo === 'arriba' ? { top: distanciaBorde, marginTop: -r } : { bottom: distanciaBorde, marginBottom: -r };
-    return (
-        <View
-            style={[styles.arco, { width: diametro, height: diametro, borderRadius: r, left: '50%', marginLeft: -r, borderStyle: dashed ? 'dashed' : 'solid' }, lado]}
-            pointerEvents="none"
-        />
-    );
-}
-
-function LineaPunteada({ extremo, distanciaPorc, anchoPorc = 8 }) {
-    const lado = extremo === 'arriba' ? { top: `${distanciaPorc}%` } : { bottom: `${distanciaPorc}%` };
-    return <View style={[styles.lineaPunteada, { left: `${anchoPorc}%`, right: `${anchoPorc}%` }, lado]} pointerEvents="none" />;
-}
-
-function Red() {
-    return (
-        <>
-            <View style={styles.red} pointerEvents="none" />
-            <View style={[styles.poste, { left: '3%' }]} pointerEvents="none" />
-            <View style={[styles.poste, { right: '3%' }]} pointerEvents="none" />
-        </>
-    );
-}
-
-function CajasServicio({ profundidadPorc = 22 }) {
-    const borde = `${50 - profundidadPorc}%`;
-    return (
-        <>
-            <View style={[styles.cajaServicio, { top: borde, height: `${profundidadPorc}%` }]} pointerEvents="none" />
-            <View style={[styles.cajaServicio, { bottom: borde, height: `${profundidadPorc}%` }]} pointerEvents="none" />
-            <View style={[styles.lineaServicioCentral, { top: borde, bottom: borde }]} pointerEvents="none" />
-        </>
-    );
-}
-
-function Postes({ extremo }) {
-    const lado = extremo === 'arriba' ? { top: 2 } : { bottom: 2 };
-    return (
-        <View style={[styles.postesWrap, lado]} pointerEvents="none">
-            <View style={styles.posteIzq} />
-            <View style={styles.posteDer} />
-            <View style={styles.travesano} />
-        </View>
-    );
-}
-
-function Diamante() {
-    return (
-        <View style={styles.diamanteWrap} pointerEvents="none">
-            <View style={styles.diamante} />
-            <View style={styles.monticulo} />
-        </View>
     );
 }
 
@@ -690,22 +528,13 @@ function Diamante() {
 const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.6362 },
     futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 },
-    futsal:     { fondo: '#1a6ea8', aspecto: 0.50 },
-    baloncesto: { fondo: '#c17f3e', aspecto: 0.5357 },
-    balonmano:  { fondo: '#146b52', aspecto: 0.50 },
-    voleibol:   { fondo: '#1d6fae', aspecto: 0.50 },
-    padel:      { fondo: '#0e9488', aspecto: 0.50 },
-    tenis:      { fondo: TENIS_APRON, aspecto: 0.4885 },
-    tenisMesa:  { fondo: '#0a4f8c', aspecto: 0.60 },
-    badminton:  { fondo: '#2f9e52', aspecto: 0.48 },
-    rugby:      { fondo: '#0c5c33', aspecto: 0.5833 },
-    hockey:     { fondo: '#1560bd', aspecto: 0.64 },
-    beisbol:    { fondo: '#2e7d32', aspecto: 0.80 },
-    generico:   { fondo: '#232833', aspecto: 0.70 },
+    futsal:     { fondo: '#1a6ea8', aspecto: 0.635 },
+    baloncesto: { fondo: '#c17f3e', aspecto: 0.6357 },
+    balonmano:  { fondo: '#146b52', aspecto: 0.635 },
+    rugby:      { fondo: '#0c5c33', aspecto: 0.6367 },
 };
 
-const DIVIDE_POR_RED = ['voleibol', 'padel', 'tenis', 'tenisMesa', 'badminton'];
-const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis', 'baloncesto', 'balonmano', 'rugby', 'voleibol', 'hockey', 'beisbol', 'padel', 'badminton', 'tenisMesa'];
+const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'baloncesto', 'balonmano', 'rugby'];
 
 /* =====================================================
    COMPONENTE PRINCIPAL
@@ -713,8 +542,7 @@ const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'tenis', 'baloncesto', 'balon
 
 export default function FormationPitch({ equipo, posicionesInfo, deporte, small, formacion }) {
     const tipo = detetarDeporte(deporte);
-    const cfg = CONFIG[tipo];
-    const dividePorRed = DIVIDE_POR_RED.includes(tipo);
+    const cfg = CONFIG[tipo] || CONFIG.futbol;
     const denso = equipo.length >= 9;
     const tamanho = small || denso ? 'small' : 'normal';
     const { width: cardW, height: cardH } = JERSEY_SIZES[tamanho];
@@ -766,11 +594,10 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
             sobrantes.forEach((j, i) => resultado.push({ jogador: j, xPorc: xs[i], yPorc: 50 }));
         }
 
-        if (dividePorRed) return resultado.map(r => ({ ...r, yPorc: 58 + (r.yPorc / 100) * 38 }));
         return resultado;
     }
 
-    const formacao = formacion ? calcularFormacaoPrecisa(equipo, formacion) : calcularFormacao(equipo, posicionesInfo, tipo, dividePorRed);
+    const formacao = formacion ? calcularFormacaoPrecisa(equipo, formacion) : calcularFormacao(equipo, posicionesInfo, tipo, false);
     const usaSVG = SVG_FIELDS.includes(tipo);
 
     return (
@@ -787,47 +614,9 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
             {tipo === 'futbol' && <FieldFutbol11 />}
             {tipo === 'futbol7' && <FieldFutbol7 />}
             {tipo === 'futsal' && <FieldFutsal />}
-            {tipo === 'tenis' && <FieldTenis />}
-
-            {tipo === 'baloncesto' && (
-                <FieldBasketball />
-            )}
-
-            {tipo === 'balonmano' && (
-                <FieldHandball />
-            )}
-
-            {tipo === 'hockey' && (
-                <FieldHockey />
-            )}
-
-            {tipo === 'rugby' && (
-                <FieldRugby />
-            )}
-
-            {tipo === 'voleibol' && (
-                <FieldVolleyball />
-            )}
-
-            {tipo === 'padel' && (
-                <FieldPadel />
-            )}
-
-            {tipo === 'badminton' && (
-                <FieldBadminton />
-            )}
-
-            {tipo === 'tenisMesa' && (
-                <FieldTableTennis />
-            )}
-
-            {tipo === 'beisbol' && <FieldBaseball />}
-
-            {tipo === 'generico' && (
-                <>
-                    <LineaCentral /><CirculoCentro diametro={60} />
-                </>
-            )}
+            {tipo === 'baloncesto' && <FieldBasketball />}
+            {tipo === 'balonmano' && <FieldHandball />}
+            {tipo === 'rugby' && <FieldRugby />}
 
             {formacao.map(({ jogador, xPorc, yPorc }) => (
                 <View
@@ -865,44 +654,6 @@ const styles = StyleSheet.create({
         borderWidth: 26,
         borderColor: 'rgba(0,0,0,0.10)',
         borderRadius: 30,
-    },
-
-    lineaMedio: { position: 'absolute', left: 0, right: 0, top: '50%', height: 2, backgroundColor: LINEA },
-    circulo: { position: 'absolute', borderWidth: 2, borderColor: LINEA },
-    puntoCentro: {
-        position: 'absolute', top: '50%', left: '50%',
-        width: 5, height: 5, borderRadius: 2.5, marginTop: -2.5, marginLeft: -2.5,
-        backgroundColor: LINEA,
-    },
-    punto: { position: 'absolute', left: '50%', width: 5, height: 5, borderRadius: 2.5, marginLeft: -2.5, backgroundColor: LINEA },
-
-    caja: { position: 'absolute', borderWidth: 2, borderColor: LINEA },
-    arco: { position: 'absolute', borderWidth: 2, borderColor: LINEA, backgroundColor: 'transparent' },
-    lineaPunteada: { position: 'absolute', height: 0, borderTopWidth: 2, borderColor: LINEA_SUAVE, borderStyle: 'dashed' },
-
-    red: { position: 'absolute', left: 0, right: 0, top: '50%', height: 4, marginTop: -2, backgroundColor: 'rgba(255,255,255,0.9)' },
-    poste: { position: 'absolute', top: '46%', width: 4, height: '8%', backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 2 },
-
-    cajaServicio: { position: 'absolute', left: '12%', right: '12%', borderWidth: 1.5, borderColor: LINEA_SUAVE },
-    lineaServicioCentral: { position: 'absolute', left: '50%', width: 2, marginLeft: -1, backgroundColor: LINEA_SUAVE },
-
-    postesWrap: { position: 'absolute', left: '50%', marginLeft: -17, width: 34, height: 24 },
-    posteIzq: { position: 'absolute', left: 0, top: 0, width: 3, height: 24, backgroundColor: 'rgba(255,255,255,0.9)' },
-    posteDer: { position: 'absolute', right: 0, top: 0, width: 3, height: 24, backgroundColor: 'rgba(255,255,255,0.9)' },
-    travesano: { position: 'absolute', top: 16, left: 0, right: 0, height: 3, backgroundColor: 'rgba(255,255,255,0.9)' },
-
-    diamanteWrap: {
-        position: 'absolute', left: '10%', right: '10%', bottom: '6%', height: '46%',
-        alignItems: 'center', justifyContent: 'flex-end',
-    },
-    diamante: {
-        width: '78%', aspectRatio: 1,
-        backgroundColor: '#8b5e34', borderWidth: 2, borderColor: 'rgba(255,255,255,0.7)',
-        transform: [{ rotate: '45deg' }],
-    },
-    monticulo: {
-        position: 'absolute', bottom: '34%', width: 16, height: 16, borderRadius: 8,
-        backgroundColor: '#a9744a', borderWidth: 1, borderColor: 'rgba(255,255,255,0.6)',
     },
 
     jogadorAbs: { position: 'absolute' },

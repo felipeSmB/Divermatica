@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function BrandTitle() {
     return (
         <View style={styles.wrapper}>
-            <Text style={styles.title}>MATCHORA</Text>
+            <Text style={styles.title}>DIVERSPORT</Text>
             <LinearGradient
                 colors={['#00d4ff', '#7c4dff']}
                 start={{ x: 0, y: 0 }}

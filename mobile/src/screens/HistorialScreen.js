@@ -48,7 +48,7 @@ export default function HistorialScreen() {
                     <Text style={styles.overlayIcon}>🔒</Text>
                     <Text style={styles.overlayTitle}>Funcionalidad Pro</Text>
                     <Text style={styles.overlaySubtitle}>Actualiza para ver el historial de partidas.</Text>
-                    <TouchableOpacity style={styles.overlayButton} onPress={() => Alert.alert('MATCHORA Pro', 'Contacta al administrador para actualizar tu plan.')}>
+                    <TouchableOpacity style={styles.overlayButton} onPress={() => Alert.alert('DiverSport Pro', 'Contacta al administrador para actualizar tu plan.')}>
                         <Text style={styles.overlayButtonText}>Saber más</Text>
                     </TouchableOpacity>
                 </View>

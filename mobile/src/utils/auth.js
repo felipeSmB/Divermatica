@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode as atobPolyfill } from 'base-64';
 
-const TOKEN_KEY = 'matchora_token';
+const TOKEN_KEY = 'diversport_token';
 
 export async function getToken() {
     return await AsyncStorage.getItem(TOKEN_KEY);

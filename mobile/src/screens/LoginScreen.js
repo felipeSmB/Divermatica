@@ -56,7 +56,7 @@ export default function LoginScreen({ navigation }) {
                     contentContainerStyle={styles.container}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <Text style={styles.titulo}>MATCHORA</Text>
+                    <Text style={styles.titulo}>DIVERSPORT</Text>
                     <TextInput style={styles.input} placeholder="Usuario" placeholderTextColor="#888" value={username} onChangeText={setUsername} autoCapitalize="none" />
                     <TextInput style={styles.input} placeholder="Contraseña" placeholderTextColor="#888" value={password} onChangeText={setPassword} secureTextEntry />
                     <TouchableOpacity style={styles.boton} onPress={entrar} disabled={cargando}>

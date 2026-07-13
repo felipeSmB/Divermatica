@@ -13,9 +13,9 @@ import {
 
 const SECTIONS = ['overview', 'users', 'logs'];
 const SECTION_LABELS = {
-    overview: '📊 Visión General',
-    users: '👥 Utilizadores',
-    logs: '📋 Logs',
+    overview: 'General',
+    users: 'Utilizadores',
+    logs: 'Logs',
 };
 
 function formatFecha(fecha) {
@@ -155,15 +155,15 @@ export default function AdminScreen() {
             {seccionActiva === 'overview' && (
                 <ScrollView contentContainerStyle={styles.content}>
                     <View style={styles.grid}>
-                        <View style={styles.card}>
+                        <View style={[styles.card, styles.statsCard]}>
                             <Text style={styles.cardLabel}>Total Utilizadores</Text>
                             <Text style={styles.cardValue}>{stats?.total_usuarios ?? '—'}</Text>
                         </View>
-                        <View style={styles.card}>
+                        <View style={[styles.card, styles.statsCard]}>
                             <Text style={styles.cardLabel}>Total Jugadores</Text>
                             <Text style={styles.cardValue}>{stats?.total_jugadores ?? '—'}</Text>
                         </View>
-                        <View style={styles.card}>
+                        <View style={[styles.card, styles.statsCard]}>
                             <Text style={styles.cardLabel}>Total Deportes</Text>
                             <Text style={styles.cardValue}>{stats?.total_deportes ?? '—'}</Text>
                         </View>
@@ -282,17 +282,18 @@ export default function AdminScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#0f1115' },
-    chipsRow: { flexDirection: 'row', flexWrap: 'wrap', padding: 12, gap: 8 },
-    chip: { backgroundColor: '#1c1f26', borderColor: '#2a2f3a', borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 },
+    chipsRow: { flexDirection: 'row', backgroundColor: '#1c1f26', borderColor: '#2a2f3a', borderWidth: 1, borderRadius: 999, padding: 4, margin: 12, gap: 4 },
+    chip: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 8 },
     chipActive: { backgroundColor: '#00c2ff' },
-    chipText: { color: '#fff', fontWeight: '700' },
+    chipText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
     chipTextActive: { color: '#0f1115' },
     content: { padding: 12, paddingBottom: 24 },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 },
+    grid: { flexDirection: 'row', gap: 12, marginBottom: 12 },
+    statsCard: { flex: 1, minWidth: 0, alignItems: 'center', justifyContent: 'center' },
     card: { backgroundColor: '#1c1f26', borderRadius: 14, padding: 14, marginBottom: 12 },
-    cardLabel: { color: '#8a9bbf', marginBottom: 6 },
+    cardLabel: { color: '#8a9bbf', marginBottom: 6, textAlign: 'center' },
     cardTitle: { color: '#fff', fontWeight: '700', marginBottom: 8 },
-    cardValue: { color: '#00c2ff', fontSize: 28, fontWeight: '800' },
+    cardValue: { color: '#00c2ff', fontSize: 28, fontWeight: '800', textAlign: 'center' },
     listItem: { paddingVertical: 8, borderBottomColor: '#2a2f3a', borderBottomWidth: 1 },
     listTitle: { color: '#fff', fontWeight: '700' },
     listSubtitle: { color: '#8a9bbf', marginTop: 2 },

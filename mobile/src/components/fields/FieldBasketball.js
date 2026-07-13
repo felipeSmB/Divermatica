@@ -10,7 +10,9 @@ const COURT_B = '#a9622c';
 // com os dois cestos em cima/baixo (a mesma convenção usada nos campos
 // de futebol/futsal do projeto). ---
 export default function FieldBasketball() {
-    const W = 150, H = 280;
+    const courtW = 150; // 15m — largura real da pista FIBA
+    const W = 178, H = 280;
+    const padX = (W - courtW) / 2; // 14 — margem lateral para igualar o rácio do Futebol 11/7
     const cx = W / 2;
     const keyW = 49; // largura do garrafão (4,9m)
     const keyD = 58; // profundidade linha de fundo -> lance livre (5,8m)
@@ -43,11 +45,11 @@ export default function FieldBasketball() {
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#bballCourt)" />
 
-            {/* Limites do campo */}
-            <Rect x={1.5} y={1.5} width={W - 3} height={H - 3} fill="none" stroke={LINEA} strokeWidth={1.6} />
+            {/* Linhas laterais da pista (dentro da margem lateral) */}
+            <Rect x={padX} y={0} width={courtW} height={H} fill="none" stroke={LINEA} strokeWidth={1.6} />
 
             {/* Linha e círculo central */}
-            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={1.6} />
+            <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={1.6} />
             <Circle cx={cx} cy={H / 2} r={centerR} fill="none" stroke={LINEA} strokeWidth={1.6} />
             <Circle cx={cx} cy={H / 2} r={1.2} fill={LINEA} />
 

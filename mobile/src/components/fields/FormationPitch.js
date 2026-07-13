@@ -16,7 +16,7 @@ const GRASS_B = '#125f34';
 const POSICIONES_FORMACION = {
     futbol: {
         '4-3-3': {
-            Portero: [{ x: 50, y: 6 }],
+            Portero: [{ x: 50, y: 8 }],
             Defensa: [
                 { x: 14, y: 26 },
                 { x: 40, y: 22 },
@@ -30,12 +30,12 @@ const POSICIONES_FORMACION = {
             ],
             Delantero: [
                 { x: 14, y: 78 },
-                { x: 50, y: 84 },
+                { x: 50, y: 82 },
                 { x: 86, y: 78 },
             ],
         },
         '4-4-2': {
-            Portero: [{ x: 50, y: 6 }],
+            Portero: [{ x: 50, y: 8 }],
             Defensa: [
                 { x: 14, y: 26 },
                 { x: 40, y: 22 },
@@ -54,7 +54,7 @@ const POSICIONES_FORMACION = {
             ],
         },
         '3-5-2': {
-            Portero: [{ x: 50, y: 6 }],
+            Portero: [{ x: 50, y: 8 }],
             Defensa: [
                 { x: 24, y: 24 },
                 { x: 50, y: 20 },
@@ -73,7 +73,7 @@ const POSICIONES_FORMACION = {
             ],
         },
         '4-2-3-1': {
-            Portero: [{ x: 50, y: 6 }],
+            Portero: [{ x: 50, y: 8 }],
             Defensa: [
                 { x: 14, y: 26 },
                 { x: 40, y: 22 },
@@ -92,7 +92,7 @@ const POSICIONES_FORMACION = {
             Delantero: [{ x: 50, y: 80 }],
         },
         '3-4-3': {
-            Portero: [{ x: 50, y: 6 }],
+            Portero: [{ x: 50, y: 8 }],
             Defensa: [
                 { x: 20, y: 24 },
                 { x: 50, y: 20 },
@@ -106,7 +106,7 @@ const POSICIONES_FORMACION = {
             ],
             Delantero: [
                 { x: 14, y: 78 },
-                { x: 50, y: 84 },
+                { x: 50, y: 82 },
                 { x: 86, y: 78 },
             ],
         },
@@ -182,7 +182,7 @@ const POSICIONES_FORMACION = {
     },
     futsal: {
         '3-1': {
-            Portero: [{ x: 50, y: 8 }],
+            Portero: [{ x: 50, y: 9 }],
             Fixo: [{ x: 50, y: 26 }],
             Ala: [
                 { x: 22, y: 46 },
@@ -191,7 +191,7 @@ const POSICIONES_FORMACION = {
             'Pivô': [{ x: 50, y: 74 }],
         },
         '2-2': {
-            Portero: [{ x: 50, y: 8 }],
+            Portero: [{ x: 50, y: 9 }],
             Defensa: [
                 { x: 26, y: 28 },
                 { x: 74, y: 28 },
@@ -202,7 +202,7 @@ const POSICIONES_FORMACION = {
             ],
         },
         '4-0': {
-            Portero: [{ x: 50, y: 8 }],
+            Portero: [{ x: 50, y: 9 }],
             Ala: [
                 { x: 22, y: 38 },
                 { x: 39, y: 38 },
@@ -211,7 +211,7 @@ const POSICIONES_FORMACION = {
             ],
         },
         'Australiano (1-2-1)': {
-            Portero: [{ x: 50, y: 8 }],
+            Portero: [{ x: 50, y: 9 }],
             Fixo: [{ x: 50, y: 26 }],
             Ala: [
                 { x: 22, y: 46 },
@@ -246,7 +246,7 @@ const POSICIONES_FORMACION = {
             Escolta: [{ x: 30, y: 38 }],
             Alero: [{ x: 70, y: 38 }],
             'Ala-Pívot': [{ x: 36, y: 62 }],
-            'Pívot': [{ x: 56, y: 78 }],
+            'Pívot': [{ x: 56, y: 76 }],
         },
         'Zona 2-3': {
             Escolta: [
@@ -254,9 +254,9 @@ const POSICIONES_FORMACION = {
                 { x: 72, y: 30 },
             ],
             'Pívot': [
-                { x: 27, y: 66 },
-                { x: 50, y: 78 },
-                { x: 73, y: 66 },
+                { x: 27, y: 64 },
+                { x: 50, y: 76 },
+                { x: 73, y: 64 },
             ],
         },
         'Zona 3-2': {
@@ -266,8 +266,8 @@ const POSICIONES_FORMACION = {
                 { x: 77, y: 28 },
             ],
             'Pívot': [
-                { x: 37, y: 68 },
-                { x: 63, y: 68 },
+                { x: 37, y: 66 },
+                { x: 63, y: 66 },
             ],
         },
         'Defesa Individual': {
@@ -275,50 +275,50 @@ const POSICIONES_FORMACION = {
             Escolta: [{ x: 28, y: 38 }],
             Alero: [{ x: 72, y: 38 }],
             'Ala-Pívot': [{ x: 36, y: 64 }],
-            'Pívot': [{ x: 56, y: 78 }],
+            'Pívot': [{ x: 56, y: 76 }],
         },
         'Motion Offense': {
             Base: [{ x: 44, y: 24 }],
             Escolta: [{ x: 25, y: 40 }],
             Alero: [{ x: 75, y: 40 }],
             'Ala-Pívot': [{ x: 37, y: 64 }],
-            'Pívot': [{ x: 54, y: 76 }],
+            'Pívot': [{ x: 54, y: 74 }],
         },
         'Pick and Roll': {
             Base: [{ x: 44, y: 28 }],
             'Ala-Pívot': [{ x: 50, y: 34 }],
             Escolta: [{ x: 23, y: 40 }],
             Alero: [{ x: 77, y: 40 }],
-            'Pívot': [{ x: 56, y: 74 }],
+            'Pívot': [{ x: 56, y: 72 }],
         },
     },
     balonmano: {
         'Andebol 7': {
-            'Guarda-Redes': [{ x: 50, y: 8 }],
-            'Ponta Esquerda': [{ x: 15, y: 76 }],
+            'Guarda-Redes': [{ x: 50, y: 9 }],
+            'Ponta Esquerda': [{ x: 16, y: 74 }],
             'Lateral Esquerdo': [{ x: 29, y: 42 }],
             Central: [{ x: 50, y: 38 }],
-            Pivot: [{ x: 50, y: 80 }],
+            Pivot: [{ x: 50, y: 78 }],
             'Lateral Direito': [{ x: 71, y: 42 }],
-            'Ponta Direita': [{ x: 85, y: 76 }],
+            'Ponta Direita': [{ x: 84, y: 74 }],
         },
     },
     rugby: {
         'XV Completo': {
             Pilar: [
-                { x: 38, y: 10 },
-                { x: 62, y: 10 },
+                { x: 38, y: 11 },
+                { x: 62, y: 11 },
             ],
-            Talonador: [{ x: 50, y: 8 }],
+            Talonador: [{ x: 50, y: 9 }],
             'Segunda Linha': [
-                { x: 42, y: 18 },
-                { x: 58, y: 18 },
+                { x: 42, y: 19 },
+                { x: 58, y: 19 },
             ],
             Ala: [
-                { x: 26, y: 26 },
-                { x: 74, y: 26 },
+                { x: 26, y: 27 },
+                { x: 74, y: 27 },
             ],
-            'Número 8': [{ x: 50, y: 28 }],
+            'Número 8': [{ x: 50, y: 29 }],
             'Médio Scrum': [{ x: 50, y: 40 }],
             Abertura: [{ x: 50, y: 50 }],
             Centro: [
@@ -326,10 +326,10 @@ const POSICIONES_FORMACION = {
                 { x: 64, y: 60 },
             ],
             Ponta: [
-                { x: 12, y: 76 },
-                { x: 88, y: 76 },
+                { x: 14, y: 75 },
+                { x: 86, y: 75 },
             ],
-            Zagueiro: [{ x: 50, y: 90 }],
+            Zagueiro: [{ x: 50, y: 87 }],
         },
     },
 };
@@ -345,9 +345,6 @@ function obtenerPosicionesFormacion(tipo, etiquetaFormacion, puestoEtiqueta, can
     return posiciones;
 }
 
-// Faixas de relva cortada (mowing stripes) — largura real de uma faixa
-// de corte profissional (~9m); o nº de faixas muda consoante o
-// comprimento real de cada campo.
 function FaixasRelva({ W, H, largura = 90 }) {
     const n = Math.ceil(H / largura);
     return (
@@ -363,11 +360,8 @@ function FaixasRelva({ W, H, largura = 90 }) {
 
 /* =====================================================
    CAMPOS EM SVG — Futebol 11, Futebol 7, Futsal
-   Medidas reais convertidas para unidades = decímetros
-   (1 unidade = 0,1m), para ficarem exatas e legíveis.
    ===================================================== */
 
-// --- FUTEBOL 11 — 100,6 × 64m ---
 function FieldFutbol11() {
     const W = 640, H = 1006;
     const cx = W / 2;
@@ -417,7 +411,6 @@ function FieldFutbol11() {
     );
 }
 
-// --- FUTEBOL 7 — 55 × 36,5m ---
 function FieldFutbol7() {
     const W = 365, H = 550;
     const cx = W / 2;
@@ -459,19 +452,20 @@ function FieldFutbol7() {
     );
 }
 
-// --- FUTSAL — 40 × 20m, zona de baliza em "D" (arco de 6m), tal como o
-// campo real de futsal (baliza + retângulo de profundidade + arco duplo). ---
+// --- FUTSAL — 40 x 20m, área em D (arco de 6m + reta), cantos arredondados,
+// marcas nas laterais e retângulo da baliza — igual à imagem de referência. ---
 function FieldFutsal() {
-    const courtW = 200; // 20m — largura real da pista
-    const W = 232, H = 400;
-    const padX = (W - courtW) / 2; // 16 — margem mínima para igualar a escala das outras modalidades
+    const courtW = 200; // 20m
+    const W = 254, H = 400;
+    const padX = (W - courtW) / 2; // 27
     const cx = W / 2;
-    const postHalf = 15; // meia-largura da baliza (3m)
-    const archR = 60; // raio do arco da área (6m)
-    const spot1 = 60, spot2 = 100; // marca de grande penalidade (6m) e dupla penalidade (10m)
+    const postHalf = 15; // 3m
+    const archR = 60; // 6m
+    const doublePenalty = 100; // 10m
     const circleR = 30;
-    const spotR = 2.6;
-    const goalDepth = 8;
+    const spotR = 2.8;
+    const cornerR = 8;
+    const goalDepth = 7;
 
     const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} 0 Z`;
     const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} ${H} Z`;
@@ -492,32 +486,41 @@ function FieldFutsal() {
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalPiso)" />
 
-            {/* Linhas laterais da pista (limite real do campo) */}
+            {/* Limite real do campo */}
             <Rect x={padX} y={0} width={courtW} height={H} fill="none" stroke={LINEA} strokeWidth={3} />
+
+            {/* Cantos arredondados */}
+            <Path d={`M ${padX + cornerR} 0 A ${cornerR} ${cornerR} 0 0 0 ${padX} ${cornerR}`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Path d={`M ${padX + courtW - cornerR} 0 A ${cornerR} ${cornerR} 0 0 1 ${padX + courtW} ${cornerR}`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Path d={`M ${padX} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${padX + cornerR} ${H}`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Path d={`M ${padX + courtW} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${padX + courtW - cornerR} ${H}`} stroke={LINEA} strokeWidth={2} fill="none" />
 
             <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
 
-            {/* Área de baliza de cima (arco duplo em D, laranja sólido) */}
+            {/* Área de baliza de cima (D sólido laranja) */}
             <Path d={arcTop} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
-            <Circle cx={cx} cy={spot1} r={spotR} fill={LINEA} />
-            <Circle cx={cx} cy={spot2} r={spotR} fill={LINEA} />
-            <Rect x={cx - postHalf} y={-goalDepth} width={postHalf * 2} height={goalDepth} fill="none" stroke={LINEA} strokeWidth={2.4} />
+            <Circle cx={cx} cy={doublePenalty} r={spotR} fill={LINEA} />
+            <Rect x={cx - postHalf} y={-1} width={postHalf * 2} height={goalDepth} fill="none" stroke={LINEA} strokeWidth={2.4} />
             <Line x1={cx - postHalf} y1={0} x2={cx + postHalf} y2={0} stroke={LINEA} strokeWidth={7} />
 
             {/* Área de baliza de baixo (espelhada) */}
             <Path d={arcBot} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
-            <Circle cx={cx} cy={H - spot1} r={spotR} fill={LINEA} />
-            <Circle cx={cx} cy={H - spot2} r={spotR} fill={LINEA} />
-            <Rect x={cx - postHalf} y={H} width={postHalf * 2} height={goalDepth} fill="none" stroke={LINEA} strokeWidth={2.4} />
+            <Circle cx={cx} cy={H - doublePenalty} r={spotR} fill={LINEA} />
+            <Rect x={cx - postHalf} y={H - goalDepth + 1} width={postHalf * 2} height={goalDepth} fill="none" stroke={LINEA} strokeWidth={2.4} />
             <Line x1={cx - postHalf} y1={H} x2={cx + postHalf} y2={H} stroke={LINEA} strokeWidth={7} />
 
-            {/* Marcas de substituição no meio-campo */}
-            <Line x1={padX} y1={H / 2 - 50} x2={padX + 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={padX} y1={H / 2 + 50} x2={padX + 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={padX + courtW} y1={H / 2 - 50} x2={padX + courtW - 6} y2={H / 2 - 50} stroke={LINEA} strokeWidth={2.5} />
-            <Line x1={padX + courtW} y1={H / 2 + 50} x2={padX + courtW - 6} y2={H / 2 + 50} stroke={LINEA} strokeWidth={2.5} />
+            {/* Marcas nas linhas laterais (substituição + referência) */}
+            {[0.18, 0.36, 0.5, 0.64, 0.82].map((f, i) => {
+                const y = H * f;
+                return (
+                    <React.Fragment key={i}>
+                        <Line x1={padX} y1={y} x2={padX + 6} y2={y} stroke={LINEA} strokeWidth={2} />
+                        <Line x1={padX + courtW} y1={y} x2={padX + courtW - 6} y2={y} stroke={LINEA} strokeWidth={2} />
+                    </React.Fragment>
+                );
+            })}
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalVig)" />
         </Svg>
@@ -526,15 +529,16 @@ function FieldFutsal() {
 
 /* =====================================================
    CONFIGURAÇÃO VISUAL POR DESPORTO
+   (mesmo grupo de escala/aspeto do Futebol 11 e Futebol 7)
    ===================================================== */
 
 const CONFIG = {
     futbol:     { fondo: '#0f6b3a', aspecto: 0.6362 },
     futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 },
-    futsal:     { fondo: '#1c58a0', aspecto: 0.58 },
-    baloncesto: { fondo: '#c98f4e', aspecto: 0.579 },
-    balonmano:  { fondo: '#147a58', aspecto: 0.58 },
-    rugby:      { fondo: '#0c6c3a', aspecto: 0.6033 },
+    futsal:     { fondo: '#1c58a0', aspecto: 0.635 },
+    baloncesto: { fondo: '#c98f4e', aspecto: 0.6357 },
+    balonmano:  { fondo: '#147a58', aspecto: 0.635 },
+    rugby:      { fondo: '#0c6c3a', aspecto: 0.6367 },
 };
 
 const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'baloncesto', 'balonmano', 'rugby'];
@@ -581,7 +585,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
                         const step = Math.min(6, 3 + Math.floor(n / 2));
                         offsetY = (i - (n - 1) / 2) * step;
                     }
-                    resultado.push({ jogador: j, xPorc: Math.min(92, Math.max(8, xs[i] ?? xs[0])), yPorc: Math.min(94, Math.max(6, info.y + offsetY)) });
+                    resultado.push({ jogador: j, xPorc: Math.min(88, Math.max(12, xs[i] ?? xs[0])), yPorc: Math.min(90, Math.max(8, info.y + offsetY)) });
                 });
             }
         });
@@ -589,7 +593,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
         const usados = new Set(resultado.map(r => r.jogador.id));
         const sobrantes = equipoLocal.filter(j => !usados.has(j.id));
         if (sobrantes.length > 0) {
-            const xs = distribuirX(sobrantes.length, 50, 76);
+            const xs = distribuirX(sobrantes.length, 50, 72);
             sobrantes.forEach((j, i) => resultado.push({ jogador: j, xPorc: xs[i], yPorc: 50 }));
         }
 

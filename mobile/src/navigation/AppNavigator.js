@@ -117,8 +117,42 @@ export default function AppNavigator() {
                         <Stack.Screen name="App">
                             {() => <AppTabs role={role} />}
                         </Stack.Screen>
-                        <Stack.Screen name="Conta" component={ContaScreen} />
-                        <Stack.Screen name="Historial" component={HistorialScreen} />
+                        <Stack.Screen
+                            name="Conta"
+                            component={ContaScreen}
+                            options={{
+                                headerShown: true,
+                                headerStyle: {
+                                    backgroundColor: '#0f1115',
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: '#1c1f26',
+                                    elevation: 0,
+                                    shadowOpacity: 0,
+                                },
+                                headerShadowVisible: false,
+                                headerTintColor: '#fff',
+                                headerTitleStyle: { color: '#fff', fontWeight: '700' },
+                                headerTitle: 'Mi Cuenta',
+                            }}
+                        />
+                        <Stack.Screen
+                            name="Historial"
+                            component={HistorialScreen}
+                            options={{
+                                headerShown: true,
+                                headerStyle: {
+                                    backgroundColor: '#0f1115',
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: '#1c1f26',
+                                    elevation: 0,
+                                    shadowOpacity: 0,
+                                },
+                                headerShadowVisible: false,
+                                headerTintColor: '#fff',
+                                headerTitleStyle: { color: '#fff', fontWeight: '700' },
+                                headerTitle: 'Historial',
+                            }}
+                        />
                     </>
                 ) : (
                     <>

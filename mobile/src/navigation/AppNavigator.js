@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
@@ -14,26 +14,25 @@ import EquiposScreen from '../screens/EquiposScreen';
 import HistorialScreen from '../screens/HistorialScreen';
 import BrandTitle from '../components/BrandTitle';
 import AdminScreen from '../screens/AdminScreen';
+import ContaScreen from '../screens/ContaScreen';
+import AccountMenu from '../components/AccountMenu';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function BotonSalir() {
-    const { logout } = useAuth();
-    return (
-        <TouchableOpacity onPress={logout} style={{ marginRight: 16 }}>
-            <Text style={{ color: '#ff4d4d', fontWeight: 'bold' }}>Salir</Text>
-        </TouchableOpacity>
-    );
-}
-
 function AppTabs({ role }) {
     const insets = useSafeAreaInsets();
+    const [menuVisible, setMenuVisible] = useState(false);
 
     return (
+        <>
         <Tab.Navigator
             screenOptions={{
-                headerRight: () => <BotonSalir />,
+                headerRight: () => (
+                    <TouchableOpacity onPress={() => setMenuVisible(true)} style={{ marginRight: 16 }}>
+                        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 20 }}>☰</Text>
+                    </TouchableOpacity>
+                ),
                 headerStyle: {
                     backgroundColor: '#0f1115',
                     borderBottomWidth: 1,
@@ -88,15 +87,6 @@ function AppTabs({ role }) {
                     ),
                 }}
             />
-            <Tab.Screen
-                name="Historial"
-                component={HistorialScreen}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>📖</Text>
-                    ),
-                }}
-            />
             {role === 'admin' && (
                 <Tab.Screen
                     name="Admin"
@@ -109,6 +99,8 @@ function AppTabs({ role }) {
                 />
             )}
         </Tab.Navigator>
+        <AccountMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
+        </>
     );
 }
 
@@ -121,9 +113,13 @@ export default function AppNavigator() {
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {autenticado ? (
-                    <Stack.Screen name="App">
-                        {() => <AppTabs role={role} />}
-                    </Stack.Screen>
+                    <>
+                        <Stack.Screen name="App">
+                            {() => <AppTabs role={role} />}
+                        </Stack.Screen>
+                        <Stack.Screen name="Conta" component={ContaScreen} />
+                        <Stack.Screen name="Historial" component={HistorialScreen} />
+                    </>
                 ) : (
                     <>
                         <Stack.Screen name="Login" component={LoginScreen} />

@@ -3,15 +3,15 @@ import Svg, { Rect, Line, Path, Defs, LinearGradient, RadialGradient, Stop } fro
 
 const LINEA = 'rgba(255,255,255,0.92)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
-const FLOOR_A = '#178a63';
+const FLOOR_A = '#1a9169';
 const FLOOR_B = '#106a4c';
 
 // --- ANDEBOL — pista IHF 40 x 20m (1 unidade = 0,1m), em retrato, com
-// as duas balizas em cima/baixo, tal como os restantes campos do projeto. ---
+// as duas balizas em cima/baixo, tal como os restantes campos. ---
 export default function FieldHandball() {
     const courtW = 200; // 20m — largura real da pista IHF
-    const W = 254, H = 400;
-    const padX = (W - courtW) / 2; // 27 — margem lateral para igualar o rácio do Futebol 11/7
+    const W = 232, H = 400;
+    const padX = (W - courtW) / 2; // 16 — margem mínima
     const cx = W / 2;
     const goalW = 30; // baliza 3m
     const goalD = 8;
@@ -35,26 +35,24 @@ export default function FieldHandball() {
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#hbFloor)" />
 
-            {/* Linhas laterais da pista (dentro da margem lateral) */}
             <Rect x={padX} y={0} width={courtW} height={H} fill="none" stroke={LINEA} strokeWidth={2} />
 
-            <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={1.6} />
+            <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={1.8} />
 
-            {/* Marcas de substituição, a 4,5m de cada lado do meio-campo */}
             <Line x1={padX} y1={H / 2 - 45} x2={padX + 5} y2={H / 2 - 45} stroke={LINEA} strokeWidth={1.4} />
             <Line x1={padX} y1={H / 2 + 45} x2={padX + 5} y2={H / 2 + 45} stroke={LINEA} strokeWidth={1.4} />
             <Line x1={padX + courtW} y1={H / 2 - 45} x2={padX + courtW - 5} y2={H / 2 - 45} stroke={LINEA} strokeWidth={1.4} />
             <Line x1={padX + courtW} y1={H / 2 + 45} x2={padX + courtW - 5} y2={H / 2 + 45} stroke={LINEA} strokeWidth={1.4} />
 
             {/* --- Baliza de cima --- */}
-            <Path d={`M ${cx - sixMeterR} 0 A ${sixMeterR} ${sixMeterR} 0 0 0 ${cx + sixMeterR} 0`} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={1.6} />
+            <Path d={`M ${cx - sixMeterR} 0 A ${sixMeterR} ${sixMeterR} 0 0 0 ${cx + sixMeterR} 0`} fill="rgba(255,255,255,0.08)" stroke={LINEA} strokeWidth={1.8} />
             <Path d={`M ${cx - nineMeterR} 0 A ${nineMeterR} ${nineMeterR} 0 0 0 ${cx + nineMeterR} 0`} fill="none" stroke={LINEA_SUAVE} strokeWidth={1.3} strokeDasharray="5,5" />
             <Line x1={cx - 10} y1={fourMeterMarkY} x2={cx + 10} y2={fourMeterMarkY} stroke={LINEA_SUAVE} strokeWidth={1.3} strokeDasharray="4,4" />
             <Rect x={cx - goalW / 2} y={-1} width={goalW} height={goalD} fill="none" stroke={LINEA} strokeWidth={2.4} />
             <Line x1={cx - goalW / 2} y1={0} x2={cx + goalW / 2} y2={0} stroke={LINEA} strokeWidth={4} />
 
             {/* --- Baliza de baixo (espelhada) --- */}
-            <Path d={`M ${cx - sixMeterR} ${H} A ${sixMeterR} ${sixMeterR} 0 0 1 ${cx + sixMeterR} ${H}`} fill="rgba(255,255,255,0.06)" stroke={LINEA} strokeWidth={1.6} />
+            <Path d={`M ${cx - sixMeterR} ${H} A ${sixMeterR} ${sixMeterR} 0 0 1 ${cx + sixMeterR} ${H}`} fill="rgba(255,255,255,0.08)" stroke={LINEA} strokeWidth={1.8} />
             <Path d={`M ${cx - nineMeterR} ${H} A ${nineMeterR} ${nineMeterR} 0 0 1 ${cx + nineMeterR} ${H}`} fill="none" stroke={LINEA_SUAVE} strokeWidth={1.3} strokeDasharray="5,5" />
             <Line x1={cx - 10} y1={H - fourMeterMarkY} x2={cx + 10} y2={H - fourMeterMarkY} stroke={LINEA_SUAVE} strokeWidth={1.3} strokeDasharray="4,4" />
             <Rect x={cx - goalW / 2} y={H + 1 - goalD} width={goalW} height={goalD} fill="none" stroke={LINEA} strokeWidth={2.4} />

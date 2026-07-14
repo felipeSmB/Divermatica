@@ -14,6 +14,16 @@ jwt_verificar($secret);
 
 $metodo = $_SERVER['REQUEST_METHOD'];
 
+
+if (in_array($metodo, ['POST', 'PUT', 'DELETE'], true)) {
+    if (!isset($payload['role']) || $payload['role'] !== 'admin') {
+        http_response_code(403);
+        echo json_encode(['erro' => 'Acesso negado.']);
+        exit;
+    }
+}
+
+
 switch ($metodo) {
 
     case 'GET':

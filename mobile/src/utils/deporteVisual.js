@@ -9,20 +9,8 @@ export function iconoDeporte(nombre) {
     if (n.includes('futbol sala') || n.includes('futsal')) return '🥅';
     if (n.includes('futbol'))     return '⚽';
     if (n.includes('baloncesto') || n.includes('basquet')) return '🏀';
-    if (n.includes('voleibol') || n.includes('voley'))     return '🏐';
-    if (n.includes('tenis de mesa') || n.includes('ping pong')) return '🏓';
-    if (n.includes('padel'))      return '🎾';
-    if (n.includes('tenis'))      return '🎾';
     if (n.includes('balonmano') || n.includes('handball')) return '🤾';
     if (n.includes('rugby'))      return '🏉';
-    if (n.includes('beisbol') || n.includes('softball'))   return '⚾';
-    if (n.includes('hockey'))     return '🏑';
-    if (n.includes('badminton'))  return '🏸';
-    if (n.includes('natacion'))   return '🏊';
-    if (n.includes('ciclismo'))   return '🚴';
-    if (n.includes('atletismo') || n.includes('carrera'))  return '🏃';
-    if (n.includes('boxeo'))      return '🥊';
-    if (n.includes('golf'))       return '⛳';
     return '🏅';
 }
 

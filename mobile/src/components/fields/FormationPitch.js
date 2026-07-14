@@ -453,22 +453,22 @@ function FieldFutbol7() {
 }
 
 // --- FUTSAL — 40 x 20m, área em D (arco de 6m + reta), cantos arredondados,
-// marcas nas laterais e retângulo da baliza — igual à imagem de referência. ---
-function FieldFutsal() {
-    const courtW = 200; // 20m
-    const W = 254, H = 400;
-    const padX = (W - courtW) / 2; // 27
-    const cx = W / 2;
-    const postHalf = 15; // 3m
-    const archR = 60; // 6m
-    const doublePenalty = 100; // 10m
-    const circleR = 30;
-    const spotR = 2.8;
-    const cornerR = 8;
-    const goalDepth = 7;
+// Certifique-se de importar Svg, Rect, Path, Line, Circle, Defs, LinearGradient, RadialGradient do 'react-native-svg' se for React Native.
 
-    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} 0 Z`;
-    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} ${H} Z`;
+function FieldFutsal() {
+    const W = 200;
+    const H = 400;
+    const cx = 100;
+    const postHalf = 15;
+    const archR = 60;
+    const circleR = 30;
+    const spotR = 2.6;
+    const spot1 = 60;
+    const spot2 = 100;
+    const cornerR = 6;
+
+    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} 0 Z`;
+    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} ${H} Z`;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
@@ -486,46 +486,33 @@ function FieldFutsal() {
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalPiso)" />
 
-            {/* Limite real do campo */}
-            <Rect x={padX} y={0} width={courtW} height={H} fill="none" stroke={LINEA} strokeWidth={3} />
+            <Path d={arcTop} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
+            <Path d={arcBot} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
 
-            {/* Cantos arredondados */}
-            <Path d={`M ${padX + cornerR} 0 A ${cornerR} ${cornerR} 0 0 0 ${padX} ${cornerR}`} stroke={LINEA} strokeWidth={2} fill="none" />
-            <Path d={`M ${padX + courtW - cornerR} 0 A ${cornerR} ${cornerR} 0 0 1 ${padX + courtW} ${cornerR}`} stroke={LINEA} strokeWidth={2} fill="none" />
-            <Path d={`M ${padX} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${padX + cornerR} ${H}`} stroke={LINEA} strokeWidth={2} fill="none" />
-            <Path d={`M ${padX + courtW} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${padX + courtW - cornerR} ${H}`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Rect x={0} y={0} width={W} height={H} fill="none" stroke={LINEA} strokeWidth={3} />
 
-            <Line x1={padX} y1={H / 2} x2={padX + courtW} y2={H / 2} stroke={LINEA} strokeWidth={3} />
+            <Path d={`M 0 ${cornerR} A ${cornerR} ${cornerR} 0 0 0 ${cornerR} 0`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Path d={`M ${W - cornerR} 0 A ${cornerR} ${cornerR} 0 0 0 ${W} ${cornerR}`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Path d={`M 0 ${H - cornerR} A ${cornerR} ${cornerR} 0 0 1 ${cornerR} ${H}`} stroke={LINEA} strokeWidth={2} fill="none" />
+            <Path d={`M ${W} ${H - cornerR} A ${cornerR} ${cornerR} 0 0 0 ${W - cornerR} ${H}`} stroke={LINEA} strokeWidth={2} fill="none" />
+
+            <Line x1={0} y1={H / 2} x2={W} y2={H / 2} stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={circleR} fill="none" stroke={LINEA} strokeWidth={3} />
             <Circle cx={cx} cy={H / 2} r={spotR} fill={LINEA} />
 
-            {/* Área de baliza de cima (D sólido laranja) */}
-            <Path d={arcTop} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
-            <Circle cx={cx} cy={doublePenalty} r={spotR} fill={LINEA} />
-            <Rect x={cx - postHalf} y={-1} width={postHalf * 2} height={goalDepth} fill="none" stroke={LINEA} strokeWidth={2.4} />
-            <Line x1={cx - postHalf} y1={0} x2={cx + postHalf} y2={0} stroke={LINEA} strokeWidth={7} />
+            <Rect x={cx - postHalf} y={-7} width={postHalf * 2} height={7} fill="none" stroke={LINEA} strokeWidth={2} />
+            <Rect x={cx - postHalf} y={H} width={postHalf * 2} height={7} fill="none" stroke={LINEA} strokeWidth={2} />
 
-            {/* Área de baliza de baixo (espelhada) */}
-            <Path d={arcBot} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
-            <Circle cx={cx} cy={H - doublePenalty} r={spotR} fill={LINEA} />
-            <Rect x={cx - postHalf} y={H - goalDepth + 1} width={postHalf * 2} height={goalDepth} fill="none" stroke={LINEA} strokeWidth={2.4} />
-            <Line x1={cx - postHalf} y1={H} x2={cx + postHalf} y2={H} stroke={LINEA} strokeWidth={7} />
+            {[H / 2 - 50, H / 2 + 50].flatMap((offset, index) => [
+                <Line key={`${index}-left`} x1={0} y1={H / 2 + offset} x2={4} y2={H / 2 + offset} stroke={LINEA} strokeWidth={2} />,
+                <Line key={`${index}-right`} x1={W - 4} y1={H / 2 + offset} x2={W} y2={H / 2 + offset} stroke={LINEA} strokeWidth={2} />,
+            ])}
 
-            {/* Marcas nas linhas laterais (substituição + referência) */}
-            {[0.18, 0.36, 0.5, 0.64, 0.82].map((f, i) => {
-                const y = H * f;
-                return (
-                    <React.Fragment key={i}>
-                        <Line x1={padX} y1={y} x2={padX + 6} y2={y} stroke={LINEA} strokeWidth={2} />
-                        <Line x1={padX + courtW} y1={y} x2={padX + courtW - 6} y2={y} stroke={LINEA} strokeWidth={2} />
-                    </React.Fragment>
-                );
-            })}
-
-            <Rect x={0} y={0} width={W} height={H} fill="url(#futsalVig)" />
+            <Rect x={0} y={0} width={W} height={H} fill="url(#futsalVig)" pointerEvents="none" />
         </Svg>
     );
 }
+
 
 /* =====================================================
    CONFIGURAÇÃO VISUAL POR DESPORTO

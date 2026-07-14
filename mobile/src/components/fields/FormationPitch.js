@@ -520,12 +520,12 @@ function FieldFutsal() {
    ===================================================== */
 
 const CONFIG = {
-    futbol:     { fondo: '#0f6b3a', aspecto: 0.6362 },
+    futbol:     { fondo: '#0f6b3a', aspecto: 0.6636 },
     futbol7:    { fondo: '#0f6b3a', aspecto: 0.6636 },
-    futsal:     { fondo: '#1c58a0', aspecto: 0.635 },
-    baloncesto: { fondo: '#c98f4e', aspecto: 0.6357 },
-    balonmano:  { fondo: '#147a58', aspecto: 0.635 },
-    rugby:      { fondo: '#0c6c3a', aspecto: 0.6367 },
+    futsal:     { fondo: '#1c58a0', aspecto: 0.6636 },
+    baloncesto: { fondo: '#c98f4e', aspecto: 0.6636 },
+    balonmano:  { fondo: '#147a58', aspecto: 0.6636 },
+    rugby:      { fondo: '#0c6c3a', aspecto: 0.6636 },
 };
 
 const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'baloncesto', 'balonmano', 'rugby'];

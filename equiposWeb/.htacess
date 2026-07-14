@@ -1,0 +1,6 @@
+<FilesMatch "\.(env|sql|log|sh|bak|zip)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+Options -Indexes

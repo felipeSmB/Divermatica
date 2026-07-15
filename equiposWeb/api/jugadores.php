@@ -38,7 +38,7 @@ switch ($metodo) {
                     FROM jugadores j
                     LEFT JOIN deportes d ON d.id = j.deporte_id
                     WHERE j.usuario_id = ?';
-        $params = [];
+        $params = [$usuario_id];
 
         if ($buscar !== '') {
             $query   .= ' AND j.nombre LIKE ?';

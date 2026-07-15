@@ -5,7 +5,7 @@
 </Files>
 
 # Bloquear acesso a ficheiros sensíveis
-<FilesMatch "\.(env|log|sh|sql|bak)$">
+<FilesMatch "\.(env|log|sh|sql|bak|zip)$">
     Order allow,deny
     Deny from all
 </FilesMatch>

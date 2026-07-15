@@ -477,11 +477,12 @@ function FieldFutsal() {
     const spot2 = 100;
     const cornerR = 6;
 
-    const arcTop = `M ${cx - postHalf - archR} 0 A ${archR} ${archR} 0 0 0 ${cx - postHalf} ${archR} L ${cx + postHalf} ${archR} A ${archR} ${archR} 0 0 0 ${cx + postHalf + archR} 0 Z`;
-    const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} ${H} Z`;
+    const arcTop = `M ${cx - archR} 0 A ${archR} ${archR} 0 0 0 ${cx + archR} 0`;
+    const arcBot = `M ${cx - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx + archR} ${H}`;
+
 
     return (
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
             <Defs>
                 <LinearGradient id="futsalPiso" x1="0" y1="0" x2="0" y2="1">
                     <Stop offset="0" stopColor="#2266b8" />

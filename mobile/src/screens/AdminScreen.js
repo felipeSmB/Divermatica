@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { colorNivel } from '../utils/nivel';
 import {
     alterarBloqueioUsuario,
+    alterarPlanoUsuario,
     alterarRoleUsuario,
     eliminarUsuarioAdmin,
     listarLogsAdmin,
@@ -14,7 +15,7 @@ import {
 const SECTIONS = ['overview', 'users', 'logs'];
 const SECTION_LABELS = {
     overview: 'General',
-    users: 'Usuarios',
+    users: 'Utilizadores',
     logs: 'Logs',
 };
 
@@ -39,6 +40,7 @@ export default function AdminScreen() {
     const [logs, setLogs] = useState([]);
     const [tipoFiltro, setTipoFiltro] = useState('');
     const [usernameFiltro, setUsernameFiltro] = useState('');
+    const [buscaUsuario, setBuscaUsuario] = useState('');
 
     const cargarStats = useCallback(async () => {
         try {
@@ -118,6 +120,23 @@ export default function AdminScreen() {
         );
     }
 
+    async function onTogglePlano(usuario) {
+        const planoAtual = usuario.plano || 'demo';
+        const siguientePlano = planoAtual === 'pro' ? 'demo' : 'pro';
+        confirmarAccion(
+            'Confirmar',
+            `¿Cambiar el plan de ${usuario.username} a ${siguientePlano === 'pro' ? 'Pro' : 'Demo'}?`,
+            async () => {
+                try {
+                    await alterarPlanoUsuario(usuario.id, siguientePlano);
+                    cargarUsuarios();
+                } catch (error) {
+                    Alert.alert('Error', error.message || 'No se pudo actualizar el plan');
+                }
+            },
+        );
+    }
+
     async function onEliminarUsuario(usuario) {
         confirmarAccion(
             'Eliminar usuario',
@@ -138,6 +157,12 @@ export default function AdminScreen() {
         if (!stats?.jugadores_por_nivel?.length) return 1;
         return Math.max(...stats.jugadores_por_nivel.map(item => Number(item.cantidad) || 0));
     }, [stats]);
+
+    const usuariosFiltrados = useMemo(() => {
+        if (!buscaUsuario.trim()) return usuarios;
+        const termo = buscaUsuario.trim().toLowerCase();
+        return usuarios.filter(u => (u.username || '').toLowerCase().includes(termo));
+    }, [usuarios, buscaUsuario]);
 
     return (
         <View style={styles.container}>
@@ -194,19 +219,31 @@ export default function AdminScreen() {
 
             {seccionActiva === 'users' && (
                 <FlatList
-                    data={usuarios}
+                    data={usuariosFiltrados}
                     keyExtractor={item => String(item.id)}
                     contentContainerStyle={styles.content}
+                    ListHeaderComponent={
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Buscar por username (ej: para confirmar pago MB WAY)"
+                            placeholderTextColor="#5b6478"
+                            value={buscaUsuario}
+                            onChangeText={setBuscaUsuario}
+                        />
+                    }
                     renderItem={({ item }) => (
                         <View style={styles.card}>
                             <View style={styles.rowBetween}>
                                 <Text style={styles.listTitle}>{item.username}</Text>
                                 <View style={styles.badgeRow}>
                                     <View style={[styles.badge, item.role === 'admin' ? styles.badgeAdmin : styles.badgeUser]}>
-                                        <Text style={styles.badgeText}>{item.role === 'admin' ? 'Admin' : 'Usuario'}</Text>
+                                        <Text style={styles.badgeText}>{item.role === 'admin' ? 'Admin' : 'User'}</Text>
                                     </View>
                                     <View style={[styles.badge, item.bloqueado ? styles.badgeBlocked : styles.badgeActive]}>
                                         <Text style={styles.badgeText}>{item.bloqueado ? 'Bloqueado' : 'Activo'}</Text>
+                                    </View>
+                                    <View style={[styles.badge, (item.plano || 'demo') === 'pro' ? styles.badgePro : styles.badgeDemo]}>
+                                        <Text style={styles.badgeText}>{(item.plano || 'demo') === 'pro' ? 'Pro' : 'Demo'}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -217,6 +254,9 @@ export default function AdminScreen() {
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.actionBtn} onPress={() => onToggleBloqueo(item)}>
                                     <Text style={styles.actionText}>{item.bloqueado ? 'Desbloquear' : 'Bloquear'}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.actionBtn} onPress={() => onTogglePlano(item)}>
+                                    <Text style={styles.actionText}>{(item.plano || 'demo') === 'pro' ? 'Tornar Demo' : 'Tornar Pro'}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={[styles.actionBtn, styles.actionDanger]} onPress={() => onEliminarUsuario(item)}>
                                     <Text style={styles.actionText}>Eliminar</Text>
@@ -245,7 +285,7 @@ export default function AdminScreen() {
                         </View>
                         <TextInput
                             style={styles.input}
-                            placeholder="Filtrar por usuario"
+                            placeholder="Filtrar por username"
                             placeholderTextColor="#5b6478"
                             value={usernameFiltro}
                             onChangeText={setUsernameFiltro}
@@ -255,7 +295,7 @@ export default function AdminScreen() {
                         data={logs}
                         keyExtractor={item => String(item.id)}
                         contentContainerStyle={styles.content}
-                        ListEmptyComponent={<Text style={styles.emptyText}>No hay registros encontrados</Text>}
+                        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum registo encontrado</Text>}
                         renderItem={({ item }) => {
                             const tipoKey = item.tipo || '';
                             const tipoColor = tipoKey === 'login' ? '#00e676' : tipoKey === 'login_falhou' ? '#ff4d6d' : tipoKey === 'registro' ? '#00c2ff' : '#ffb347';
@@ -310,6 +350,8 @@ const styles = StyleSheet.create({
     badgeUser: { backgroundColor: '#2a2f3a' },
     badgeBlocked: { backgroundColor: '#ff4d6d' },
     badgeActive: { backgroundColor: '#00e676' },
+    badgePro: { backgroundColor: '#ffb300' },
+    badgeDemo: { backgroundColor: '#2a2f3a' },
     badgeText: { color: '#0f1115', fontWeight: '700', fontSize: 11 },
     actionsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
     actionBtn: { backgroundColor: '#2a2f3a', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 8 },

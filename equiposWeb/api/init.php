@@ -5,7 +5,7 @@ ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 
 set_exception_handler(function (Throwable $e): void {
-    error_log('[MATCHORA] Exceção não tratada: ' . $e->getMessage() . ' em ' . $e->getFile() . ':' . $e->getLine());
+    error_log('[DIVERSPORT] Exceção não tratada: ' . $e->getMessage() . ' em ' . $e->getFile() . ':' . $e->getLine());
     if (!headers_sent()) {
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');

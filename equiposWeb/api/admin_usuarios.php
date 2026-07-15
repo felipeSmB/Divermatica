@@ -73,28 +73,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
         exit;
     }
     
-    // Verificar si es el último admin
-    $stmtCheck = $pdo->prepare('SELECT COUNT(*) as admin_count FROM usuarios WHERE role = "admin"');
-    $stmtCheck->execute();
-    $result = $stmtCheck->fetch();
-    
-    if ($result['admin_count'] <= 1) {
-        http_response_code(400);
-        echo json_encode(['erro' => 'No se puede eliminar el último administrador']);
-        exit;
-    }
-    
-    // Verificar que el usuario a eliminar es realmente un admin
+    // Verificar que el usuario a eliminar existe
     $stmtVerify = $pdo->prepare('SELECT role FROM usuarios WHERE id = ?');
     $stmtVerify->execute([$id]);
     $user = $stmtVerify->fetch();
-    
-    if ($user && $user['role'] === 'admin' && $result['admin_count'] === 1) {
-        http_response_code(400);
-        echo json_encode(['erro' => 'No se puede eliminar el último administrador']);
+
+    if (!$user) {
+        http_response_code(404);
+        echo json_encode(['erro' => 'Usuario no encontrado']);
         exit;
     }
-    
+
+    // Solo verificar "último admin" si el usuario a eliminar es admin
+    if ($user['role'] === 'admin') {
+        $stmtCheck = $pdo->prepare('SELECT COUNT(*) as admin_count FROM usuarios WHERE role = "admin"');
+        $stmtCheck->execute();
+        $result = $stmtCheck->fetch();
+
+        if ($result['admin_count'] <= 1) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'No se puede eliminar el último administrador']);
+            exit;
+        }
+    }
+
     // Eliminar usuario
     $stmt = $pdo->prepare('DELETE FROM usuarios WHERE id = ?');
     $stmt->execute([$id]);

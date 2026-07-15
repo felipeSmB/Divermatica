@@ -95,7 +95,7 @@ export default function ProScreen() {
                     <View style={styles.badgeGrande}>
                         <Text style={styles.badgeGrandeTexto}>⭐ PRO</Text>
                     </View>
-                    <Text style={styles.titulo}>Matchora PRO</Text>
+                    <Text style={styles.titulo}>DiverSport PRO</Text>
                     <Text style={styles.subtitulo}>
                         {isPro
                             ? 'Ya disfrutas de todas las ventajas PRO. ¡Gracias por tu apoyo!'

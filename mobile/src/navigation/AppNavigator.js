@@ -16,7 +16,7 @@ import BrandTitle from '../components/BrandTitle';
 import AdminScreen from '../screens/AdminScreen';
 import ContaScreen from '../screens/ContaScreen';
 import AccountMenu from '../components/AccountMenu';
-import ProScreen from '../screens/Proscreen';
+import ProScreen from '../screens/ProScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

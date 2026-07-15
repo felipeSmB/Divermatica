@@ -1,0 +1,39 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#00c2ff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#00c2ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c2ff"/>
+      <stop offset="100%" stop-color="#0091c2"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="512" cy="430" r="360" fill="url(#glow)"/>
+
+  <circle cx="512" cy="430" r="140" fill="none" stroke="url(#ringGrad)" stroke-width="10"/>
+
+  <g>
+    <path d="M512 330
+             L592 366
+             V430
+             C592 486 558 526 512 546
+             C466 526 432 486 432 430
+             V366
+             Z"
+          fill="none" stroke="#00c2ff" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M480 428 L505 453 L552 402" fill="none" stroke="#00c2ff" stroke-width="12"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <circle cx="512" cy="222" r="9" fill="#00c2ff"/>
+
+  <text x="512" y="660" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="76" letter-spacing="1"
+        fill="#ffffff">Diver<tspan fill="#00c2ff">Sport</tspan></text>
+
+  <text x="512" y="706" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="26" letter-spacing="4"
+        fill="#7d8592">EQUIPOS · JUGADORES · DEPORTES</text>
+</svg>

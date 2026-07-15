@@ -89,7 +89,7 @@ export default function EquiposScreen() {
 
     function generar() {
         if (!deporteId) { Alert.alert('Atención', 'Selecciona un deporte'); return; }
-        if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.'); return; }
+        if (jugadoresDeporte.length === 0) { Alert.alert('Atención', 'No hay jugadores suficientes para generar equipos en esta modalidad.'); return; }
 
         const n = Math.max(2, parseInt(numEquipos, 10) || 2);
         if (isDemo && n > 2) {
@@ -99,14 +99,14 @@ export default function EquiposScreen() {
 
         // If the sport has available fixed formations, require the user to select one
         if (formacionesDisponibles.length > 0 && !selectedFormacion) {
-            Alert.alert('Atención', 'Escolhe primeiro uma formação antes de gerar as equipas.');
+            Alert.alert('Atención', 'Elige primero una formación antes de generar los equipos.');
             return;
         }
 
         if (formacionAUsar) {
             const necesarios = totalPorEquipoFormacion * n;
             if (jugadoresDeporte.length < necesarios) {
-                Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.');
+                Alert.alert('Atención', 'No hay jugadores suficientes para generar equipos en esta modalidad.');
                 return;
             }
 
@@ -122,9 +122,9 @@ export default function EquiposScreen() {
             return;
         }
 
-        // Deporte sin formación fixa definida: reparto equilibrado genérico
+        // Deporte sin formación fija definida: reparto equilibrado genérico
         if (n > jugadoresDeporte.length) {
-            Alert.alert('Atención', 'Não existem jogadores suficientes para gerar equipas nesta modalidade.');
+            Alert.alert('Atención', 'No hay jugadores suficientes para generar equipos en esta modalidad.');
             return;
         }
         setEquipos(generarEquiposBalanceados(jugadoresDeporte, n));
@@ -308,7 +308,7 @@ export default function EquiposScreen() {
                         </View>
                         {formacionesDisponibles && formacionesDisponibles.length > 0 ? (
                             <>
-                                <Text style={styles.formacionEtiqueta}>Escolhe una formación:</Text>
+                                <Text style={styles.formacionEtiqueta}>Elige una formación:</Text>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, marginTop: 8 }}>
                                     {formacionesDisponibles.map((f, i) => {
                                         const activo = selectedFormacion && selectedFormacion.etiqueta === f.etiqueta;
@@ -326,7 +326,7 @@ export default function EquiposScreen() {
                                 {selectedFormacion ? (
                                     <Text style={styles.formacionDetalle}>{totalPorEquipoFormacion} jugadores por equipo · {selectedFormacion.postos.map(p => `${p.cantidad} ${p.etiqueta}`).join(', ')}</Text>
                                 ) : (
-                                    <Text style={[styles.formacionDetalle, { marginTop: 8 }]}>Escolhe uma formação antes de gerar as equipas.</Text>
+                                    <Text style={[styles.formacionDetalle, { marginTop: 8 }]}>Elige una formación antes de generar los equipos.</Text>
                                 )}
                             </>
                         ) : (

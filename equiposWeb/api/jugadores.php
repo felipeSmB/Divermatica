@@ -73,7 +73,7 @@ switch ($metodo) {
                 echo json_encode(['erro' => 'Límite del plan demo alcanzado (' . JUGADORES_LIMITE_DEMO . ' jugadores). Actualiza a Pro para jugadores ilimitados.']);
                 exit;
             }
-        }
+
 
         $raw   = json_decode(file_get_contents('php://input'), true) ?? [];
         $dados = validar_jogador($raw, $pdo);

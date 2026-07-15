@@ -2,9 +2,7 @@ let jugadoresEquipos = [];
 let deportesCache = [];
 let equiposActuales = [];
 
-// ─────────────────────────────────────────────
 // INICIALIZAÇÃO
-// ─────────────────────────────────────────────
 
 async function iniciarModuloEquipos() {
     try {
@@ -57,9 +55,7 @@ async function cargarJugadoresDelDeporte() {
     renderizarListaJugadores();
 }
 
-// ─────────────────────────────────────────────
 // NOMES EQUIPOS
-// ─────────────────────────────────────────────
 
 function actualizarNombresEquipos() {
     const num = Math.max(2, parseInt(document.getElementById('numEquipos').value || 2));
@@ -73,9 +69,7 @@ function actualizarNombresEquipos() {
     `).join('');
 }
 
-// ─────────────────────────────────────────────
 // LISTA JOGADORES
-// ─────────────────────────────────────────────
 
 function renderizarListaJugadores() {
     const lista = document.getElementById('listaJugadoresEquipos');
@@ -90,9 +84,7 @@ function renderizarListaJugadores() {
     total.textContent = `Total: ${jugadoresEquipos.length}`;
 }
 
-// ─────────────────────────────────────────────
-// GERAR EQUIPOS — balanceado por nivel Y posición
-// ─────────────────────────────────────────────
+// gerar equipos balanceado por nivel Y posición
 
 function generarEquipos() {
     const numEquipos = parseInt(document.getElementById('numEquipos').value, 10);
@@ -145,9 +137,7 @@ function generarEquipos() {
     renderizarEquiposCards(equipos);
 }
 
-// ─────────────────────────────────────────────
 // RENDER CARDS
-// ─────────────────────────────────────────────
 
 function renderizarEquiposCards(equipos) {
     const container = document.getElementById('equiposGenerados');
@@ -174,9 +164,7 @@ function renderizarEquiposCards(equipos) {
     document.getElementById('btnGuardarPartido').style.display = equipos.length ? 'inline-block' : 'none';
 }
 
-// ─────────────────────────────────────────────
 // GUARDAR EN HISTORIAL
-// ─────────────────────────────────────────────
 
 async function guardarPartido() {
     if (equiposActuales.length === 0) return;

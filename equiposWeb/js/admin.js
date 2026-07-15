@@ -1,9 +1,9 @@
 /**
- * Sistema de Administración - MATCHORA
+ * Sistema de Administración
  * Gestión de usuarios, logs y estadísticas
  */
 
-// ── Verificación de Admin ────────────────────────────
+// ── Verificación de Admin 
 
 function verificarAdmin() {
     const token = getToken();
@@ -40,7 +40,7 @@ function verificarAdmin() {
 // Verificar admin al cargar la página
 const payloadAdmin = verificarAdmin();
 
-// ── Navegación entre Secciones ─────────────────────
+// ── Navegación entre Secciones 
 
 function navegarSeccion(seccion) {
     // Ocultar todas las secciones
@@ -76,7 +76,7 @@ function navegarSeccion(seccion) {
     }
 }
 
-// ── DASHBOARD ──────────────────────────────────────
+// ── DASHBOARD
 
 async function cargarDashboard() {
     try {
@@ -117,7 +117,7 @@ async function cargarDashboard() {
     }
 }
 
-// ── USUARIOS ───────────────────────────────────────
+// ── USUARIOS 
 
 async function cargarUsuarios() {
     try {
@@ -260,7 +260,7 @@ async function eliminarUsuario(id, username) {
     }
 }
 
-// ── LOGS ───────────────────────────────────────────
+// ── LOGS 
 
 async function cargarLogs() {
     try {
@@ -303,7 +303,7 @@ async function cargarLogs() {
     }
 }
 
-// ── ESTADÍSTICAS ───────────────────────────────────
+// ── ESTADÍSTICAS 
 
 async function cargarEstadisticas() {
     try {
@@ -328,7 +328,7 @@ async function cargarEstadisticas() {
     }
 }
 
-// ── UTILIDADES ─────────────────────────────────────
+// ── UTILIDADES 
 
 function badgeRole(role) {
     const esAdmin = role === 'admin';
@@ -392,7 +392,7 @@ function cerrarSesionAdmin() {
     }
 }
 
-// ── Cargar Dashboard al iniciar ────────────────────
+// ── Cargar Dashboard al iniciar 
 window.addEventListener('load', () => {
     cargarDashboard();
 });

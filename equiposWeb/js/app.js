@@ -48,9 +48,7 @@ function cerrarSesion() {
     window.location.href = 'login.html';
 }
 
-// ─────────────────────────────────────────────
-// API FETCH (CORRIGIDO DEFINITIVO)
-// ─────────────────────────────────────────────
+// API FETCH 
 
 async function apiFetch(url, opciones = {}) {
     const token = getToken();
@@ -78,9 +76,7 @@ async function apiFetch(url, opciones = {}) {
     }
 }
 
-// ─────────────────────────────────────────────
 // UTILITÁRIOS
-// ─────────────────────────────────────────────
 
 function escapeHtml(value) {
     const text = String(value ?? '');
@@ -122,6 +118,5 @@ function puntajeNivel(nivel) {
     return 1;
 }
 
-// ─────────────────────────────────────────────
 
 verificarSesion();

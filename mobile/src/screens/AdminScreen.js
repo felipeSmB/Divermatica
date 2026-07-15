@@ -14,7 +14,7 @@ import {
 const SECTIONS = ['overview', 'users', 'logs'];
 const SECTION_LABELS = {
     overview: 'General',
-    users: 'Utilizadores',
+    users: 'Usuarios',
     logs: 'Logs',
 };
 
@@ -203,7 +203,7 @@ export default function AdminScreen() {
                                 <Text style={styles.listTitle}>{item.username}</Text>
                                 <View style={styles.badgeRow}>
                                     <View style={[styles.badge, item.role === 'admin' ? styles.badgeAdmin : styles.badgeUser]}>
-                                        <Text style={styles.badgeText}>{item.role === 'admin' ? 'Admin' : 'User'}</Text>
+                                        <Text style={styles.badgeText}>{item.role === 'admin' ? 'Admin' : 'Usuario'}</Text>
                                     </View>
                                     <View style={[styles.badge, item.bloqueado ? styles.badgeBlocked : styles.badgeActive]}>
                                         <Text style={styles.badgeText}>{item.bloqueado ? 'Bloqueado' : 'Activo'}</Text>
@@ -245,7 +245,7 @@ export default function AdminScreen() {
                         </View>
                         <TextInput
                             style={styles.input}
-                            placeholder="Filtrar por username"
+                            placeholder="Filtrar por usuario"
                             placeholderTextColor="#5b6478"
                             value={usernameFiltro}
                             onChangeText={setUsernameFiltro}
@@ -255,7 +255,7 @@ export default function AdminScreen() {
                         data={logs}
                         keyExtractor={item => String(item.id)}
                         contentContainerStyle={styles.content}
-                        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum registo encontrado</Text>}
+                        ListEmptyComponent={<Text style={styles.emptyText}>No hay registros encontrados</Text>}
                         renderItem={({ item }) => {
                             const tipoKey = item.tipo || '';
                             const tipoColor = tipoKey === 'login' ? '#00e676' : tipoKey === 'login_falhou' ? '#ff4d6d' : tipoKey === 'registro' ? '#00c2ff' : '#ffb347';

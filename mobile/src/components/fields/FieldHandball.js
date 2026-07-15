@@ -5,9 +5,9 @@ const LINEA = 'rgba(255,255,255,0.92)';
 const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
 
 export default function FieldHandball() {
-    const courtW = 200; // 20m
     const W = 254, H = 400;
-    const padX = (W - courtW) / 2; // 27 — mesma escala do Futsal
+    const courtW = W; // campo ocupa toda a largura, até à borda
+    const padX = 0;
     const cx = W / 2;
     const goalW = 30;
     const goalD = 7;
@@ -16,7 +16,7 @@ export default function FieldHandball() {
     const fourMeterMarkY = 40;
 
     return (
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
             <Defs>
                 <LinearGradient id="hbFloor" x1="0" y1="0" x2="0" y2="1">
                     <Stop offset="0" stopColor="#1a9169" />

@@ -28,6 +28,7 @@ export default function JugadoresScreen() {
     const [deportes, setDeportes] = useState([]);
     const [posiciones, setPosiciones] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [filtroModalVisible, setFiltroModalVisible] = useState(false);
     const [editandoId, setEditandoId] = useState(null);
     const [detalleVisible, setDetalleVisible] = useState(false);
     const [jugadorSeleccionado, setJugadorSeleccionado] = useState(null);
@@ -66,6 +67,9 @@ export default function JugadoresScreen() {
         deportes.forEach((d, i) => { map[d.id] = ACCENTS[i % ACCENTS.length]; });
         return map;
     }, [deportes]);
+
+    const deporteFiltroSeleccionado = deportes.find(d => String(d.id) === filtroDeporte);
+    const nombreFiltroDeporte = deporteFiltroSeleccionado ? `${iconoDeporte(deporteFiltroSeleccionado.nombre)} ${deporteFiltroSeleccionado.nombre}` : 'Todos';
 
     const jugadoresFiltrados = useMemo(() => {
         const q = normalizarTexto(busqueda);
@@ -181,52 +185,14 @@ export default function JugadoresScreen() {
                 )}
             </View>
 
-            {/* Filtro por deporte — SEM scroll escondido: quebra de linha
-                automática, para que todos os filtros estejam sempre à vista. */}
-            <View style={styles.filtrosFila}>
-                <TouchableOpacity
-                    style={[styles.chip, filtroDeporte === '' && styles.chipActivoTodos]}
-                    onPress={() => setFiltroDeporte('')}
-                    activeOpacity={0.8}
-                >
-                    <Text style={[styles.chipTexto, filtroDeporte === '' && styles.chipTextoActivo]}>
-                        📋 Todos
-                    </Text>
-                    <View style={[styles.chipContador, filtroDeporte === '' && styles.chipContadorActivo]}>
-                        <Text style={[styles.chipContadorTexto, filtroDeporte === '' && styles.chipContadorTextoActivo]}>
-                            {jugadores.length}
-                        </Text>
+<View style={styles.filtroBarra}>
+                <TouchableOpacity style={styles.filtroBoton} onPress={() => setFiltroModalVisible(true)} activeOpacity={0.85}>
+                    <View>
+                        <Text style={styles.filtroBotonLabel}>Filtrar por deporte</Text>
+                        <Text style={styles.filtroBotonValor}>{nombreFiltroDeporte}</Text>
                     </View>
+                    <Text style={styles.filtroBotonAbrir}>▼</Text>
                 </TouchableOpacity>
-                {deportes.map(d => {
-                    const activo = String(d.id) === filtroDeporte;
-                    const accent = accentPorDeporte[d.id] || '#00c2ff';
-                    const cantidad = jugadores.filter(j => String(j.deporte_id) === String(d.id)).length;
-                    const bloqueado = isDemo && detetarDeporte(d.nombre) !== 'futbol';
-                    return (
-                        <TouchableOpacity
-                            key={d.id}
-                            style={[styles.chip, activo && { backgroundColor: accent, borderColor: accent }, bloqueado && { opacity: 0.5 }]}
-                            onPress={() => {
-                                if (bloqueado) {
-                                    Alert.alert('Funcionalidad Pro', 'Actualiza a Pro para usar este deporte.');
-                                    return;
-                                }
-                                setFiltroDeporte(String(d.id));
-                            }}
-                            activeOpacity={0.8}
-                        >
-                            <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]} numberOfLines={1}>
-                                {iconoDeporte(d.nombre)} {d.nombre}{bloqueado ? ' (Pro)' : ''}
-                            </Text>
-                            <View style={[styles.chipContador, activo && { backgroundColor: 'rgba(0,0,0,0.18)' }]}>
-                                <Text style={[styles.chipContadorTexto, activo && styles.chipContadorTextoActivo]}>
-                                    {cantidad}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    );
-                })}
             </View>
 
             <FlatList
@@ -289,6 +255,51 @@ export default function JugadoresScreen() {
                     );
                 }}
             />
+
+            <Modal visible={filtroModalVisible} animationType="slide" presentationStyle="pageSheet">
+                <SafeAreaView style={styles.modalSafe}>
+                    <View style={styles.modalHeader}>
+                        <Text style={styles.modalTitulo}>Selecciona un deporte</Text>
+                        <TouchableOpacity onPress={() => setFiltroModalVisible(false)}>
+                            <Text style={styles.cerrarModal}>✕</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView contentContainerStyle={styles.modalBody} keyboardShouldPersistTaps="handled">
+                        <TouchableOpacity
+                            style={[styles.filtroItem, filtroDeporte === '' && styles.filtroItemActivo]}
+                            onPress={() => { setFiltroDeporte(''); setFiltroModalVisible(false); }}
+                        >
+                            <Text style={[styles.filtroItemTexto, filtroDeporte === '' && styles.filtroItemTextoActivo]}>📋 Todos</Text>
+                            <Text style={[styles.filtroItemCuenta, filtroDeporte === '' && styles.filtroItemTextoActivo]}>{jugadores.length}</Text>
+                        </TouchableOpacity>
+                        {deportes.map(d => {
+                            const activo = String(d.id) === filtroDeporte;
+                            const accent = accentPorDeporte[d.id] || '#00c2ff';
+                            const cantidad = jugadores.filter(j => String(j.deporte_id) === String(d.id)).length;
+                            const bloqueado = isDemo && detetarDeporte(d.nombre) !== 'futbol';
+                            return (
+                                <TouchableOpacity
+                                    key={d.id}
+                                    style={[styles.filtroItem, activo && { borderColor: accent, backgroundColor: `${accent}20` }, bloqueado && { opacity: 0.5 }]}
+                                    onPress={() => {
+                                        if (bloqueado) {
+                                            Alert.alert('Funcionalidad Pro', 'Actualiza a Pro para usar este deporte.');
+                                            return;
+                                        }
+                                        setFiltroDeporte(String(d.id));
+                                        setFiltroModalVisible(false);
+                                    }}
+                                >
+                                    <View style={styles.filtroTextoWrap}>
+                                        <Text style={[styles.filtroItemTexto, activo && styles.filtroItemTextoActivo]}>{iconoDeporte(d.nombre)} {d.nombre}</Text>
+                                        <Text style={styles.filtroItemSubtexto}>{cantidad} jugador{cantidad === 1 ? '' : 'es'}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </ScrollView>
+                </SafeAreaView>
+            </Modal>
 
             {/* Modal de crear / editar */}
             <Modal visible={modalVisible} animationType="slide" presentationStyle="pageSheet">
@@ -464,12 +475,40 @@ const styles = StyleSheet.create({
     buscadorLimpiar: { color: '#5b6478', fontSize: 15, fontWeight: 'bold', paddingHorizontal: 4 },
 
     // Filtros em quebra de linha — nunca ficam escondidos fora do ecrã
-    filtrosFila: {
+    filtroBarra: { marginBottom: 14 },
+    filtroBoton: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
-        marginBottom: 14,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#1c1f26',
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: '#2a2f3a',
     },
+    filtroBotonLabel: { color: '#8a9bbf', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+    filtroBotonValor: { color: '#fff', fontSize: 15, fontWeight: '700' },
+    filtroBotonAbrir: { color: '#5b6478', fontSize: 12 },
+
+    filtroItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#11141a',
+        borderColor: '#2a2f3a',
+        borderWidth: 1,
+        borderRadius: 16,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        marginBottom: 10,
+    },
+    filtroItemActivo: { backgroundColor: '#00c2ff', borderColor: '#00c2ff' },
+    filtroTextoWrap: { flex: 1 },
+    filtroItemTexto: { color: '#fff', fontSize: 15, fontWeight: '700' },
+    filtroItemTextoActivo: { color: '#0f1115' },
+    filtroItemSubtexto: { color: '#8a9bbf', fontSize: 12, marginTop: 2 },
+    filtroItemCuenta: { color: '#8a9bbf', fontSize: 13, fontWeight: '700' },
 
     lista: { paddingBottom: 24 },
     columna: { gap: 12 },

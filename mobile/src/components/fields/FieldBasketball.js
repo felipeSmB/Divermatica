@@ -5,9 +5,9 @@ const LINEA = 'rgba(255,255,255,0.95)';
 const VERMELHO = '#c6322d';
 
 export default function FieldBasketball() {
-    const courtW = 150;
     const W = 178, H = 280;
-    const padX = (W - courtW) / 2;
+    const courtW = W; // campo ocupa toda a largura, até à borda
+    const padX = 0;
     const cx = W / 2;
 
     const keyBaseW = 54;
@@ -23,7 +23,7 @@ export default function FieldBasketball() {
     const threePointCornerY = 47;
 
     return (
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
             <Defs>
                 <LinearGradient id="bballCourt" x1="0" y1="0" x2="0" y2="1">
                     <Stop offset="0" stopColor="#e2ac6e" />
@@ -53,7 +53,7 @@ export default function FieldBasketball() {
             <Line x1={cx - 9} y1={backboardInset} x2={cx + 9} y2={backboardInset} stroke={LINEA} strokeWidth={2.6} />
             <Circle cx={cx} cy={hoopInset} r={2.4} fill="none" stroke="#ff7a1a" strokeWidth={1.6} />
             <Path
-                d={`M ${cx - threePointSide} 0 L ${cx - threePointSide} ${threePointCornerY} A ${threePointR} ${threePointR} 0 0 0 ${cx + threePointSide} ${threePointCornerY} L ${cx + threePointSide} 0`}
+                d={`M ${cx - threePointSide} 0 L ${cx - threePointSide} ${threePointCornerY} A ${threePointR} ${threePointR} 0 0 1 ${cx + threePointSide} ${threePointCornerY} L ${cx + threePointSide} 0`}
                 stroke={LINEA} strokeWidth={2} fill="none"
             />
 

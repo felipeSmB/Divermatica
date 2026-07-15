@@ -334,6 +334,16 @@ const POSICIONES_FORMACION = {
     },
 };
 
+// Desvio vertical aplicado à composição destes desportos, para que os
+// jogadores fiquem mais afastados da linha de fundo/baliza e a
+// composição se veja bem dentro do campo.
+const OFFSET_Y_COMPOSICAO = {
+    futbol: 5,
+    futbol7: 5,
+    futsal: 6,
+    balonmano: 6,
+};
+
 function obtenerPosicionesFormacion(tipo, etiquetaFormacion, puestoEtiqueta, cantidad) {
     const form = POSICIONES_FORMACION[tipo]?.[etiquetaFormacion];
     if (!form) return null;
@@ -471,7 +481,7 @@ function FieldFutsal() {
     const arcBot = `M ${cx - postHalf - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx - postHalf} ${H - archR} L ${cx + postHalf} ${H - archR} A ${archR} ${archR} 0 0 1 ${cx + postHalf + archR} ${H} Z`;
 
     return (
-        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
+        <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
             <Defs>
                 <LinearGradient id="futsalPiso" x1="0" y1="0" x2="0" y2="1">
                     <Stop offset="0" stopColor="#2266b8" />
@@ -545,6 +555,8 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
         const resultado = [];
         if (!formacionTemplate) return [];
 
+        const desvioY = OFFSET_Y_COMPOSICAO[tipo] || 0;
+
         const grupos = {};
         equipoLocal.forEach(j => {
             const pos = j.posicion || 'Sem posición';
@@ -559,7 +571,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
             if (posiciones && posiciones.length > 0) {
                 jugadoresGrupo.forEach((j, i) => {
                     const posicion = posiciones[i] || posiciones[0];
-                    resultado.push({ jogador: j, xPorc: posicion.x, yPorc: posicion.y });
+                    resultado.push({ jogador: j, xPorc: posicion.x, yPorc: Math.min(94, posicion.y + desvioY) });
                 });
             } else {
                 const n = jugadoresGrupo.length;
@@ -572,7 +584,7 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
                         const step = Math.min(6, 3 + Math.floor(n / 2));
                         offsetY = (i - (n - 1) / 2) * step;
                     }
-                    resultado.push({ jogador: j, xPorc: Math.min(88, Math.max(12, xs[i] ?? xs[0])), yPorc: Math.min(90, Math.max(8, info.y + offsetY)) });
+                    resultado.push({ jogador: j, xPorc: Math.min(88, Math.max(12, xs[i] ?? xs[0])), yPorc: Math.min(94, Math.max(8, info.y + offsetY + desvioY)) });
                 });
             }
         });

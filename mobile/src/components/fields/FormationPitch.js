@@ -13,6 +13,22 @@ const LINEA_SUAVE = 'rgba(255,255,255,0.55)';
 const GRASS_A = '#0e6b39';
 const GRASS_B = '#125f34';
 
+// -----------------------------------------------------------------
+// NORMALIZAÇÃO DE TEXTO — usada para comparar o "etiqueta" que vem da
+// formação (formacion.postos[i].etiqueta) com as chaves definidas em
+// POSICIONES_FORMACION, ignorando acentos, maiúsculas e espaços extra.
+// Isto evita que pequenas diferenças de escrita (ex.: "2ª Linha" vs
+// "Segunda Linha", ou "Numero 8" vs "Número 8") façam o código cair no
+// fallback genérico e sobrepor jogadores.
+// -----------------------------------------------------------------
+function normalizarChave(texto) {
+    return (texto || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // remove acentos
+        .replace(/[^a-z0-9]/g, '');      // remove espaços, hífens, etc.
+}
+
 const POSICIONES_FORMACION = {
     futbol: {
         '4-3-3': {
@@ -303,36 +319,67 @@ const POSICIONES_FORMACION = {
             'Ponta Direita': [{ x: 84, y: 74 }],
         },
     },
+    // -----------------------------------------------------------------
+    // RUGBY — composição igual ao cartaz "XV de France vs Canada":
+    // 15 sozinho no topo, depois 14-13-12-11, depois 10-8-9,
+    // depois 7-6, depois 5-4, e por fim 3-2-1 junto à base.
+    // 6 linhas, espaçamento vertical uniforme de 16 (y: 6,22,38,54,70,86),
+    // nunca mais de 4 jogadores por linha, gaps horizontais generosos.
+    // -----------------------------------------------------------------
     rugby: {
         'XV Completo': {
+            // Linha 1 (topo, própria linha de golo) — 1ª linha: Pilar-Talonador-Pilar
+            Talonador: [{ x: 50, y: 6 }],
             Pilar: [
-                { x: 38, y: 11 },
-                { x: 62, y: 11 },
+                { x: 35, y: 6 },
+                { x: 65, y: 6 },
             ],
-            Talonador: [{ x: 50, y: 9 }],
+            // Linha 2 — 2ª linha, bem afastada da linha 1
             'Segunda Linha': [
-                { x: 42, y: 19 },
-                { x: 58, y: 19 },
+                { x: 40, y: 22 },
+                { x: 60, y: 22 },
             ],
+            // Linha 3 — 3ª linha: flankers nas laterais, Número 8 ao centro
             Ala: [
-                { x: 26, y: 27 },
-                { x: 74, y: 27 },
+                { x: 20, y: 38 },
+                { x: 80, y: 38 },
             ],
-            'Número 8': [{ x: 50, y: 29 }],
-            'Médio Scrum': [{ x: 50, y: 40 }],
-            Abertura: [{ x: 50, y: 50 }],
+            'Número 8': [{ x: 50, y: 38 }],
+            // Linha 4 — médios
+            'Médio Scrum': [{ x: 35, y: 54 }],
+            Abertura: [{ x: 65, y: 54 }],
+            // Linha 5 — centros
             Centro: [
-                { x: 36, y: 60 },
-                { x: 64, y: 60 },
+                { x: 35, y: 70 },
+                { x: 65, y: 70 },
             ],
+            // Linha 6 (base) — pontas nas laterais, zagueiro ao centro
             Ponta: [
-                { x: 14, y: 75 },
-                { x: 86, y: 75 },
+                { x: 15, y: 86 },
+                { x: 85, y: 86 },
             ],
-            Zagueiro: [{ x: 50, y: 87 }],
+            Zagueiro: [{ x: 50, y: 86 }],
         },
     },
 };
+
+// -----------------------------------------------------------------
+// Índice normalizado de POSICIONES_FORMACION, construído uma única vez.
+// Permite localizar a formação/posto certos mesmo que o "etiqueta" que
+// vem de fora (formacion.postos[i].etiqueta) tenha acentos, maiúsculas
+// ou espaços escritos de forma diferente da chave original.
+// -----------------------------------------------------------------
+const INDICE_NORMALIZADO = {};
+Object.entries(POSICIONES_FORMACION).forEach(([tipo, formacoes]) => {
+    INDICE_NORMALIZADO[tipo] = {};
+    Object.entries(formacoes).forEach(([etiquetaFormacao, postos]) => {
+        const chaveFormacao = normalizarChave(etiquetaFormacao);
+        INDICE_NORMALIZADO[tipo][chaveFormacao] = {};
+        Object.entries(postos).forEach(([etiquetaPosto, posicoes]) => {
+            INDICE_NORMALIZADO[tipo][chaveFormacao][normalizarChave(etiquetaPosto)] = posicoes;
+        });
+    });
+});
 
 // Desvio vertical aplicado à composição destes desportos, para que os
 // jogadores fiquem mais afastados da linha de fundo/baliza e a
@@ -345,9 +392,11 @@ const OFFSET_Y_COMPOSICAO = {
 };
 
 function obtenerPosicionesFormacion(tipo, etiquetaFormacion, puestoEtiqueta, cantidad) {
-    const form = POSICIONES_FORMACION[tipo]?.[etiquetaFormacion];
-    if (!form) return null;
-    const posiciones = form[puestoEtiqueta];
+    const porTipo = INDICE_NORMALIZADO[tipo];
+    if (!porTipo) return null;
+    const porFormacion = porTipo[normalizarChave(etiquetaFormacion)];
+    if (!porFormacion) return null;
+    const posiciones = porFormacion[normalizarChave(puestoEtiqueta)];
     if (!posiciones) return null;
     if (posiciones.length === cantidad) return posiciones;
     if (posiciones.length > cantidad) return posiciones.slice(0, cantidad);
@@ -470,16 +519,33 @@ function FieldFutsal() {
     const H = 400;
     const cx = 100;
     const postHalf = 15;
-    const archR = 60;
+    const areaR = 60; // raio dos arcos da área (6m à escala)
     const circleR = 30;
     const spotR = 2.6;
     const spot1 = 60;
     const spot2 = 100;
     const cornerR = 6;
 
-    const arcTop = `M ${cx - archR} 0 A ${archR} ${archR} 0 0 0 ${cx + archR} 0`;
-    const arcBot = `M ${cx - archR} ${H} A ${archR} ${archR} 0 0 1 ${cx + archR} ${H}`;
+    const Lx = cx - postHalf; // poste esquerdo
+    const Rx = cx + postHalf; // poste direito
 
+    // Área de cima: 2 arcos (raio areaR, centrados nos postes) + linha reta no topo
+    const areaTop = `
+        M ${Lx - areaR} 0
+        A ${areaR} ${areaR} 0 0 0 ${Lx} ${areaR}
+        L ${Rx} ${areaR}
+        A ${areaR} ${areaR} 0 0 0 ${Rx + areaR} 0
+        Z
+    `;
+
+    // Área de baixo: espelhada
+    const areaBot = `
+        M ${Lx - areaR} ${H}
+        A ${areaR} ${areaR} 0 0 1 ${Lx} ${H - areaR}
+        L ${Rx} ${H - areaR}
+        A ${areaR} ${areaR} 0 0 1 ${Rx + areaR} ${H}
+        Z
+    `;
 
     return (
         <Svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
@@ -497,8 +563,8 @@ function FieldFutsal() {
 
             <Rect x={0} y={0} width={W} height={H} fill="url(#futsalPiso)" />
 
-            <Path d={arcTop} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
-            <Path d={arcBot} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
+            <Path d={areaTop} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
+            <Path d={areaBot} fill="#f5921e" stroke={LINEA} strokeWidth={3} />
 
             <Rect x={0} y={0} width={W} height={H} fill="none" stroke={LINEA} strokeWidth={3} />
 
@@ -523,7 +589,6 @@ function FieldFutsal() {
         </Svg>
     );
 }
-
 
 /* =====================================================
    CONFIGURAÇÃO VISUAL POR DESPORTO
@@ -566,7 +631,13 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
         });
 
         formacionTemplate.postos.forEach(posto => {
-            const jugadoresGrupo = grupos[posto.etiqueta] || [];
+            // A busca do grupo de jogadores também é feita de forma normalizada,
+            // para casar "posicion" do jogador com "posto.etiqueta" mesmo que
+            // venham escritos de forma ligeiramente diferente.
+            const chavePosto = normalizarChave(posto.etiqueta);
+            const nomeGrupoReal = Object.keys(grupos).find(k => normalizarChave(k) === chavePosto);
+            const jugadoresGrupo = nomeGrupoReal ? grupos[nomeGrupoReal] : [];
+
             const posiciones = obtenerPosicionesFormacion(tipo, formacionTemplate.etiqueta, posto.etiqueta, jugadoresGrupo.length);
 
             if (posiciones && posiciones.length > 0) {

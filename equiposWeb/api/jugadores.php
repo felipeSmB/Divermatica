@@ -57,8 +57,17 @@ switch ($metodo) {
         break;
 
     case 'POST':
-        if (obtener_plano_usuario($pdo, $usuario_id) === 'demo') {
+        $plano = $payload['plano'] ?? 'demo';
+        if ($plano === 'demo') {
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS total FROM jugadores WHERE usuario_id = ?');
+            $stmtCount->execute([$usuario_id]);
+            if ((int) $stmtCount->fetch()['total'] >= JUGADORES_LIMITE_DEMO) {
+                http_response_code(403);
+                echo json_encode(['erro' => 'Límite del plan demo alcanzado (' . JUGADORES_LIMITE_DEMO . ' jugadores). Actualiza a Pro para jugadores ilimitados.']);
+                exit;
+            }
+        }
+        $stmtCount = $pdo->prepare('SELECT COUNT(*) AS total FROM jugadores WHERE usuario_id = ?');
             $stmtCount->execute([$usuario_id]);
             if ((int) $stmtCount->fetch()['total'] >= JUGADORES_LIMITE_DEMO) {
                 http_response_code(403);

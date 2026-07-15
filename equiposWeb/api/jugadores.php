@@ -57,7 +57,6 @@ switch ($metodo) {
         break;
 
     case 'POST':
-        $plano = $payload['plano'] ?? 'demo';
         if ($plano === 'demo') {
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS total FROM jugadores WHERE usuario_id = ?');
             $stmtCount->execute([$usuario_id]);

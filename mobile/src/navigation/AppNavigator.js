@@ -16,6 +16,7 @@ import BrandTitle from '../components/BrandTitle';
 import AdminScreen from '../screens/AdminScreen';
 import ContaScreen from '../screens/ContaScreen';
 import AccountMenu from '../components/AccountMenu';
+import ProScreen from '../screens/ProScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -87,6 +88,19 @@ function AppTabs({ role }) {
                     ),
                 }}
             />
+
+            <Tab.Screen
+                name="Pro"
+                component={ProScreen}
+                options={{
+                    title: 'PRO',
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.5 }}>⭐</Text>
+                    ),
+                }}
+            />
+            
+           
             {role === 'admin' && (
                 <Tab.Screen
                     name="Admin"

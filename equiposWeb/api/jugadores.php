@@ -28,6 +28,8 @@ function obtener_plano_usuario(PDO $pdo, int $usuario_id): string {
     return $stmt->fetch()['plano'] ?? 'demo';
 }
 
+$plano = obtener_plano_usuario($pdo, $usuario_id);
+
 switch ($metodo) {
 
     case 'GET':

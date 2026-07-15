@@ -15,6 +15,25 @@ $usuario_id = (int) $payload['sub'];
 
 $metodo = $_SERVER['REQUEST_METHOD'];
 
+function obtener_plano_usuario(PDO $pdo, int $usuario_id): string {
+    try {
+        $col = $pdo->query("SHOW COLUMNS FROM usuarios LIKE 'plano'");
+        if (!$col->fetch()) return 'demo';
+    } catch (Exception $e) {
+        return 'demo';
+    }
+    $stmt = $pdo->prepare('SELECT plano FROM usuarios WHERE id = ?');
+    $stmt->execute([$usuario_id]);
+    return $stmt->fetch()['plano'] ?? 'demo';
+}
+
+if (obtener_plano_usuario($pdo, $usuario_id) !== 'pro') {
+    http_response_code(403);
+    echo json_encode(['erro' => 'Funcionalidad Pro. Actualiza tu plan para guardar y ver el historial de partidas.']);
+    exit;
+}
+
+
 switch ($metodo) {
 
     case 'GET':

@@ -28,6 +28,8 @@ function obtener_plano_usuario(PDO $pdo, int $usuario_id): string {
     return $stmt->fetch()['plano'] ?? 'demo';
 }
 
+$plano = obtener_plano_usuario($pdo, $usuario_id);
+
 switch ($metodo) {
 
     case 'GET':
@@ -57,7 +59,7 @@ switch ($metodo) {
         break;
 
     case 'POST':
-        if (obtener_plano_usuario($pdo, $usuario_id) === 'demo') {
+        if ($plano === 'demo') {
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS total FROM jugadores WHERE usuario_id = ?');
             $stmtCount->execute([$usuario_id]);
             if ((int) $stmtCount->fetch()['total'] >= JUGADORES_LIMITE_DEMO) {
@@ -66,6 +68,14 @@ switch ($metodo) {
                 exit;
             }
         }
+        $stmtCount = $pdo->prepare('SELECT COUNT(*) AS total FROM jugadores WHERE usuario_id = ?');
+            $stmtCount->execute([$usuario_id]);
+            if ((int) $stmtCount->fetch()['total'] >= JUGADORES_LIMITE_DEMO) {
+                http_response_code(403);
+                echo json_encode(['erro' => 'Límite del plan demo alcanzado (' . JUGADORES_LIMITE_DEMO . ' jugadores). Actualiza a Pro para jugadores ilimitados.']);
+                exit;
+            }
+
 
         $raw   = json_decode(file_get_contents('php://input'), true) ?? [];
         $dados = validar_jogador($raw, $pdo);

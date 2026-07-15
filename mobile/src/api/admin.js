@@ -38,6 +38,22 @@ export async function alterarBloqueioUsuario(id, bloqueado) {
     return res.json().catch(() => null);
 }
 
+
+export async function alterarPlanoUsuario(id, plano) {
+    const res = await apiFetch('/admin_usuarios.php', {
+        method: 'PUT',
+        body: JSON.stringify({ id, plano }),
+    });
+
+    if (!res) return null;
+    if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.erro || 'No se pudo actualizar el plan');
+    }
+    return res.json().catch(() => null);
+}
+
+
 export async function eliminarUsuarioAdmin(id) {
     const res = await apiFetch(`/admin_usuarios.php?id=${id}`, {
         method: 'DELETE',

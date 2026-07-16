@@ -320,45 +320,49 @@ const POSICIONES_FORMACION = {
         },
     },
     // -----------------------------------------------------------------
-    // RUGBY — composição igual ao cartaz "XV de France vs Canada":
-    // 15 sozinho no topo, depois 14-13-12-11, depois 10-8-9,
-    // depois 7-6, depois 5-4, e por fim 3-2-1 junto à base.
-    // 6 linhas, espaçamento vertical uniforme de 16 (y: 6,22,38,54,70,86),
-    // nunca mais de 4 jogadores por linha, gaps horizontais generosos.
+    // RUGBY — composição clássica em forma de "losango": 1ª linha e
+    // zagueiro bem centrados e fechados, pontas no limite do campo.
+    // 7 filas com espaçamento vertical uniforme de 14 (y: 6,20,34,48,62,76,92),
+    // nunca mais de 3 jogadores por linha, gaps horizontais generosos.
     // -----------------------------------------------------------------
     rugby: {
+        // Composição clássica em "losango": junta ao centro na frente e nas
+        // costas (1ª linha e zagueiro), abre ao máximo a meio (pontas),
+        // com 7 filas uniformemente espaçadas (y: 6,20,34,48,62,76,92) para
+        // que nenhuma fila fique demasiado perto da seguinte.
         'XV Completo': {
-            // Linha 1 (topo, própria linha de golo) — 1ª linha: Pilar-Talonador-Pilar
+            // Fila 1 (topo, linha de golo própria) — Pilar-Talonador-Pilar, bem juntos
             Talonador: [{ x: 50, y: 6 }],
             Pilar: [
-                { x: 35, y: 6 },
-                { x: 65, y: 6 },
+                { x: 30, y: 6 },
+                { x: 70, y: 6 },
             ],
-            // Linha 2 — 2ª linha, bem afastada da linha 1
+            // Fila 2 — 2ª linha (locks), ligeiramente mais abertos que a 1ª
             'Segunda Linha': [
-                { x: 40, y: 22 },
-                { x: 60, y: 22 },
+                { x: 38, y: 20 },
+                { x: 62, y: 20 },
             ],
-            // Linha 3 — 3ª linha: flankers nas laterais, Número 8 ao centro
+            // Fila 3 — 3ª linha: alas (flankers) nas pontas da fila, Número 8 ao centro
             Ala: [
-                { x: 20, y: 38 },
-                { x: 80, y: 38 },
+                { x: 18, y: 34 },
+                { x: 82, y: 34 },
             ],
-            'Número 8': [{ x: 50, y: 38 }],
-            // Linha 4 — médios
-            'Médio Scrum': [{ x: 35, y: 54 }],
-            Abertura: [{ x: 65, y: 54 }],
-            // Linha 5 — centros
+            'Número 8': [{ x: 50, y: 34 }],
+            // Fila 4 — meios (médio-melé e abertura), próximos um do outro no centro
+            'Médio Scrum': [{ x: 38, y: 48 }],
+            Abertura: [{ x: 62, y: 48 }],
+            // Fila 5 — centros, mais abertos que os meios
             Centro: [
-                { x: 35, y: 70 },
-                { x: 65, y: 70 },
+                { x: 30, y: 62 },
+                { x: 70, y: 62 },
             ],
-            // Linha 6 (base) — pontas nas laterais, zagueiro ao centro
+            // Fila 6 — pontas (wings), no limite do campo, o mais abertas possível
             Ponta: [
-                { x: 15, y: 86 },
-                { x: 85, y: 86 },
+                { x: 8, y: 76 },
+                { x: 92, y: 76 },
             ],
-            Zagueiro: [{ x: 50, y: 86 }],
+            // Fila 7 (base) — zagueiro sozinho e centrado, bem separado das pontas
+            Zagueiro: [{ x: 50, y: 92 }],
         },
     },
 };

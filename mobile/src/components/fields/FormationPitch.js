@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Pressable, Text } from 'react-native';
 import Svg, { Rect, Circle, Line, Path, Defs, ClipPath, RadialGradient, LinearGradient, Stop } from 'react-native-svg';
 import PlayerJerseyCard, { JERSEY_SIZES } from '../PlayerJerseyCard';
+import { colorNivel, colorNivelDim } from '../../utils/nivel';
 import { detetarDeporte, calcularFormacao } from '../../utils/posicionamento';
 import { classificarPosicao, distribuirX } from '../../utils/posicionamento';
 import FieldBasketball from './FieldBasketball';
@@ -615,6 +616,7 @@ const SVG_FIELDS = ['futbol', 'futbol7', 'futsal', 'baloncesto', 'balonmano', 'r
    ===================================================== */
 
 export default function FormationPitch({ equipo, posicionesInfo, deporte, small, formacion }) {
+    const [jogadorSelecionado, setJogadorSelecionado] = useState(null);
     const tipo = detetarDeporte(deporte);
     const cfg = CONFIG[tipo] || CONFIG.futbol;
     const denso = equipo.length >= 9;
@@ -697,8 +699,9 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
             {tipo === 'rugby' && <FieldRugby />}
 
             {formacao.map(({ jogador, xPorc, yPorc }) => (
-                <View
+                <Pressable
                     key={jogador.id}
+                    onPress={() => setJogadorSelecionado(jogador)}
                     style={[
                         styles.jogadorAbs,
                         {
@@ -710,8 +713,28 @@ export default function FormationPitch({ equipo, posicionesInfo, deporte, small,
                     ]}
                 >
                     <PlayerJerseyCard jugador={jogador} size={tamanho} />
-                </View>
+                </Pressable>
             ))}
+
+            {/* Cartão de detalhe grande, centrado por cima do campo — mostra
+                nome completo, posição completa e nível, bem legível, sem
+                depender do tamanho pequeno dos cartões no campo. Toca em
+                qualquer sítio fora do cartão para fechar. */}
+            {jogadorSelecionado && (
+                <Pressable style={styles.detalheOverlay} onPress={() => setJogadorSelecionado(null)}>
+                    <View style={[styles.detalheCard, { borderColor: colorNivel(jogadorSelecionado.nivel) }]}>
+                        <Text style={styles.detalheNome} numberOfLines={2}>{jogadorSelecionado.nombre}</Text>
+                        <Text style={styles.detalhePosicao}>{jogadorSelecionado.posicion || 'Sem posición'}</Text>
+                        <View style={[styles.detalheNivelPill, { backgroundColor: colorNivelDim(jogadorSelecionado.nivel) }]}>
+                            <View style={[styles.detalheNivelDot, { backgroundColor: colorNivel(jogadorSelecionado.nivel) }]} />
+                            <Text style={[styles.detalheNivelTexto, { color: colorNivel(jogadorSelecionado.nivel) }]}>
+                                {jogadorSelecionado.nivel || 'Sem nivel'}
+                            </Text>
+                        </View>
+                        <Text style={styles.detalheFechar}>Toca fora para fechar</Text>
+                    </View>
+                </Pressable>
+            )}
         </View>
     );
 }
@@ -725,6 +748,36 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         position: 'relative',
     },
+    detalheOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.55)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+    },
+    detalheCard: {
+        backgroundColor: '#1c1f26',
+        borderRadius: 16,
+        borderWidth: 2,
+        paddingVertical: 20,
+        paddingHorizontal: 24,
+        alignItems: 'center',
+        minWidth: '70%',
+        maxWidth: '90%',
+    },
+    detalheNome: { color: '#fff', fontSize: 20, fontWeight: '800', textAlign: 'center', marginBottom: 6 },
+    detalhePosicao: { color: '#8a9bbf', fontSize: 14, fontWeight: '700', marginBottom: 12, textAlign: 'center' },
+    detalheNivelPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+    },
+    detalheNivelDot: { width: 8, height: 8, borderRadius: 4 },
+    detalheNivelTexto: { fontSize: 14, fontWeight: '800' },
+    detalheFechar: { color: '#5b6478', fontSize: 11, marginTop: 16, fontStyle: 'italic' },
     franjas: { ...StyleSheet.absoluteFillObject, flexDirection: 'column' },
     franja: { flex: 1 },
     vinheta: {

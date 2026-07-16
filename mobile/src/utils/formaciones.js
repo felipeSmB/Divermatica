@@ -84,14 +84,14 @@ const BALONMANO_7 = { etiqueta: 'Balonmano 7', postos: [
 const RUGBY_XV = { etiqueta: 'XV Completo', postos: [
     { etiqueta: 'Pilar', regex: /pilar/, cantidad: 2 },
     { etiqueta: 'Talonador', regex: /talonador/, cantidad: 1 },
-    { etiqueta: 'Segunda Línea', regex: /segunda.?l[ií]nea|segunda.?linha/, cantidad: 2 },
+    { etiqueta: 'Segunda Linha', regex: /segunda.?l[ií]nea|segunda.?linha/, cantidad: 2 },
     { etiqueta: 'Ala', regex: /\bala\b/, cantidad: 2 },
     { etiqueta: 'Número 8', regex: /n[uú]mero.?8|\bn.?8\b/, cantidad: 1 },
-    { etiqueta: 'Medio Melé', regex: /medio.?mel[eé]|medio.?scrum|m[eé]dio.?scrum/, cantidad: 1 },
-    { etiqueta: 'Apertura', regex: /abertura|apertura/, cantidad: 1 },
+    { etiqueta: 'Médio Scrum', regex: /medio.?mel[eé]|medio.?scrum|m[eé]dio.?scrum/, cantidad: 1 },
+    { etiqueta: 'Abertura', regex: /abertura|apertura/, cantidad: 1 },
     { etiqueta: 'Centro', regex: /centro/, cantidad: 2 },
-    { etiqueta: 'Wing', regex: /wing|ponta|extremo/, cantidad: 2 },
-    { etiqueta: 'Zaguero', regex: /zagueiro|zaguero|fullback/, cantidad: 1 },
+    { etiqueta: 'Ponta', regex: /wing|ponta|extremo/, cantidad: 2 },
+    { etiqueta: 'Zagueiro', regex: /zagueiro|zaguero|fullback/, cantidad: 1 },
 ] };
 
 // Voleibol: rotação padrão 5-1 (6 titulares em campo)

@@ -576,8 +576,7 @@ const styles = StyleSheet.create({
     tabTexto: { color: '#999', fontWeight: '700', fontSize: 12 },
     tabTextoActiva: { color: '#000' },
 
-    paginaCampo: { paddingHorizontal: 12, paddingBottom: 12, alignItems: 'center' },
-    nombreEquipo: { color: '#00c2ff', fontWeight: '800', fontSize: 14, textAlign: 'center', marginBottom: 8 },
+paginaCampo: { flexGrow: 1, paddingHorizontal: 12, paddingBottom: 12, alignItems: 'center', justifyContent: 'center' },    nombreEquipo: { color: '#00c2ff', fontWeight: '800', fontSize: 14, textAlign: 'center', marginBottom: 8 },
 
     botonGuardar: { backgroundColor: '#00e676', padding: 14, marginHorizontal: 12, marginVertical: 12, borderRadius: 10 },
     botonNotificar: { backgroundColor: '#ff9800', padding: 14, marginHorizontal: 12, marginVertical: 8, borderRadius: 10 },

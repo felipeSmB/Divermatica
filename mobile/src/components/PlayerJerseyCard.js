@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/nivel';
+import { colorNivel, colorNivelDim, inicialesPosicion } from '../utils/Level';
 
 // Tamanhos fixos do cartão por variante. O FormationPitch usa estes
 // valores para ancorar corretamente cada jogador na coordenada (x%, y%)

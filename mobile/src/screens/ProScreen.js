@@ -119,7 +119,7 @@ export default function ProScreen() {
 
                 <View style={styles.precoCard}>
                     <Text style={styles.precoLabel}>Todo por solo</Text>
-                    <Text style={styles.precoValor}>3€</Text>
+                    <Text style={styles.precoValor}>2.99€</Text>
                     <Text style={styles.precoSub}>Pago único · Sin suscripciones</Text>
                 </View>
 

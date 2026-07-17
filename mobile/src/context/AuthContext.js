@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getToken, guardarToken, eliminarToken, tokenExpirado, decodificarPayload } from '../utils/Auth';
+import { getToken, guardarToken, eliminarToken, tokenExpirado, decodificarPayload } from '../utils/auth';
 
 const AuthContext = createContext(null);
 

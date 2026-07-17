@@ -35,15 +35,15 @@ const POSICIONES_FORMACION = {
         '4-3-3': {
             Portero: [{ x: 50, y: 8 }],
             Defensa: [
-                { x: 14, y: 26 },
-                { x: 40, y: 22 },
-                { x: 60, y: 22 },
-                { x: 86, y: 26 },
+                { x: 14, y: 30 },
+                { x: 40, y: 26 },
+                { x: 60, y: 26 },
+                { x: 86, y: 30 },
             ],
             Centrocampista: [
-                { x: 22, y: 46 },
-                { x: 50, y: 52 },
-                { x: 78, y: 46 },
+                { x: 22, y: 54 },
+                { x: 50, y: 60 },
+                { x: 78, y: 54 },
             ],
             Delantero: [
                 { x: 14, y: 78 },
@@ -54,35 +54,35 @@ const POSICIONES_FORMACION = {
         '4-4-2': {
             Portero: [{ x: 50, y: 8 }],
             Defensa: [
-                { x: 14, y: 26 },
-                { x: 40, y: 22 },
-                { x: 60, y: 22 },
-                { x: 86, y: 26 },
+                { x: 14, y: 33 },
+                { x: 40, y: 29 },
+                { x: 60, y: 29 },
+                { x: 86, y: 33 },
             ],
             Centrocampista: [
-                { x: 18, y: 46 },
-                { x: 42, y: 52 },
-                { x: 58, y: 52 },
-                { x: 82, y: 46 },
+                { x: 18, y: 54 },
+                { x: 42, y: 60 },
+                { x: 58, y: 60 },
+                { x: 82, y: 54 },
             ],
             Delantero: [
-                { x: 35, y: 74 },
-                { x: 65, y: 74 },
+                { x: 35, y: 80 },
+                { x: 65, y: 80 },
             ],
         },
         '3-5-2': {
             Portero: [{ x: 50, y: 8 }],
             Defensa: [
-                { x: 24, y: 24 },
-                { x: 50, y: 20 },
-                { x: 76, y: 24 },
+                { x: 24, y: 30 },
+                { x: 50, y: 26 },
+                { x: 76, y: 30 },
             ],
             Centrocampista: [
-                { x: 15, y: 46 },
-                { x: 38, y: 50 },
-                { x: 50, y: 54 },
-                { x: 62, y: 50 },
-                { x: 85, y: 46 },
+                { x: 11, y: 50 },
+                { x: 30, y: 54 },
+                { x: 50, y: 58 },
+                { x: 70, y: 54 },
+                { x: 89, y: 50 },
             ],
             Delantero: [
                 { x: 36, y: 78 },
@@ -111,15 +111,15 @@ const POSICIONES_FORMACION = {
         '3-4-3': {
             Portero: [{ x: 50, y: 8 }],
             Defensa: [
-                { x: 20, y: 24 },
-                { x: 50, y: 20 },
-                { x: 80, y: 24 },
+                { x: 20, y: 32 },
+                { x: 50, y: 28 },
+                { x: 80, y: 32 },
             ],
             Centrocampista: [
-                { x: 18, y: 46 },
-                { x: 42, y: 50 },
-                { x: 58, y: 50 },
-                { x: 82, y: 46 },
+                { x: 18, y: 54 },
+                { x: 42, y: 58 },
+                { x: 58, y: 58 },
+                { x: 82, y: 54 },
             ],
             Delantero: [
                 { x: 14, y: 78 },
@@ -130,15 +130,15 @@ const POSICIONES_FORMACION = {
     },
     futbol7: {
         '3-2-1': {
-            Portero: [{ x: 50, y: 8 }],
+            Portero: [{ x: 50, y: 10 }],
             Defensa: [
-                { x: 18, y: 26 },
-                { x: 50, y: 20 },
-                { x: 82, y: 26 },
+                { x: 18, y: 36 },
+                { x: 50, y: 32 },
+                { x: 82, y: 36 },
             ],
             Centrocampista: [
-                { x: 34, y: 44 },
-                { x: 66, y: 44 },
+                { x: 34, y: 56 },
+                { x: 66, y: 56 },
             ],
             Delantero: [{ x: 50, y: 76 }],
         },
@@ -333,34 +333,34 @@ const POSICIONES_FORMACION = {
         // que nenhuma fila fique demasiado perto da seguinte.
         'XV Completo': {
             // Fila 1 (topo, linha de golo própria) — Pilar-Talonador-Pilar, bem juntos
-            Talonador: [{ x: 50, y: 6 }],
+            Talonador: [{ x: 50, y: 17 }],
             Pilar: [
-                { x: 30, y: 6 },
-                { x: 70, y: 6 },
+                { x: 30, y: 17 },
+                { x: 70, y: 17 },
             ],
             // Fila 2 — 2ª linha (locks), ligeiramente mais abertos que a 1ª
             'Segunda Linha': [
-                { x: 38, y: 20 },
-                { x: 62, y: 20 },
+                { x: 38, y: 33 },
+                { x: 62, y: 33 },
             ],
             // Fila 3 — 3ª linha: alas (flankers) nas pontas da fila, Número 8 ao centro
             Ala: [
-                { x: 18, y: 34 },
-                { x: 82, y: 34 },
+                { x: 18, y: 47 },
+                { x: 82, y: 47 },
             ],
-            'Número 8': [{ x: 50, y: 34 }],
+            'Número 8': [{ x: 50, y: 47 }],
             // Fila 4 — meios (médio-melé e abertura), próximos um do outro no centro
-            'Médio Scrum': [{ x: 38, y: 48 }],
-            Abertura: [{ x: 62, y: 48 }],
+            'Médio Scrum': [{ x: 38, y: 60 }],
+            Abertura: [{ x: 62, y: 60 }],
             // Fila 5 — centros, mais abertos que os meios
             Centro: [
-                { x: 30, y: 62 },
-                { x: 70, y: 62 },
+                { x: 30, y: 75 },
+                { x: 70, y: 75 },
             ],
             // Fila 6 — pontas (wings), no limite do campo, o mais abertas possível
             Ponta: [
-                { x: 8, y: 76 },
-                { x: 92, y: 76 },
+                { x: 8, y: 85 },
+                { x: 92, y: 85 },
             ],
             // Fila 7 (base) — zagueiro sozinho e centrado, bem separado das pontas
             Zagueiro: [{ x: 50, y: 92 }],

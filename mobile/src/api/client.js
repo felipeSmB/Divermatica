@@ -1,5 +1,5 @@
 import { API_URL } from '../config';
-import { getToken, eliminarToken } from '../utils/auth';
+import { getToken, eliminarToken } from '../utils/Auth';
 
 export async function apiFetch(path, opciones = {}) {
     const token = await getToken();

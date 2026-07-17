@@ -8,13 +8,13 @@ import { useAuth } from '../context/AuthContext';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import JugadoresScreen from '../screens/JugadoresScreen';
-import DeportesScreen from '../screens/DeportesScreen';
-import EquiposScreen from '../screens/EquiposScreen';
-import HistorialScreen from '../screens/HistorialScreen';
+import JugadoresScreen from '../screens/PlayersScreen';
+import DeportesScreen from '../screens/SportScreen';
+import EquiposScreen from '../screens/TeamScreen';
+import HistorialScreen from '../screens/HistoryScreen';
 import BrandTitle from '../components/BrandTitle';
 import AdminScreen from '../screens/AdminScreen';
-import ContaScreen from '../screens/ContaScreen';
+import ContaScreen from '../screens/AccountScreen';
 import AccountMenu from '../components/AccountMenu';
 import ProScreen from '../screens/ProScreen';
 

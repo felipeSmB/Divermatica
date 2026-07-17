@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Pressable, Text } from 'react-native';
 import Svg, { Rect, Circle, Line, Path, Defs, ClipPath, RadialGradient, LinearGradient, Stop } from 'react-native-svg';
 import PlayerJerseyCard, { JERSEY_SIZES } from '../PlayerJerseyCard';
+<<<<<<< HEAD
 import { colorNivel, colorNivelDim } from '../../utils/nivel';
 import { detetarDeporte, calcularFormacao } from '../../utils/posicionamento';
 import { classificarPosicao, distribuirX } from '../../utils/posicionamento';
+=======
+import { detetarDeporte, calcularFormacao } from '../../utils/Positioning';
+import { classificarPosicao, distribuirX } from '../../utils/Positioning';
+>>>>>>> 945eff2ce8acd2505af661c2f31872bdfdd311f6
 import FieldBasketball from './FieldBasketball';
 import FieldRugby from './FieldRugby';
 import FieldHandball from './FieldHandball';

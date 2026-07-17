@@ -1,4 +1,4 @@
-import { puntajeNivel } from './nivel';
+import { puntajeNivel } from './Level';
 
 export { puntajeNivel };
 

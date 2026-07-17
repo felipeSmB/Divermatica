@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { colorNivel } from '../utils/nivel';
+import { colorNivel } from '../utils/Level';
 import {
     alterarBloqueioUsuario,
     alterarPlanoUsuario,

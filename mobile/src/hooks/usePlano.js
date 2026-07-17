@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { decodificarPayload, getToken } from '../utils/auth';
+import { decodificarPayload, getToken } from '../utils/Auth';
 
 export default function usePlano() {
     const [plano, setPlano] = useState('demo');

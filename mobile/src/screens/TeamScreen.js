@@ -343,7 +343,7 @@ export default function EquiposScreen() {
                 <Text style={styles.hint}>Jugadores disponibles para este deporte: {jugadoresDeporte.length}</Text>
 
                 <TouchableOpacity style={[styles.boton, generarDisabled && styles.botonDeshabilitado]} onPress={generar} activeOpacity={0.85} disabled={generarDisabled}>
-                    <Text style={styles.botonTexto}>⚡ Generar equipos</Text>
+                    <Text style={styles.botonTexto}>Generar equipos</Text>
                 </TouchableOpacity>
 
                 {equipos.length > 0 && !campoVisible && (
@@ -355,7 +355,7 @@ export default function EquiposScreen() {
 
             {equipos.length > 0 && !campoVisible && (
                 <TouchableOpacity style={styles.fab} onPress={abrirCampo} activeOpacity={0.85}>
-                    <Text style={styles.fabTexto}>🏟️  Revisar equipo</Text>
+                    <Text style={styles.fabTexto}>Revisar equipo</Text>
                 </TouchableOpacity>
             )}
 
@@ -421,7 +421,7 @@ export default function EquiposScreen() {
                             activeOpacity={0.85}
                         >
                             <View style={styles.botonTextoRow}>
-                                <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : '💾 Guardar en historial'}</Text>
+                                <Text style={styles.botonTextoClaro}>{guardando ? 'Guardando…' : 'Guardar en historial'}</Text>
                                 {isDemo && <ProBadge />}
                             </View>
                         </TouchableOpacity>
@@ -439,7 +439,7 @@ export default function EquiposScreen() {
                             activeOpacity={0.85}
                         >
                             <View style={styles.botonTextoRow}>
-                                <Text style={styles.botonTextoClaro}>📱 Notificar Jugadores</Text>
+                                <Text style={styles.botonTextoClaro}>Notificar Jugadores</Text>
                                 {isDemo && <ProBadge />}
                             </View>
                         </TouchableOpacity>
@@ -490,7 +490,7 @@ export default function EquiposScreen() {
                                 activeOpacity={0.85}
                             >
                                 <Text style={styles.botonTextoClaro}>
-                                    {notificando ? 'Enviando notificaciones…' : `📨 Enviar SMS a ${equipos.length} equipo(s) (${equipos.flat().length} jugadores)`}
+                                    {notificando ? 'Enviando notificaciones…' : `Enviar SMS a ${equipos.length} equipo(s) (${equipos.flat().length} jugadores)`}
                                 </Text>
                             </TouchableOpacity>
                         </ScrollView>

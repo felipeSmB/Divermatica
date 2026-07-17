@@ -27,7 +27,7 @@ const VENTAJAS = [
         texto: 'Demo genera un máximo de 2 equipos por partido. PRO genera tantos como necesites.',
     },
     {
-        icono: '💾',
+        icono: '📥',
         titulo: 'Guardar en el historial',
         texto: 'Guarda cada partido generado para consultarlo más adelante.',
     },
@@ -93,7 +93,7 @@ export default function ProScreen() {
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContenido}>
                 <View style={styles.header}>
                     <View style={styles.badgeGrande}>
-                        <Text style={styles.badgeGrandeTexto}>⭐ PRO</Text>
+                        <Text style={styles.badgeGrandeTexto}>PRO</Text>
                     </View>
                     <Text style={styles.titulo}>DiverSport PRO</Text>
                     <Text style={styles.subtitulo}>

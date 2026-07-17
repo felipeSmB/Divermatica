@@ -390,7 +390,7 @@ export default function JugadoresScreen() {
 
                         <View style={styles.modalFooter}>
                             <TouchableOpacity style={styles.boton} onPress={guardar}>
-                                <Text style={styles.botonTexto}>💾 Guardar</Text>
+                                <Text style={styles.botonTexto}>Guardar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.botonSecundario} onPress={() => setModalVisible(false)}>
                                 <Text style={styles.botonTextoClaro}>Cancelar</Text>
@@ -415,23 +415,23 @@ export default function JugadoresScreen() {
                             <Text style={styles.detalleNombre}>{jugadorSeleccionado.nombre}</Text>
 
                             <View style={styles.detalleFila}>
-                                <Text style={styles.detalleLabel}>📞 Teléfono</Text>
+                                <Text style={styles.detalleLabel}>Teléfono</Text>
                                 <Text style={styles.detalleValor}>{jugadorSeleccionado.telefono || '—'}</Text>
                             </View>
                             <View style={styles.detalleFila}>
-                                <Text style={styles.detalleLabel}>✉️ Correo</Text>
+                                <Text style={styles.detalleLabel}>Correo</Text>
                                 <Text style={styles.detalleValor}>{jugadorSeleccionado.mail || '—'}</Text>
                             </View>
                             <View style={styles.detalleFila}>
-                                <Text style={styles.detalleLabel}>⚽ Deporte</Text>
+                                <Text style={styles.detalleLabel}>Deporte</Text>
                                 <Text style={styles.detalleValor}>{jugadorSeleccionado.deporte_nombre || '—'}</Text>
                             </View>
                             <View style={styles.detalleFila}>
-                                <Text style={styles.detalleLabel}>📍 Posición</Text>
+                                <Text style={styles.detalleLabel}>Posición</Text>
                                 <Text style={styles.detalleValor}>{jugadorSeleccionado.posicion || '—'}</Text>
                             </View>
                             <View style={styles.detalleFila}>
-                                <Text style={styles.detalleLabel}>⭐ Nivel</Text>
+                                <Text style={styles.detalleLabel}>Nivel</Text>
                                 <Text style={styles.detalleValor}>{jugadorSeleccionado.nivel}</Text>
                             </View>
 
@@ -440,13 +440,13 @@ export default function JugadoresScreen() {
                                     style={styles.boton}
                                     onPress={() => { setDetalleVisible(false); abrirEditar(jugadorSeleccionado); }}
                                 >
-                                    <Text style={styles.botonTexto}>✏️ Editar</Text>
+                                    <Text style={styles.botonTexto}>Editar</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.botonEliminar}
                                     onPress={() => { setDetalleVisible(false); eliminar(jugadorSeleccionado.id, jugadorSeleccionado.nombre); }}
                                 >
-                                    <Text style={styles.botonTextoClaro}>🗑️ Eliminar</Text>
+                                    <Text style={styles.botonTextoClaro}>Eliminar</Text>
                                 </TouchableOpacity>
                             </View>
                         </ScrollView>
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
     cerrarModal: { color: '#999', fontSize: 20 },
     modalBody: { padding: 20, paddingBottom: 40 },
     modalFooter: { padding: 20, borderTopWidth: 1, borderTopColor: '#1c1f26' },
-    botonEliminar: { backgroundColor: '#3a1c1c', padding: 14, borderRadius: 8, marginTop: 10 },
+    botonEliminar: { backgroundColor: '#bb0a0a', padding: 14, borderRadius: 8, marginTop: 10 },
     detalleNombre: { color: '#fff', fontSize: 20, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
     detalleFila: {
         flexDirection: 'row', justifyContent: 'space-between',
